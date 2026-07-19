@@ -1,0 +1,66 @@
+/* ---------- Buttons ---------- */
+/* Extracted from home-page.css so button styles can be shared/linked
+   independently across pages. Depends on --gold and --ease-smooth
+   custom properties being defined wherever this is used. */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 12px 26px;
+    transition: transform .35s var(--ease-smooth), box-shadow .35s var(--ease-smooth),
+        background-color .3s ease, border-color .3s ease, color .3s ease;
+    white-space: nowrap;
+    text-decoration: none;
+    will-change: transform;
+}
+
+.btn:active {
+    transform: translateY(0) scale(0.97);
+}
+
+.btn-primary {
+    background: var(--gold);
+    color: #0a0a0a;
+    box-shadow: 0 20px 45px rgba(247, 197, 32, 0.22);
+}
+
+.btn-primary:hover {
+    background: #ffd64c;
+    transform: translateY(-3px);
+    box-shadow: 0 24px 50px rgba(247, 197, 32, 0.35);
+}
+
+.btn-outline {
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    background: transparent;
+}
+
+.btn-outline:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 34px rgba(247, 197, 32, 0.16);
+}
+
+.btn-cta-gold {
+    color: var(--gold);
+    border-color: rgba(247, 197, 32, 0.45);
+}
+
+.btn-cta-gold:hover {
+    color: #0a0a0a;
+    background: var(--gold);
+    border-color: var(--gold);
+}
+
+.btn-sm {
+    padding: 9px 20px;
+    font-size: 11px;
+}

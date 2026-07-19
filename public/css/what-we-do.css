@@ -1,0 +1,245 @@
+/* ---------- Services grid ---------- */
+/* Grid of "What We Do" service cards. Expects each card to be an <a>
+   wrapping an <svg class="service-icon"> and a label element — see
+   markup note below. Depends on --gold and --ease-smooth. */
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.service-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 28px 24px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+    text-decoration: none;
+    color: #fff;
+    transition: transform .35s var(--ease-smooth), box-shadow .35s var(--ease-smooth),
+        background-color .3s ease, border-color .3s ease;
+    will-change: transform;
+}
+
+.service-card:hover,
+.service-card:focus-visible {
+    transform: translateY(-4px);
+    border-color: rgba(247, 197, 32, 0.35);
+    background: rgba(247, 197, 32, 0.04);
+    box-shadow: 0 20px 45px rgba(247, 197, 32, 0.12);
+}
+
+.service-card:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+}
+
+.service-card:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.service-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform .35s var(--ease-smooth), stroke .3s ease;
+}
+
+.service-card:hover .service-icon {
+    transform: scale(1.08);
+}
+
+.service-item {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    min-width: auto;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: #f1f5f9;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    transition: transform .25s ease, background .25s ease, border-color .25s ease;
+    scroll-snap-align: start;
+}
+
+.service-item:hover,
+.service-item:focus-visible {
+    transform: translateY(-1px);
+    background: rgba(247, 197, 32, 0.12);
+    border-color: rgba(247, 197, 32, 0.25);
+}
+
+.service-item:focus-visible {
+    outline: 2px solid rgba(247, 197, 32, 0.85);
+    outline-offset: 2px;
+}
+
+.service-item--active {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.24);
+    color: #ffffff;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.service-label {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.35;
+    color: #f5f5f0;
+}
+
+.services-strip {
+    margin-top: 34px;
+    padding: 18px 0 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: none;
+    text-align: center;
+}
+
+.services-strip .section-eyebrow {
+    display: inline-block;
+    margin: 0 auto 10px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #f7c518;
+}
+
+.services-strip .section-title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #ffffff;
+}
+
+/* Center hero content on service pages that use .page-main */
+.page-main .hero-section {
+    display: block;
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.page-main .hero-section .hero-left {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.page-main .hero-section .eyebrow {
+    color: #f7c518;
+    font-weight: 800;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.page-main .hero-section .hero-title {
+    font-size: 48px;
+    line-height: 1.05;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin: 6px 0 8px;
+}
+
+.page-main .hero-section .hero-sub {
+    color: #a8b3c4;
+    max-width: 780px;
+    margin: 0 auto;
+}
+
+.page-main .hero-section .hero-actions {
+    justify-content: center;
+    display: flex;
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.service-nav-grid {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 10px;
+    padding: 10px 24px;
+    margin-top: 10px;
+    align-items: center;
+    scroll-snap-type: x mandatory;
+}
+
+.service-nav-grid .service-item {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    justify-content: center;
+    padding: 12px 16px;
+}
+
+.service-item--hidden {
+    display: none;
+}
+
+.service-nav-grid.expanded .service-item--hidden {
+    display: inline-flex;
+}
+
+.service-nav-grid::-webkit-scrollbar {
+    height: 8px;
+}
+
+.service-nav-grid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+}
+
+.service-nav-grid::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+@media (max-width: 640px) {
+    .service-nav-grid {
+        gap: 8px;
+        padding: 10px 18px;
+    }
+
+    .service-nav-grid .service-item {
+        padding: 10px 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+
+    .service-card {
+        padding: 22px 18px;
+    }
+}
+
+@media (max-width: 460px) {
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+}

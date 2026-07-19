@@ -1,0 +1,170 @@
+/* ============================================================
+   header.css
+   Shared header styles for all pages.
+   Classes are namespaced (site-header__*) so they can't collide
+   with unrelated rules in per-page stylesheets (home-page.css,
+   about-page.css, etc.) that are loaded alongside this file.
+   ============================================================ */
+
+.site-header {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 32px;
+    padding: 14px 32px;
+    backdrop-filter: blur(14px);
+    width: max-content;
+    max-width: calc(100vw - 40px);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.72);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    overflow-x: hidden;
+}
+
+.site-header__logo {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    white-space: nowrap;
+}
+
+.site-header__logo-accent {
+    color: var(--gold);
+}
+
+.site-header__nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 28px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #cbd5e1;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.site-header__nav::-webkit-scrollbar {
+    display: none;
+}
+
+.site-header__nav-link {
+    color: #f4f5f5;
+    padding-bottom: 6px;
+    border-bottom: 2px solid transparent;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.site-header__nav-link:hover {
+    color: #fff;
+}
+
+.site-header__nav-link--active {
+    color: var(--gold);
+}
+
+/* Header button: keep color/border feedback, drop the hover lift/jump */
+.site-header .btn {
+    background: transparent;
+}
+
+.site-header .btn:hover {
+    background: transparent;
+    transform: none;
+}
+
+.site-header .btn:active {
+    transform: none;
+}
+
+/* ============================================================
+   Home page logo (aiZAP mark), rendered outside .site-header
+   so it never enters the pill's background/blur/border, but
+   fixed-positioned on the same row so it lines up visually
+   with the nav pill.
+   ============================================================ */
+.home-logo {
+    position: absolute;
+    top: 20px;
+    left: 32px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    height: 60px;
+    /* matches approx rendered height of .site-header pill */
+}
+
+.home-logo a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.home-logo img {
+    height: 40px;
+    width: auto;
+    display: block;
+}
+
+/* Give the page content room so it doesn't sit under the floating header */
+body {
+    padding-top: 90px;
+}
+
+/* Videos here are all autoplay/muted/loop, so the native centered
+   play-button overlay some browsers show by default is unnecessary
+   and gets hidden site-wide. */
+video::-webkit-media-controls-start-playback-button {
+    display: none !important;
+    -webkit-appearance: none;
+    pointer-events: none;
+}
+
+video::-webkit-media-controls {
+    display: none !important;
+}
+
+/* Chrome/Android renders a different overlay play button (separate
+   pseudo-element from Safari's) — hide that one too. */
+video::-internal-media-controls-overlay-play-button {
+    display: none !important;
+}
+
+video::-webkit-media-controls-overlay-play-button {
+    display: none !important;
+}
+
+/* ===== Small screens ===== */
+@media (max-width: 640px) {
+    .site-header {
+        top: 12px;
+        padding: 12px 20px;
+        gap: 18px;
+        grid-template-columns: auto auto;
+    }
+
+    .site-header__nav {
+        gap: 18px;
+    }
+
+    .home-logo {
+        top: 12px;
+        left: 16px;
+        height: 50px;
+    }
+
+    .home-logo img {
+        height: 32px;
+    }
+}

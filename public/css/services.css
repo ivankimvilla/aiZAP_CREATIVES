@@ -1,0 +1,305 @@
+/* ============================================================
+   services.css
+   Page-specific styles for the Services page.
+   Loaded IN ADDITION TO home-page.css, which supplies the
+   sitewide base: reset, header, nav, buttons, footer, and
+   the section-eyebrow / section-title heading styles.
+   ============================================================ */
+
+
+/* ---------- Interior page layout (About, Services, etc.) ---------- */
+.page-main {
+    display: block;
+    margin-top: 5px;
+    max-width: 1180px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 24px;
+}
+
+/* Hero: copy on the left, the feature video on the right —
+   this is the page's one and only "what we do" statement,
+   the section below no longer repeats it. */
+.page-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 48px;
+    max-width: none;
+    margin: 0 0 12px;
+    text-align: left;
+    padding-top: 6px;
+}
+
+.page-hero .hero-copy {
+    max-width: 480px;
+}
+
+.page-hero .eyebrow {
+    justify-content: flex-start;
+}
+
+.page-hero .hero-title {
+    font-size: 44px;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+}
+
+.page-hero .hero-sub {
+    max-width: 460px;
+    margin: 18px 0 0;
+    text-align: left;
+}
+
+.services-feature-video {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 18px;
+    overflow: hidden;
+    border: none;
+    background: none;
+}
+
+.services-feature-video__media {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (max-width: 760px) {
+    .page-hero {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+}
+
+/* Section headers: left-aligned label + heading, with the
+   supporting copy sitting beside them rather than centered
+   underneath. */
+.section-header-row {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: end;
+    gap: 40px;
+    margin-bottom: 34px;
+}
+
+.section-header-row .section-eyebrow,
+.section-header-row .section-title {
+    text-align: left;
+}
+
+@media (max-width: 760px) {
+    .section-header-row {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+}
+
+.section-copy {
+    text-align: left;
+    max-width: 420px;
+    margin: 0;
+    color: #94a3b8;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+/* ---------- Value grid (Services: What We Do) ---------- */
+.value-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 18px;
+    margin-top: 0;
+}
+
+@media (max-width: 560px) {
+    .value-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.value-card {
+    padding: 26px 22px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+    transition: transform .4s var(--ease-smooth), border-color .3s ease, background .3s ease;
+}
+
+.value-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(247, 197, 32, 0.35);
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.value-index {
+    display: block;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    margin-bottom: 14px;
+}
+
+.value-title {
+    font-size: 15px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.value-text {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #94a3b8;
+}
+
+/* ---------- Process list (Services: From Idea To Launch) ---------- */
+.reasons-section {
+    margin-top: 72px;
+}
+
+.reasons-layout {
+    display: grid;
+    grid-template-columns: 0.85fr 1.4fr;
+    gap: 56px;
+    align-items: start;
+}
+
+.reasons-intro {
+    position: static;
+}
+
+.reasons-intro .reasons-tag {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+}
+
+.reasons-intro h2 {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.15;
+    color: #fff;
+    margin-bottom: 14px;
+}
+
+.reasons-intro .reasons-lead {
+    max-width: 320px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #94a3b8;
+}
+
+.reasons-video {
+    margin-top: 28px;
+    max-width: 320px;
+    aspect-ratio: 16 / 9;
+    border-radius: 16px;
+    overflow: hidden;
+    border: none;
+    background: none;
+}
+
+.reasons-video video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (max-width: 760px) {
+    .reasons-video {
+        max-width: 100%;
+    }
+}
+
+.reasons-list {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 52px;
+}
+
+.reason-row {
+    display: grid;
+    grid-template-columns: 44px 1fr 34px;
+    align-items: center;
+    gap: 20px;
+    padding: 24px 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    transition: border-color .3s ease, padding-left .3s var(--ease-smooth);
+}
+
+.reasons-list .reason-row:first-child {
+    padding-top: 0;
+}
+
+.reason-row:hover {
+    padding-left: 12px;
+    border-color: rgba(247, 197, 32, 0.4);
+}
+
+.reason-num {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+}
+
+.reason-copy h3 {
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-bottom: 5px;
+}
+
+.reason-copy p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #a3b1c2;
+}
+
+.reason-check {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0a0a0a;
+    background: var(--gold);
+    opacity: 0.55;
+    transform: scale(0.92);
+    transition: opacity .3s ease, transform .3s var(--ease-smooth);
+}
+
+.reason-row:hover .reason-check {
+    opacity: 1;
+    transform: scale(1);
+}
+
+@media (max-width: 760px) {
+    .reasons-layout {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .reason-row {
+        grid-template-columns: 34px 1fr;
+    }
+
+    .reason-check {
+        display: none;
+    }
+}

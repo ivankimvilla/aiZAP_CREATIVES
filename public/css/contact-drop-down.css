@@ -1,0 +1,241 @@
+/* ===== Gold & Black palette ===== */
+.contact-dropdown-component {
+    --gold: #d4af37;
+    --gold-light: #f2d271;
+    --gold-dark: #a8842a;
+    --black: #111111;
+    --black-soft: #1c1c1c;
+    --off-white: #faf7ee;
+}
+
+/* Keep the whole contact widget pinned to the upper-right corner */
+.contact-dropdown-component {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 1100;
+    font-family: inherit;
+}
+
+/* ===== Trigger button ===== */
+.contact-float-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border: 2px solid var(--gold);
+    border-radius: 999px;
+    z-index: 1101;
+    background: var(--gold);
+    color: var(--black);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.contact-float-button:hover,
+.contact-float-button:focus-visible {
+    background: var(--black);
+    color: var(--gold-light);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+}
+
+.contact-float-button:active {
+    transform: translateY(0);
+}
+
+/* ===== Dropdown panel ===== */
+.contact-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    left: auto;
+    min-width: min(360px, calc(100vw - 40px));
+    z-index: 1100;
+    transform-origin: top right;
+    display: none;
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.contact-dropdown.open {
+    display: block;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.contact-dropdown:not(.open) {
+    display: none;
+}
+
+.contact-dropdown .contact-dropdown-inner {
+    margin-top: 0;
+    background: var(--black-soft);
+    border: 1px solid var(--gold-dark);
+    border-radius: 16px;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+    padding: 24px;
+    color: var(--off-white);
+}
+
+/* ===== Close button ===== */
+.contact-dropdown-close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    color: var(--gold-light);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.contact-dropdown-close:hover,
+.contact-dropdown-close:focus-visible {
+    color: var(--gold);
+    transform: scale(1.1);
+}
+
+/* ===== Headings and copy ===== */
+.contact-dropdown .eyebrow {
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin: 0 0 4px;
+}
+
+.contact-dropdown .section-title {
+    color: var(--off-white);
+    margin: 0 0 6px;
+    font-size: 1.3rem;
+}
+
+.contact-dropdown .hero-sub {
+    color: rgba(250, 247, 238, 0.7);
+    font-size: 0.9rem;
+    margin: 0 0 18px;
+}
+
+/* ===== Status and error messages ===== */
+.contact-dropdown-status {
+    background: rgba(212, 175, 55, 0.15);
+    border: 1px solid var(--gold-dark);
+    color: var(--gold-light);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 0.9rem;
+}
+
+.contact-dropdown-errors {
+    background: rgba(255, 90, 90, 0.1);
+    border: 1px solid #a83232;
+    color: #ff9f9f;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 0.85rem;
+}
+
+.contact-dropdown-errors p {
+    margin: 0 0 6px;
+    font-weight: 700;
+}
+
+.contact-dropdown-errors ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+/* ===== Form ===== */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.contact-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: rgba(250, 247, 238, 0.8);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.contact-form input,
+.contact-form textarea {
+    background: var(--black);
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--off-white);
+    font-size: 0.9rem;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+    color: rgba(250, 247, 238, 0.35);
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25);
+}
+
+/* ===== Submit button ===== */
+.contact-form .btn-primary {
+    margin-top: 6px;
+    padding: 12px 20px;
+    border-radius: 999px;
+    border: 2px solid var(--gold);
+    background: var(--gold);
+    color: var(--black);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+}
+
+.contact-form .btn-primary:hover,
+.contact-form .btn-primary:focus-visible {
+    background: var(--black);
+    color: var(--gold-light);
+    transform: translateY(-2px);
+}
+
+.contact-form .btn-primary:active {
+    transform: translateY(0);
+}
+
+/* ===== Small screens ===== */
+@media (max-width: 480px) {
+    .contact-dropdown-component {
+        top: 16px;
+        right: 16px;
+    }
+
+    .contact-dropdown {
+        min-width: calc(100vw - 32px);
+    }
+}

@@ -1,0 +1,1005 @@
+﻿(function () {
+    const pathname = window.location.pathname || '';
+    const body = document.body;
+    const className = body ? body.className : '';
+    const isPortfolioPage = pathname.includes('/portfolio') || className.includes('portfolio-page');
+    const isPricingPage = pathname.includes('/pricing') || className.includes('pricing-page');
+    const isProcessPage = pathname.includes('/process') || className.includes('process-page');
+
+    function initServicesShowMore() {
+        const grid = document.querySelector('.services-grid');
+        if (!grid) return;
+        const items = Array.from(grid.querySelectorAll('.service-item'));
+        const max = 8;
+        if (items.length <= max) return;
+
+        items.forEach((item, index) => {
+            if (index >= max) item.classList.add('service-item--hidden');
+        });
+
+        const button = document.getElementById('show-more-services');
+        if (!button) return;
+
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
+            const expanded = grid.classList.toggle('services-grid--expanded');
+            if (expanded) {
+                items.forEach((item) => item.classList.remove('service-item--hidden'));
+                button.textContent = 'Show Less';
+            } else {
+                items.forEach((item, index) => {
+                    if (index >= max) item.classList.add('service-item--hidden');
+                });
+                button.textContent = 'Show More';
+            }
+        });
+    }
+
+    function initProjectThumbs() {
+        if (!document.querySelector('.project-thumb')) return;
+
+        document.querySelectorAll('.project-thumb').forEach((thumb) => {
+            if (thumb.dataset.videoBound === '1') return;
+            thumb.dataset.videoBound = '1';
+
+            const video = thumb.querySelector('video');
+            const toggle = thumb.querySelector('.mute-toggle');
+            if (!video || !toggle) return;
+
+            const hasDataSrc = Boolean(video.getAttribute('data-src'));
+            const shouldLazyLoad = hasDataSrc && !video.getAttribute('src') && !video.src;
+
+            try {
+                video.muted = true;
+                video.setAttribute('muted', '');
+                video.playsInline = true;
+                video.setAttribute('playsinline', '');
+                video.autoplay = true;
+                video.setAttribute('autoplay', '');
+            } catch (error) {
+                // ignore autoplay restrictions
+            }
+
+            const updateToggle = () => {
+                toggle.textContent = video.muted ? '🔇' : '🔊';
+                toggle.setAttribute('aria-label', video.muted ? 'Unmute' : 'Mute');
+            };
+
+            const muteAllOtherPortfolioVideos = (activeVideo) => {
+                document.querySelectorAll('.project-thumb').forEach((otherThumb) => {
+                    const otherVideo = otherThumb.querySelector('video');
+                    const otherToggle = otherThumb.querySelector('.mute-toggle');
+                    if (!otherVideo || otherVideo === activeVideo) return;
+                    otherVideo.muted = true;
+                    otherVideo.volume = 0;
+                    otherVideo.setAttribute('muted', '');
+                    if (otherToggle) {
+                        otherToggle.textContent = '🔇';
+                        otherToggle.setAttribute('aria-label', 'Unmute');
+                    }
+                });
+            };
+
+            const loadVideoIfNeeded = () => {
+                if (video.dataset.videoLoaded === '1') return;
+                video.dataset.videoLoaded = '1';
+
+                if (video.getAttribute('data-src')) {
+                    const source = video.querySelector('source');
+                    if (source) {
+                        source.src = video.getAttribute('data-src');
+                    } else {
+                        video.src = video.getAttribute('data-src');
+                    }
+                }
+
+                try {
+                    video.load();
+                } catch (error) {
+                    // ignore
+                }
+
+                try {
+                    video.play().catch(() => { });
+                } catch (error) {
+                    // ignore
+                }
+            };
+
+            updateToggle();
+            if (shouldLazyLoad && isPortfolioPage) {
+                if ('IntersectionObserver' in window) {
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach((entry) => {
+                            if (entry.isIntersecting) {
+                                loadVideoIfNeeded();
+                                observer.disconnect();
+                            }
+                        });
+                    }, { rootMargin: '160px 0px', threshold: 0.1 });
+                    observer.observe(thumb);
+                } else {
+                    window.setTimeout(loadVideoIfNeeded, 120);
+                }
+            } else {
+                window.setTimeout(loadVideoIfNeeded, 60);
+            }
+
+            const ensureOnlyOneAudioSource = () => {
+                if (!video.muted) {
+                    muteAllOtherPortfolioVideos(video);
+                }
+            };
+
+            video.addEventListener('play', ensureOnlyOneAudioSource);
+            video.addEventListener('volumechange', ensureOnlyOneAudioSource);
+
+            toggle.addEventListener('click', (event) => {
+                event.preventDefault();
+                const willBeMuted = !video.muted;
+                if (willBeMuted) {
+                    video.muted = true;
+                    video.volume = 0;
+                    video.setAttribute('muted', '');
+                } else {
+                    muteAllOtherPortfolioVideos(video);
+                    video.muted = false;
+                    video.volume = 1;
+                    video.removeAttribute('muted');
+                    try {
+                        video.play();
+                    } catch (error) {
+                        // ignore autoplay restrictions
+                    }
+                }
+                updateToggle();
+            });
+        });
+    }
+
+    function initPricingPage() {
+        if (!isPricingPage) return;
+
+        const glow = document.querySelector('.pricing-heading-glow');
+        if (glow) {
+            glow.addEventListener('pointermove', (event) => {
+                const rect = glow.getBoundingClientRect();
+                glow.style.setProperty('--glow-x', `${event.clientX - rect.left}px`);
+                glow.style.setProperty('--glow-y', `${event.clientY - rect.top}px`);
+            });
+        }
+
+        const cards = document.querySelectorAll('.pricing-card');
+        const overlay = document.getElementById('pricingOverlay');
+        const pricingPanel = document.getElementById('pricingInquiryPanel');
+        if (!cards.length || !overlay || !pricingPanel) return;
+
+        const pricingPlans = (() => {
+            try {
+                return JSON.parse(overlay.dataset.plans || '{}');
+            } catch (error) {
+                return {};
+            }
+        })();
+
+        let selectedCard = null;
+
+        const getSummaryElements = () => {
+            return {
+                title: pricingPanel.querySelector('.pricing-inquiry-header .section-title'),
+                subtitle: pricingPanel.querySelector('.pricing-inquiry-header .summary-subtitle'),
+                featuresEl: pricingPanel.querySelector('.summary-features'),
+                packageInput: pricingPanel.querySelector('.pricing-inquiry-form input[name="package"]'),
+            };
+        };
+
+        const updatePricingSummary = (packageValue) => {
+            const { title, subtitle, featuresEl, packageInput } = getSummaryElements();
+            const meta = pricingPlans[packageValue] || null;
+
+            if (title && packageValue) {
+                title.textContent = packageValue;
+            }
+
+            if (packageInput) {
+                packageInput.value = packageValue;
+            }
+
+            if (subtitle) {
+                subtitle.textContent = meta ? meta.subtitle : 'Submit your package request and we’ll respond with pricing details.';
+            }
+
+            if (featuresEl) {
+                featuresEl.innerHTML = '';
+                if (meta && Array.isArray(meta.items)) {
+                    meta.items.forEach((item) => {
+                        const li = document.createElement('li');
+                        li.textContent = item;
+                        featuresEl.appendChild(li);
+                    });
+                } else {
+                    ['Concepts & AI video production', 'Platform-ready formats', 'Revisions & delivery timeline'].forEach((item) => {
+                        const li = document.createElement('li');
+                        li.textContent = item;
+                        featuresEl.appendChild(li);
+                    });
+                }
+            }
+        };
+
+        const clearActiveState = () => {
+            cards.forEach((card) => card.classList.remove('is-active', 'is-selected'));
+            document.querySelectorAll('.pricing-card .pricing-select-button').forEach((button) => {
+                button.classList.remove('is-active');
+                button.setAttribute('aria-pressed', 'false');
+            });
+        };
+
+        const openOverlay = () => {
+            overlay.hidden = false;
+            overlay.classList.add('is-open');
+            pricingPanel.classList.add('is-open');
+        };
+
+        const closeOverlay = () => {
+            overlay.classList.remove('is-open');
+            pricingPanel.classList.remove('is-open');
+            overlay.hidden = true;
+        };
+
+        const activateCard = (card, persistent, withOverlay = false) => {
+            if (!card) return;
+            clearActiveState();
+            card.classList.add('is-active');
+            if (persistent) {
+                card.classList.add('is-selected');
+                selectedCard = card;
+            }
+            const button = card.querySelector('.pricing-select-button');
+            if (button) {
+                button.classList.add('is-active');
+                button.setAttribute('aria-pressed', 'true');
+            }
+            const packageValue = card.querySelector('.pricing-select-button')?.dataset.plan || '';
+            if (packageValue) {
+                updatePricingSummary(packageValue);
+            }
+            if (withOverlay) {
+                openOverlay();
+            }
+        };
+
+        const openOverlayForPlan = (packageValue, triggerButton) => {
+            const button = triggerButton || document.querySelector(`.pricing-select-button[data-plan="${packageValue}"]`);
+            const card = button ? button.closest('.pricing-card') : null;
+            if (!card || !packageValue) return;
+
+            button.classList.add('is-active');
+            button.setAttribute('aria-pressed', 'true');
+            activateCard(card, true, true);
+
+            const nameInput = pricingPanel.querySelector('.pricing-inquiry-form input[name="name"]');
+            if (nameInput) {
+                nameInput.focus();
+            }
+
+            if (window.innerWidth < 900) {
+                pricingPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        };
+
+        cards.forEach((card) => {
+            card.addEventListener('mouseenter', () => activateCard(card, false));
+            card.addEventListener('mouseleave', (event) => {
+                const relatedCard = event.relatedTarget && event.relatedTarget.closest
+                    ? event.relatedTarget.closest('.pricing-card')
+                    : null;
+                if (relatedCard) return;
+                if (selectedCard) {
+                    activateCard(selectedCard, true);
+                } else {
+                    clearActiveState();
+                }
+            });
+
+            const button = card.querySelector('.pricing-select-button');
+            if (button) {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    openOverlayForPlan(button.dataset.plan || '', button);
+                });
+            }
+        });
+
+        const closeButton = pricingPanel.querySelector('.pricing-close');
+        if (closeButton) {
+            closeButton.addEventListener('click', (event) => {
+                event.preventDefault();
+                closeOverlay();
+            });
+        }
+
+        const summaryCancel = pricingPanel.querySelector('.pricing-summary-cancel');
+        if (summaryCancel) {
+            summaryCancel.addEventListener('click', (event) => {
+                event.preventDefault();
+                clearActiveState();
+                const packageInput = pricingPanel.querySelector('.pricing-inquiry-form input[name="package"]');
+                if (packageInput) packageInput.value = '';
+                closeOverlay();
+            });
+        }
+
+        overlay.addEventListener('click', (event) => {
+            if (event.target === overlay) {
+                closeOverlay();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if ((event.key === 'Escape' || event.key === 'Esc') && overlay.classList.contains('is-open')) {
+                closeOverlay();
+            }
+        });
+
+        const initialPackage = overlay.dataset.initialPackage || '';
+        const serverOpen = overlay.dataset.serverOpen === '1';
+        if (initialPackage) {
+            openOverlayForPlan(initialPackage);
+        } else if (serverOpen) {
+            openOverlay();
+        }
+    }
+
+    function initProcessPage() {
+        if (!isProcessPage) return;
+
+        document.querySelectorAll('.process-scroll-wrap').forEach((wrap) => {
+            const el = wrap.querySelector('.process-scroll');
+            const arrow = wrap.querySelector('.process-scroll-arrow');
+            if (!el) return;
+
+            const items = Array.from(el.querySelectorAll('.process-scroll-item'));
+            let isDown = false;
+            let startX = 0;
+            let startScroll = 0;
+
+            const updateCenterItem = () => {
+                if (!items.length) return;
+                const containerRect = el.getBoundingClientRect();
+                const containerCenter = containerRect.left + containerRect.width / 2;
+                let closest = null;
+                let closestDist = Infinity;
+
+                items.forEach((item) => {
+                    const rect = item.getBoundingClientRect();
+                    const itemCenter = rect.left + rect.width / 2;
+                    const dist = Math.abs(itemCenter - containerCenter);
+                    if (dist < closestDist) {
+                        closestDist = dist;
+                        closest = item;
+                    }
+                });
+
+                items.forEach((item) => item.classList.toggle('is-center', item === closest));
+            };
+
+            if (items.length) {
+                const middleItem = items[Math.floor((items.length - 1) / 2)];
+                el.scrollLeft = middleItem.offsetLeft + middleItem.offsetWidth / 2 - el.clientWidth / 2;
+            }
+
+            updateCenterItem();
+            el.addEventListener('scroll', updateCenterItem, { passive: true });
+            window.addEventListener('resize', updateCenterItem);
+
+            el.addEventListener('pointerdown', (event) => {
+                isDown = true;
+                startX = event.clientX;
+                startScroll = el.scrollLeft;
+                el.setPointerCapture(event.pointerId);
+            });
+
+            el.addEventListener('pointermove', (event) => {
+                if (!isDown) return;
+                el.scrollLeft = startScroll - (event.clientX - startX);
+            });
+
+            ['pointerup', 'pointercancel', 'pointerleave'].forEach((eventName) => {
+                el.addEventListener(eventName, () => {
+                    isDown = false;
+                });
+            });
+
+            if (arrow) {
+                arrow.addEventListener('click', () => {
+                    const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 8;
+                    const step = Math.max(el.clientWidth * 0.6, 220);
+                    el.scrollTo({
+                        left: atEnd ? 0 : el.scrollLeft + step,
+                        behavior: 'smooth',
+                    });
+                });
+            }
+        });
+    }
+
+    function initContactDropdown() {
+        const dropdown = document.getElementById('contactDropdown');
+        if (!dropdown || dropdown.dataset.contactBound === '1') return;
+        dropdown.dataset.contactBound = '1';
+
+        const contactButton = dropdown.closest('.contact-dropdown-component')?.querySelector('.contact-float-button');
+        const closeBtn = dropdown.querySelector('.contact-dropdown-close');
+
+        const setOpen = (open) => {
+            dropdown.classList.toggle('open', open);
+            dropdown.setAttribute('aria-hidden', open ? 'false' : 'true');
+        };
+
+        const toggleDropdown = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            setOpen(!dropdown.classList.contains('open'));
+        };
+
+        if (contactButton) contactButton.addEventListener('click', toggleDropdown);
+        if (closeBtn) {
+            closeBtn.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                setOpen(false);
+            });
+        }
+
+        document.addEventListener('click', (event) => {
+            if (!dropdown.classList.contains('open')) return;
+            if (event.target.closest('.contact-dropdown') || event.target.closest('.contact-float-button')) return;
+            setOpen(false);
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && dropdown.classList.contains('open')) {
+                setOpen(false);
+            }
+        });
+
+        if (dropdown.dataset.initialOpen === 'true') {
+            setOpen(true);
+            const firstInput = dropdown.querySelector('input, textarea');
+            if (firstInput) firstInput.focus();
+        }
+    }
+
+    // Helper to format time in 12-hour format (e.g., "5:27 PM")
+    function format12HourTime(hours, minutes) {
+        const h = parseInt(hours, 10);
+        const m = String(minutes).padStart(2, '0');
+        const period = h >= 12 ? 'PM' : 'AM';
+        const displayHour = h === 0 ? 12 : h > 12 ? h - 12 : h;
+        return `${displayHour}:${m} ${period}`;
+    }
+
+    // Fetch booked times for a specific date and timezone
+    function fetchBookedTimes(date, timezone) {
+        const bookingTimes = document.getElementById('bookingTimes');
+        if (!bookingTimes) return;
+
+        fetch(`/api/booked-times?date=${date}&timezone=${timezone}`)
+            .then(response => response.json())
+            .then(data => {
+                // Store booked times in data attribute
+                bookingTimes.dataset.bookedTimes = JSON.stringify(data.booked_times || []);
+                updateTimeSlotStates();
+            })
+            .catch(error => {
+                console.error('Error fetching booked times:', error);
+                bookingTimes.dataset.bookedTimes = JSON.stringify([]);
+                updateTimeSlotStates();
+            });
+    }
+
+    // Update time slot disabled states based on booked times
+    function updateTimeSlotStates() {
+        const bookingTimes = document.getElementById('bookingTimes');
+        if (!bookingTimes) return;
+
+        const bookedTimesStr = bookingTimes.dataset.bookedTimes || '[]';
+        const bookedTimes = JSON.parse(bookedTimesStr);
+
+        document.querySelectorAll('.time-slot').forEach((slot) => {
+            let originalTime = slot.dataset.originalTime;
+            if (!originalTime) {
+                originalTime = slot.textContent.replace(/not available/gi, '').trim();
+                slot.dataset.originalTime = originalTime;
+            }
+
+            const match = originalTime.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+            if (!match) return;
+
+            const [, hours, minutes, period] = match;
+            let hour = parseInt(hours, 10);
+            if (period && period.toUpperCase() === 'PM' && hour !== 12) {
+                hour += 12;
+            } else if (period && period.toUpperCase() === 'AM' && hour === 12) {
+                hour = 0;
+            }
+            const time24 = String(hour).padStart(2, '0') + ':' + minutes;
+            const isBooked = bookedTimes.includes(time24);
+
+            if (isBooked) {
+                slot.classList.add('disabled');
+                slot.setAttribute('data-available', 'false');
+                slot.innerHTML = `${originalTime}<br><span class="time-slot-unavailable">Not Available</span>`;
+            } else {
+                slot.classList.remove('disabled');
+                slot.setAttribute('data-available', 'true');
+                slot.innerHTML = originalTime;
+            }
+        });
+    }
+
+    function initBookingCalendar() {
+        const bookingCalendar = document.getElementById('bookingCalendar');
+        if (!bookingCalendar || bookingCalendar.dataset.calendarBound === '1') return;
+        bookingCalendar.dataset.calendarBound = '1';
+
+        const closeBtn = document.querySelector('.booking-calendar-close');
+        const toggles = document.querySelectorAll('[data-request-type="book_call"]');
+        const timezoneInput = document.getElementById('timezoneSearch');
+        const timezoneDropdown = document.getElementById('timezoneDropdown');
+        const timezoneSelector = document.getElementById('timezoneSelector');
+        const timezoneSelectedLabel = document.getElementById('timezoneSelectedLabel');
+        const selectedTimezoneInput = document.getElementById('selectedTimezone');
+        const bookingTimezoneInput = document.getElementById('bookingTimezoneInput');
+        const bookingUnavailableMessage = document.querySelector('.booking-unavailable-message');
+        const bookingForm = document.querySelector('.booking-form');
+        const bookingSlots = document.querySelector('.booking-slots');
+        const bookingFormFooter = document.querySelector('.booking-form-footer');
+
+        const timeZoneOptions = [
+            { label: 'Philippine Standard Time (PHT)', value: 'Asia/Manila', description: 'Philippines' },
+            { label: 'Pacific Time (PT)', value: 'America/Los_Angeles', description: 'USA (Los Angeles, Seattle)' },
+            { label: 'Mountain Time (MT)', value: 'America/Denver', description: 'USA (Denver)' },
+            { label: 'Central Time (CT)', value: 'America/Chicago', description: 'USA (Chicago, Dallas)' },
+            { label: 'Eastern Time (ET)', value: 'America/New_York', description: 'USA (New York, Miami)' },
+            { label: 'Alaska Time (AKT)', value: 'America/Anchorage', description: 'Alaska' },
+            { label: 'Hawaii Time (HST)', value: 'Pacific/Honolulu', description: 'Hawaii' },
+            { label: 'Atlantic Time (AT)', value: 'America/Halifax', description: 'Canada (Halifax)' },
+            { label: 'Eastern Standard Time (EST)', value: 'America/Toronto', description: 'Canada (Toronto)' },
+            { label: 'Newfoundland Time (NT)', value: 'America/St_Johns', description: 'Newfoundland, Canada' },
+            { label: 'Greenwich Mean Time (GMT)', value: 'Europe/London', description: 'UK, Portugal' },
+            { label: 'Irish Standard Time (IST)', value: 'Europe/Dublin', description: 'Ireland' },
+            { label: 'Central European Time (CET)', value: 'Europe/Paris', description: 'Germany, France, Italy, Spain' },
+            { label: 'Eastern European Time (EET)', value: 'Europe/Athens', description: 'Greece, Finland, Poland' },
+            { label: 'Moscow Time (MSK)', value: 'Europe/Moscow', description: 'Russia (Moscow)' },
+            { label: 'Gulf Standard Time (GST)', value: 'Asia/Dubai', description: 'UAE, Dubai, Saudi Arabia' },
+            { label: 'Pakistan Standard Time (PKT)', value: 'Asia/Karachi', description: 'Pakistan' },
+            { label: 'India Standard Time (IST)', value: 'Asia/Kolkata', description: 'India' },
+            { label: 'Bangladesh Standard Time (BST)', value: 'Asia/Dhaka', description: 'Bangladesh' },
+            { label: 'Thailand Standard Time (ICT)', value: 'Asia/Bangkok', description: 'Thailand, Cambodia, Laos' },
+            { label: 'Vietnam Standard Time (ICT)', value: 'Asia/Ho_Chi_Minh', description: 'Vietnam' },
+            { label: 'Malaysia Standard Time (MYT)', value: 'Asia/Kuala_Lumpur', description: 'Malaysia' },
+            { label: 'Singapore Standard Time (SGT)', value: 'Asia/Singapore', description: 'Singapore' },
+            { label: 'Hong Kong Standard Time (HKT)', value: 'Asia/Hong_Kong', description: 'Hong Kong' },
+            { label: 'China Standard Time (CST)', value: 'Asia/Shanghai', description: 'China, Mongolia' },
+            { label: 'Taiwan Standard Time (CST)', value: 'Asia/Taipei', description: 'Taiwan' },
+            { label: 'Japan Standard Time (JST)', value: 'Asia/Tokyo', description: 'Japan' },
+            { label: 'Korea Standard Time (KST)', value: 'Asia/Seoul', description: 'South Korea, North Korea' },
+            { label: 'Australian Central Time (ACST)', value: 'Australia/Adelaide', description: 'Australia (Adelaide, Darwin)' },
+            { label: 'Australian Eastern Time (AET)', value: 'Australia/Sydney', description: 'Sydney, Melbourne, Brisbane' },
+            { label: 'New Zealand Time (NZST)', value: 'Pacific/Auckland', description: 'New Zealand' },
+            { label: 'Fiji Standard Time (FJT)', value: 'Pacific/Fiji', description: 'Fiji' },
+            { label: 'South Africa Standard Time (SAST)', value: 'Africa/Johannesburg', description: 'South Africa, Botswana, Zimbabwe' },
+            { label: 'Egypt Standard Time (EET)', value: 'Africa/Cairo', description: 'Egypt' },
+            { label: 'Nigeria Standard Time (WAT)', value: 'Africa/Lagos', description: 'Nigeria, Ghana, Ivory Coast' },
+            { label: 'Kenya Standard Time (EAT)', value: 'Africa/Nairobi', description: 'Kenya, Uganda, Ethiopia' },
+            { label: 'Brazil Standard Time (BRT)', value: 'America/Sao_Paulo', description: 'Brazil (São Paulo, Rio)' },
+            { label: 'Brazil Time (AMT)', value: 'America/Manaus', description: 'Brazil (Amazon)' },
+            { label: 'Mexico Standard Time (CST)', value: 'America/Mexico_City', description: 'Mexico' },
+            { label: 'Argentina Standard Time (ART)', value: 'America/Argentina/Buenos_Aires', description: 'Argentina, Uruguay' },
+            { label: 'Peru Standard Time (PET)', value: 'America/Lima', description: 'Peru' },
+            { label: 'Colombia Standard Time (COT)', value: 'America/Bogota', description: 'Colombia, Ecuador' },
+            { label: 'Venezuela Time (VET)', value: 'America/Caracas', description: 'Venezuela' },
+            { label: 'UTC', value: 'UTC', description: 'Coordinated Universal Time' }
+        ];
+
+        const getDetectedTimeZone = () => {
+            if (typeof Intl !== 'undefined' && Intl.DateTimeFormat && Intl.DateTimeFormat().resolvedOptions) {
+                const detectedZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                if (detectedZone) return detectedZone;
+            }
+            return 'Asia/Manila';
+        };
+
+        const setSelectedTimeZone = (zone, label) => {
+            const selectedOption = timeZoneOptions.find((entry) => entry.value === zone) || timeZoneOptions[0];
+            const optionLabel = label || selectedOption?.label || zone;
+            const optionValue = zone || selectedOption?.value || 'Asia/Manila';
+
+            if (timezoneInput) timezoneInput.value = optionLabel;
+            if (selectedTimezoneInput) selectedTimezoneInput.value = optionValue;
+            if (bookingTimezoneInput) bookingTimezoneInput.value = optionValue;
+            if (timezoneSelectedLabel) timezoneSelectedLabel.textContent = optionLabel;
+            if (timezoneDropdown) timezoneDropdown.hidden = true;
+            if (timezoneSelector) timezoneSelector.setAttribute('aria-expanded', 'false');
+
+            // Reload booked times for the new timezone if a date is already selected
+            const bookingDateInput = document.getElementById('bookingDateInput');
+            if (bookingDateInput && bookingDateInput.value) {
+                fetchBookedTimes(bookingDateInput.value, optionValue);
+            }
+        };
+
+        const renderTimezoneOptions = (filter = '') => {
+            if (!timezoneDropdown) return;
+            const normalizedFilter = filter.trim().toLowerCase();
+            const matches = timeZoneOptions.filter((entry) => {
+                if (!normalizedFilter) return true;
+                return entry.label.toLowerCase().includes(normalizedFilter)
+                    || entry.value.toLowerCase().includes(normalizedFilter)
+                    || entry.description.toLowerCase().includes(normalizedFilter);
+            });
+
+            timezoneDropdown.innerHTML = '';
+            if (!matches.length) {
+                const emptyOption = document.createElement('div');
+                emptyOption.className = 'timezone-option';
+                emptyOption.textContent = 'No matching time zones';
+                timezoneDropdown.appendChild(emptyOption);
+                return;
+            }
+
+            matches.forEach((entry) => {
+                const option = document.createElement('button');
+                option.type = 'button';
+                option.className = 'timezone-option';
+                option.dataset.value = entry.value;
+                option.dataset.label = entry.label;
+                option.innerHTML = `<span class="timezone-option-name">${entry.label}</span><span class="timezone-option-location">${entry.description}</span>`;
+                option.addEventListener('click', () => {
+                    setSelectedTimeZone(entry.value, entry.label);
+                    if (timezoneDropdown) timezoneDropdown.hidden = true;
+                    if (timezoneSelector) timezoneSelector.setAttribute('aria-expanded', 'false');
+                });
+                timezoneDropdown.appendChild(option);
+            });
+        };
+
+        const openCalendar = () => {
+            bookingCalendar.classList.add('open');
+            bookingCalendar.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            // Ensure timezone dropdown starts hidden
+            if (timezoneDropdown) timezoneDropdown.hidden = true;
+            if (timezoneSelector) timezoneSelector.setAttribute('aria-expanded', 'false');
+            if (timezoneInput) {
+                timezoneInput.value = timezoneInput.value || 'Asia/Manila';
+            }
+        };
+
+        const closeCalendar = () => {
+            bookingCalendar.classList.remove('open');
+            bookingCalendar.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            if (timezoneDropdown) timezoneDropdown.hidden = true;
+            if (timezoneSelector) timezoneSelector.setAttribute('aria-expanded', 'false');
+        };
+
+        toggles.forEach((toggle) => {
+            toggle.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                openCalendar();
+            });
+        });
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                closeCalendar();
+            });
+        }
+        const overlay = document.querySelector('.booking-calendar-overlay');
+        if (overlay) {
+            overlay.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                closeCalendar();
+            });
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && bookingCalendar.classList.contains('open')) {
+                closeCalendar();
+            }
+        });
+
+        if (timezoneSelector) {
+            timezoneSelector.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                if (timezoneDropdown) {
+                    timezoneDropdown.hidden = false;
+                    timezoneSelector.setAttribute('aria-expanded', 'true');
+                }
+                // Show all timezones when button is clicked, not filtered
+                renderTimezoneOptions('');
+            });
+        }
+
+        if (timezoneInput) {
+            timezoneInput.addEventListener('focus', () => {
+                if (timezoneDropdown) {
+                    timezoneDropdown.hidden = false;
+                    timezoneSelector?.setAttribute('aria-expanded', 'true');
+                }
+                renderTimezoneOptions(timezoneInput.value);
+            });
+            timezoneInput.addEventListener('input', () => {
+                if (timezoneDropdown) {
+                    timezoneDropdown.hidden = false;
+                    timezoneSelector?.setAttribute('aria-expanded', 'true');
+                }
+                renderTimezoneOptions(timezoneInput.value);
+            });
+            timezoneInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    const firstOption = timezoneDropdown?.querySelector('.timezone-option');
+                    if (firstOption) {
+                        firstOption.click();
+                    }
+                }
+            });
+        }
+
+        if (timezoneDropdown) {
+            timezoneDropdown.addEventListener('click', (event) => {
+                const option = event.target.closest('.timezone-option');
+                if (!option) return;
+                const zone = option.dataset.value;
+                const label = option.dataset.label || option.textContent;
+                setSelectedTimeZone(zone, label);
+                timezoneDropdown.hidden = true;
+                if (timezoneSelector) timezoneSelector.setAttribute('aria-expanded', 'false');
+            });
+        }
+
+        document.addEventListener('click', (event) => {
+            if (!timezoneSelector || !timezoneDropdown) return;
+            const clickedInside = timezoneSelector.contains(event.target) || timezoneDropdown.contains(event.target);
+            if (!clickedInside) {
+                timezoneDropdown.hidden = true;
+                timezoneSelector.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        const today = new Date();
+        const calendarDates = document.getElementById('calendarDates');
+        const calendarMonth = document.getElementById('calendarMonth');
+        const prevMonthBtn = document.querySelector('.calendar-prev');
+        const nextMonthBtn = document.querySelector('.calendar-next');
+        const calendarViewDate = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        const renderCalendar = (viewDate) => {
+            const year = viewDate.getFullYear();
+            const month = viewDate.getMonth();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+            const bookingDateInput = document.getElementById('bookingDateInput');
+            const selectedDateValue = bookingDateInput?.value || '';
+
+            if (calendarMonth) {
+                calendarMonth.textContent = viewDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+            }
+
+            if (!calendarDates) return;
+
+            calendarDates.innerHTML = '';
+            for (let index = firstDay - 1; index >= 0; index -= 1) {
+                const date = document.createElement('div');
+                date.className = 'calendar-date disabled';
+                date.textContent = daysInPrevMonth - index;
+                calendarDates.appendChild(date);
+            }
+
+            for (let day = 1; day <= daysInMonth; day += 1) {
+                const date = document.createElement('div');
+                date.className = 'calendar-date';
+                if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    date.classList.add('today');
+                }
+                const dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+                const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const dayName = dayNames[new Date(year, month, day).getDay()];
+                const isSunday = dayName === 'Sunday';
+                if (isSunday) {
+                    date.classList.add('disabled', 'sunday-unavailable');
+                    date.setAttribute('aria-disabled', 'true');
+                    date.tabIndex = -1;
+                    date.setAttribute('title', 'Sundays are unavailable for booking.');
+                }
+                if (selectedDateValue && selectedDateValue === dateStr && !isSunday) {
+                    date.classList.add('selected');
+                    const display = document.getElementById('bookingDateDisplay');
+                    if (display) {
+                        display.innerHTML = `<h5 class="booking-day-name">${dayName}</h5><p class="booking-day-num">${day}</p>`;
+                    }
+                }
+                if (isSunday) {
+                    date.innerHTML = `<span class="calendar-day-number">${day}</span><span class="calendar-day-label">SUN</span>`;
+                } else {
+                    date.textContent = day;
+                }
+                if (!isSunday) {
+                    date.addEventListener('click', () => {
+                        document.querySelectorAll('.calendar-date').forEach((item) => item.classList.remove('selected'));
+                        date.classList.add('selected');
+                        const display = document.getElementById('bookingDateDisplay');
+                        if (display) {
+                            display.innerHTML = `<h5 class="booking-day-name">${dayName}</h5><p class="booking-day-num">${day}</p>`;
+                        }
+                        if (bookingDateInput) {
+                            bookingDateInput.value = dateStr;
+                        }
+                        document.querySelectorAll('.time-slot').forEach((item) => item.classList.remove('selected'));
+                        const bookingTimeInput = document.getElementById('bookingTimeInput');
+                        if (bookingTimeInput) {
+                            bookingTimeInput.value = '';
+                        }
+                        const timezoneInput = document.getElementById('bookingTimezoneInput');
+                        const timezone = timezoneInput ? timezoneInput.value : 'Asia/Manila';
+                        fetchBookedTimes(dateStr, timezone);
+                    });
+                } else {
+                    date.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        const display = document.getElementById('bookingDateDisplay');
+                        if (display) {
+                            display.innerHTML = `<h5 class="booking-day-name">Sundays are unavailable for booking.</h5><p class="booking-day-num"></p>`;
+                        }
+                        if (bookingUnavailableMessage) {
+                            bookingUnavailableMessage.hidden = false;
+                        }
+                        if (bookingForm) {
+                            bookingForm.hidden = true;
+                        }
+                        if (bookingSlots) {
+                            bookingSlots.hidden = true;
+                        }
+                        if (bookingFormFooter) {
+                            bookingFormFooter.hidden = true;
+                        }
+                        if (bookingDateInput) {
+                            bookingDateInput.value = '';
+                        }
+                        const bookingTimeInput = document.getElementById('bookingTimeInput');
+                        if (bookingTimeInput) {
+                            bookingTimeInput.value = '';
+                        }
+                    });
+                }
+                calendarDates.appendChild(date);
+            }
+
+            const totalCells = calendarDates.children.length;
+            const remainingCells = 42 - totalCells;
+            for (let day = 1; day <= remainingCells; day += 1) {
+                const date = document.createElement('div');
+                date.className = 'calendar-date disabled';
+                date.setAttribute('aria-disabled', 'true');
+                date.tabIndex = -1;
+                date.style.pointerEvents = 'none';
+                date.textContent = day;
+                calendarDates.appendChild(date);
+            }
+        };
+
+        if (prevMonthBtn) {
+            prevMonthBtn.addEventListener('click', () => {
+                calendarViewDate.setMonth(calendarViewDate.getMonth() - 1);
+                renderCalendar(calendarViewDate);
+            });
+        }
+
+        if (nextMonthBtn) {
+            nextMonthBtn.addEventListener('click', () => {
+                calendarViewDate.setMonth(calendarViewDate.getMonth() + 1);
+                renderCalendar(calendarViewDate);
+            });
+        }
+
+        renderCalendar(calendarViewDate);
+
+        const attachTimeSlotHandlers = () => {
+            document.querySelectorAll('.time-slot').forEach((slot) => {
+                slot.removeEventListener('click', handleTimeSlotClick);
+                slot.addEventListener('click', handleTimeSlotClick);
+            });
+        };
+
+        const restoreSelectedTimeSlot = () => {
+            const bookingTimeInput = document.getElementById('bookingTimeInput');
+            if (!bookingTimeInput || !bookingTimeInput.value) return;
+
+            document.querySelectorAll('.time-slot').forEach((slot) => {
+                const slotText = slot.textContent.trim().split('\n')[0];
+                if (!slotText) return;
+                const match = slotText.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+                if (!match) return;
+
+                const [hours, minutes, period] = match.slice(1);
+                let hour = parseInt(hours, 10);
+                if (period && period.toUpperCase() === 'PM' && hour !== 12) {
+                    hour += 12;
+                } else if (period && period.toUpperCase() === 'AM' && hour === 12) {
+                    hour = 0;
+                }
+                const normalizedValue = String(hour).padStart(2, '0') + ':' + minutes;
+                if (normalizedValue === bookingTimeInput.value) {
+                    slot.classList.add('selected');
+                }
+            });
+        };
+
+        const handleTimeSlotClick = (event) => {
+            const slot = event.currentTarget;
+            // Prevent clicking on disabled/unavailable slots
+            const isBooked = slot.classList.contains('disabled') || slot.getAttribute('data-available') === 'false';
+            if (isBooked) {
+                return;
+            }
+
+            document.querySelectorAll('.time-slot').forEach((item) => item.classList.remove('selected'));
+            slot.classList.add('selected');
+            const timeText = slot.textContent.trim().split('\n')[0];
+            const bookingTimeInput = document.getElementById('bookingTimeInput');
+            if (bookingTimeInput && timeText) {
+                const time12 = timeText;
+                const match = time12.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+                if (!match) return;
+                const [hours, minutes, period] = match.slice(1);
+                let hour = parseInt(hours, 10);
+                if (period && period.toUpperCase() === 'PM' && hour !== 12) {
+                    hour += 12;
+                } else if (period && period.toUpperCase() === 'AM' && hour === 12) {
+                    hour = 0;
+                }
+                bookingTimeInput.value = String(hour).padStart(2, '0') + ':' + minutes;
+            }
+        };
+
+        attachTimeSlotHandlers();
+
+        const initialTimezone = document.getElementById('bookingTimezoneInput')?.value
+            || document.getElementById('selectedTimezone')?.value
+            || getDetectedTimeZone();
+        setSelectedTimeZone(initialTimezone, null);
+        renderTimezoneOptions('');
+
+        const bookingDateInput = document.getElementById('bookingDateInput');
+        if (bookingDateInput && bookingDateInput.value) {
+            fetchBookedTimes(bookingDateInput.value, initialTimezone);
+        }
+        restoreSelectedTimeSlot();
+    }
+
+    const initPageInteractions = () => {
+        initServicesShowMore();
+        initProjectThumbs();
+        initPricingPage();
+        initProcessPage();
+        initContactDropdown();
+        initBookingCalendar();
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPageInteractions, { once: true });
+    } else {
+        initPageInteractions();
+    }
+})();

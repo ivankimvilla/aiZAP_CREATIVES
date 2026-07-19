@@ -1,0 +1,258 @@
+/* ============================================================
+   portfolio.css
+   Page-specific styles for the Portfolio page only.
+   Loaded IN ADDITION TO home-page.css AND pages-shared.css,
+   which supply the sitewide base and the generic interior-page
+   layout (page-main, page-hero, section-copy). The base
+   .project-card / .project-thumb / .projects-grid rules
+   themselves live in home-page.css; this file only adds the
+   hover polish specific to how this page shows them.
+   ============================================================ */
+
+/* ---------- Hero: copy left, video collage right ---------- */
+.page-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+    gap: 48px;
+    text-align: left;
+    max-width: none;
+    margin: 0 0 12px;
+}
+
+.page-hero .hero-copy {
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.page-hero .eyebrow {
+    justify-content: flex-start;
+}
+
+.page-hero .hero-title,
+.page-hero .hero-sub {
+    text-align: left;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.page-hero .hero-title {
+    font-size: 44px;
+    line-height: 1.08;
+}
+
+.page-hero .hero-sub {
+    max-width: 440px;
+    margin-top: 18px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #94a3b8;
+}
+
+/* ---------- Projects intro: compact one-row label + description ---------- */
+.projects-intro {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    column-gap: 28px;
+    row-gap: 8px;
+    margin: 0 0 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.projects-intro-label {
+    flex: 0 0 auto;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+}
+
+.projects-intro-label__first {
+    color: #fff;
+}
+
+.projects-intro-label__second {
+    color: var(--gold, #c9a15a);
+}
+
+.projects-intro-desc {
+    flex: 1 1 320px;
+    max-width: 520px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #94a3b8;
+}
+
+@media (max-width: 640px) {
+    .projects-intro {
+        flex-direction: column;
+        align-items: flex-start;
+        row-gap: 6px;
+    }
+}
+
+.projects-grid .project-video {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.projects-grid .mute-toggle {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    z-index: 2;
+}
+
+/* ---------- Hero visual: diagonal image collage, full-bleed ---------- */
+/* Two nested masks, one per axis. A parent's mask affects everything
+   rendered inside it (including an already-masked child), so stacking a
+   horizontal fade on the frame and a vertical fade on the collage itself
+   multiplies together into a true four-sided fade — independent control
+   over each edge, no mask-composite / vendor-quirk juggling needed. */
+.hero-collage-frame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 340px;
+
+    /* left / right fade */
+    mask-image: linear-gradient(to right, transparent 0%, #000 16%, #000 84%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 16%, #000 84%, transparent 100%);
+}
+
+.hero-collage {
+    --slice-cut: 60px;
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* No border-radius, no box-shadow, no inset: panels run edge-to-edge
+       to the column boundary, matching a flush full-bleed photo strip. */
+
+    /* top / bottom fade */
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%);
+}
+
+.hero-collage-item {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    background-size: cover;
+    background-position: center;
+    clip-path: polygon(var(--slice-cut) 0, 100% 0, calc(100% - var(--slice-cut)) 100%, 0 100%);
+    margin-left: calc(var(--slice-cut) * -1);
+}
+
+.hero-collage-item:first-child {
+    clip-path: polygon(0 0, 100% 0, calc(100% - var(--slice-cut)) 100%, 0 100%);
+    margin-left: 0;
+}
+
+.hero-collage-item:last-child {
+    clip-path: polygon(var(--slice-cut) 0, 100% 0, 100% 100%, 0 100%);
+}
+
+@media (max-width: 760px) {
+    .page-hero {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .projects-intro-label {
+        font-size: 20px;
+    }
+
+    .hero-collage {
+        --slice-cut: 28px;
+    }
+
+    .hero-collage-frame {
+        min-height: 220px;
+    }
+}
+
+
+.projects-grid .project-card {
+    transition: transform .4s var(--ease-smooth), box-shadow .4s var(--ease-smooth);
+    margin-bottom: 52px;
+    border-radius: 16px;
+}
+
+.projects-grid .project-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 48px rgba(7, 17, 31, 0.35);
+}
+
+.projects-grid .project-thumb {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    transition: transform .5s var(--ease-smooth);
+}
+
+.projects-grid .project-card:hover .project-thumb {
+    transform: scale(1.03);
+}
+
+.projects-grid .project-card h3 {
+    margin-top: 16px;
+    margin-bottom: 4px;
+}
+
+.projects-grid .project-card p {
+    color: #94a3b8;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.projects-grid .category-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #fff;
+    line-height: 1.4;
+}
+
+.projects-grid .mute-toggle {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    color: #fff;
+    cursor: pointer;
+    transition: background .2s ease;
+}
+
+.projects-grid .mute-toggle:hover {
+    background: rgba(0, 0, 0, 0.75);
+}
+
+.projects-section+.stats-bar {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.stats-bar-inner {
+    padding: 40px;
+}

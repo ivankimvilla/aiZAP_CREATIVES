@@ -1,0 +1,251 @@
+/* AI Brand Campaigns - standalone page styles.
+   NOTE: assumed to have the same setup as ai-commercial-ads.blade.php, i.e.
+   this page's blade file only links THIS stylesheet (no home-page.css /
+   header.css), so all base/shared styles are included here directly rather
+   than assumed to exist already. If this page's blade file actually DOES
+   also link home-page.css, some of these (the reset, .btn, .container) will
+   be harmless duplicates -- but if it doesn't, this is what was missing. */
+
+:root {
+    font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    --gold: #f7c520;
+    --ink: #050505;
+    --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* ---------- Page background ---------- */
+/* NOTE: selector assumes this page's <body> class is .page-main, same as
+   ai-commercial-ads. Confirm against the actual blade file -- if the body
+   class is different, this rule silently won't apply. */
+.page-main {
+    background: #050505;
+    min-height: 100vh;
+    color: #fff;
+}
+
+.container {
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 26px 40px;
+}
+
+@media (max-width: 640px) {
+    .container {
+        padding: 20px 18px;
+    }
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 12px 26px;
+    transition: transform .35s var(--ease-smooth), box-shadow .35s var(--ease-smooth),
+        background-color .3s ease, border-color .3s ease, color .3s ease;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.btn:active {
+    transform: translateY(0) scale(0.97);
+}
+
+.btn-primary {
+    background: var(--gold);
+    color: #0a0a0a;
+    box-shadow: 0 20px 45px rgba(247, 197, 32, 0.22);
+}
+
+.btn-primary:hover {
+    background: #ffd64c;
+    transform: translateY(-3px);
+    box-shadow: 0 24px 50px rgba(247, 197, 32, 0.35);
+}
+
+.btn-outline {
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    background: transparent;
+}
+
+.btn-outline:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 34px rgba(247, 197, 32, 0.16);
+}
+
+.btn-sm {
+    padding: 9px 20px;
+    font-size: 11px;
+}
+
+/* ---------- Back button header ---------- */
+.page-only-header {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.page-only-header .header-inner {
+    align-items: flex-start;
+    margin: 6px 0;
+}
+
+.page-only-header .btn {
+    font-weight: 700;
+}
+
+.page-only-header .btn.page-back {
+    padding: 8px 14px;
+    margin: 0;
+    transition: transform .3s var(--ease-smooth), border-color .3s ease, color .3s ease;
+}
+
+.page-only-header .btn.page-back:hover {
+    transform: translateX(-3px);
+}
+
+/* ---------- Hero ---------- */
+.hero-section {
+    margin-top: 28px;
+    display: block;
+    max-width: 760px;
+}
+
+.hero-left .eyebrow {
+    font-size: 12px;
+    color: var(--gold);
+    font-weight: 800;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+}
+
+.hero-left .hero-title {
+    font-size: 36px;
+    line-height: 1.1;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-top: 10px;
+    letter-spacing: -0.01em;
+    color: #fff;
+}
+
+.hero-left .hero-sub {
+    color: #a8b3c4;
+    font-size: 15px;
+    line-height: 1.8;
+    max-width: 640px;
+    margin-top: 14px;
+}
+
+.hero-actions {
+    margin-top: 22px;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+/* ---------- Services strip ---------- */
+.services-strip {
+    margin-top: 44px;
+    padding: 38px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 22px;
+    margin-top: 28px;
+    align-items: start;
+}
+
+.service-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 12px;
+    transition: transform .35s var(--ease-smooth), background .3s ease;
+}
+
+.service-item:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.service-icon {
+    width: 36px;
+    height: 36px;
+    color: #e7e7e7;
+    transition: color .3s ease, transform .35s var(--ease-smooth);
+}
+
+.service-item:hover .service-icon {
+    color: var(--gold);
+    transform: scale(1.08);
+}
+
+.service-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+    fill: none;
+}
+
+.service-item p {
+    font-size: 12px;
+    color: #cbd5e1;
+    font-weight: 700;
+    transition: color .3s ease;
+}
+
+.service-item:hover p {
+    color: #fff;
+}
+
+.service-item--hidden {
+    display: none;
+}
+
+.services-grid.expanded .service-item--hidden {
+    display: flex;
+}
+
+.services-controls {
+    margin-top: 20px;
+    text-align: center;
+}
+
+@media (max-width: 1100px) {
+    .services-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .services-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .hero-left .hero-title {
+        font-size: 28px;
+    }
+}
