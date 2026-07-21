@@ -182,11 +182,11 @@ export function initBookingCalendar() {
         const selectedDate = new Date(Date.UTC(selectedYear, selectedMonth, selectedDay));
         const abbreviation = getTimeZoneAbbreviation(selectedTimeZone, utcDate);
 
+        const localLabel = formatTimeInZone(utcDate);
         display.innerHTML = `
             <h5 class="booking-day-name">${formatDateTitle(selectedDate)}</h5>
             <p class="booking-day-num">${selectedDay}</p>
-            <p class="booking-selected-time">${formatTimeInZone(utcDate)} <span class="booking-timezone-abbr">${abbreviation}</span></p>
-            <p class="booking-selected-utc">UTC: ${utcDate.toISOString()}</p>
+            <p class="booking-selected-time">${localLabel} <span class="booking-timezone-abbr">${abbreviation}</span></p>
         `;
 
         if (selectedBookingUtcInput) {
@@ -384,12 +384,18 @@ export function initBookingCalendar() {
                 slotEl.className = 'time-slot';
                 slotEl.dataset.hour = String(slot.hour);
                 slotEl.dataset.minute = String(slot.minute);
+                const utcDate = getUtcTimestampForSelection(selectedDay || 1, selectedMonth || new Date().getMonth(), selectedYear || new Date().getFullYear(), slot.hour, slot.minute);
+                const localLabel = formatTimeInZone(utcDate);
+                const manilaLabel = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Manila', hour: 'numeric', minute: '2-digit', hour12: true }).format(utcDate);
+
                 if (!isAvailable) {
                     slotEl.classList.add('disabled');
                     slotEl.disabled = true;
+                    slotEl.innerHTML = `${localLabel}<br><span class="time-slot-unavailable">Not Available</span>`;
+                } else {
+                    slotEl.innerHTML = `${localLabel}<br><span class="time-slot-pht">${manilaLabel} PHT</span>`;
                 }
-                const utcDate = getUtcTimestampForSelection(selectedDay || 1, selectedMonth || new Date().getMonth(), selectedYear || new Date().getFullYear(), slot.hour, slot.minute);
-                slotEl.textContent = formatTimeInZone(utcDate);
+
                 slotEl.addEventListener('click', () => {
                     if (slotEl.disabled) return;
                     document.querySelectorAll('.time-slot').forEach((item) => item.classList.remove('selected'));
@@ -759,6 +765,12 @@ export function initBookingCalendar() {
                     selectedYear = calendarViewYear;
                     selectedHour = null;
                     selectedMinute = null;
+                    // Clear any prior booking form error when selecting a new date
+                    const errorEl = document.getElementById('bookingFormError');
+                    if (errorEl) {
+                        errorEl.hidden = true;
+                        errorEl.textContent = '';
+                    }
                     renderTimeSlots();
                     updateBookingSelection();
                 });

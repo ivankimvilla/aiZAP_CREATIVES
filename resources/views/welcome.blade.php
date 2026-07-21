@@ -11,7 +11,7 @@
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/app.css', 'resources/js/app.js'])
         @else
-            <script src="{{ asset('js/app.js') }}"></script>
+            <script type="module" src="{{ asset('js/app.js') }}"></script>
         @endif
     </head>
     <body class="min-h-screen bg-white text-slate-900 antialiased">

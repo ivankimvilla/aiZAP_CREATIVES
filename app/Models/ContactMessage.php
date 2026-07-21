@@ -11,6 +11,8 @@ class ContactMessage extends Model
 
     protected $table = 'contact_messages';
 
+    protected $appends = ['display_timestamp'];
+
     protected $fillable = [
         'name',
         'email',
@@ -30,4 +32,14 @@ class ContactMessage extends Model
         'replied_at' => 'datetime',
         'seen' => 'boolean',
     ];
+
+    public function getDisplayTimestampAttribute(): \Illuminate\Support\Carbon|null
+    {
+        return $this->updated_at ?? $this->created_at;
+    }
+
+    public function replies()
+    {
+        return $this->morphMany(Reply::class, 'replyable')->orderBy('created_at');
+    }
 }

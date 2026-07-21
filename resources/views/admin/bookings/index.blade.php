@@ -65,23 +65,6 @@
         </section>
 
         <section class="bk-panel">
-            <form method="get" class="bk-filters">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name, email, ID, service" />
-                <input type="date" name="booking_date" value="{{ request('booking_date') }}" />
-                <select name="status">
-                    <option value="">All statuses</option>
-                    <option value="pending" @selected(request('status') === 'pending')>Pending</option>
-                    <option value="confirmed" @selected(request('status') === 'confirmed')>Confirmed</option>
-                    <option value="completed" @selected(request('status') === 'completed')>Completed</option>
-                    <option value="cancelled" @selected(request('status') === 'cancelled')>Cancelled</option>
-                    <option value="rescheduled" @selected(request('status') === 'rescheduled')>Rescheduled</option>
-                    <option value="no_show" @selected(request('status') === 'no_show')>No Show</option>
-                </select>
-                <input type="text" name="service" value="{{ request('service') }}" placeholder="Service" />
-                <input type="text" name="booking_timezone" value="{{ request('booking_timezone') }}" placeholder="Time zone" />
-                <button type="submit" class="btn-primary">Filter</button>
-            </form>
-
             <div class="bk-table-wrap">
                 <table class="bk-table">
                     <thead>
@@ -106,7 +89,7 @@
                                 <td>{{ $booking->service ?? 'Discovery Call' }}</td>
                                 <td class="bk-pht">{{ $booking->booking_time_ph }}</td>
                                 <td class="bk-orig">
-                                    {{ date('g:i A', strtotime('1970-01-01 ' . $booking->booking_time)) }}
+                                    {{ $booking->booking_original_time ?? ($booking->booking_local ? date('g:i A', strtotime($booking->booking_local)) : '--:--') }}
                                     <span class="bk-tz">{{ $booking->booking_timezone }}</span>
                                 </td>
                                 <td>

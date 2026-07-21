@@ -77,7 +77,6 @@
                                     <path d="M3 21l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </button>
-                        @endif
                             <div class="category-label">{{ $categoryLabel }}</div>
                             <button type="button" class="mute-toggle" aria-label="Unmute">🔇</button>
                         @else
@@ -97,6 +96,10 @@
     </div>
 
     @once
-        <script src="{{ asset('js/app.js') }}" defer></script>
+        @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+            @vite(['resources/js/app.js'])
+        @else
+            <script type="module" src="{{ asset('js/app.js') }}"></script>
+        @endif
     @endonce
 @endif

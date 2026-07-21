@@ -325,13 +325,25 @@ class BookingController extends Controller
         $bookings = $query->get();
 
         $bookings = $bookings->map(function ($booking) {
+            // Friendly timezone label for display
+            $booking->booking_timezone = $this->formatTimeZoneLabel($booking->booking_timezone);
+
+            // booking_date & booking_time are stored as Philippine time (PHT)
             if ($booking->booking_date && $booking->booking_time) {
-                $booking->booking_timezone = $this->formatTimeZoneLabel($booking->booking_timezone);
-                $formattedTime = date('g:i A', strtotime('1970-01-01 ' . $booking->booking_time));
-                $booking->booking_time_ph = $booking->booking_date . ' ' . $formattedTime;
+                $formattedPhtTime = date('g:i A', strtotime('1970-01-01 ' . $booking->booking_time));
+                $booking->booking_time_ph = $booking->booking_date . ' ' . $formattedPhtTime;
             } else {
-                $formattedTime = $booking->booking_time ? date('g:i A', strtotime('1970-01-01 ' . $booking->booking_time)) : '--:--';
-                $booking->booking_time_ph = $booking->booking_date ? ($booking->booking_date . ' ' . $formattedTime) : 'Not scheduled';
+                $formattedPhtTime = $booking->booking_time ? date('g:i A', strtotime('1970-01-01 ' . $booking->booking_time)) : '--:--';
+                $booking->booking_time_ph = $booking->booking_date ? ($booking->booking_date . ' ' . $formattedPhtTime) : 'Not scheduled';
+            }
+
+            // Preserve and expose the original local time (from booking_local) for admin display.
+            if (!empty($booking->booking_local)) {
+                // booking_local expected format: 'Y-m-d H:i'
+                $booking->booking_original_time = date('g:i A', strtotime($booking->booking_local));
+            } else {
+                // Fallback to the stored booking_time (which may be PHT) if original not available
+                $booking->booking_original_time = $booking->booking_time ? date('g:i A', strtotime('1970-01-01 ' . $booking->booking_time)) : '--:--';
             }
 
             return $booking;
@@ -377,7 +389,25 @@ class BookingController extends Controller
             }
         }
 
+
         $data['booking_timezone'] = $this->normalizeTimeZone($data['booking_timezone'] ?? null);
+
+        // If admin provided a booking_date and booking_time, persist both the original local
+        // values and the converted Philippine date/time so the system remains consistent.
+        if (!empty($data['booking_date']) && !empty($data['booking_time'])) {
+            try {
+                $normalized = $this->normalizeTimeZone($data['booking_timezone'] ?? 'Asia/Manila');
+                $local = new \DateTimeImmutable("{$data['booking_date']} {$data['booking_time']}", new \DateTimeZone($normalized));
+                $data['booking_utc'] = $local->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d\TH:i:s\Z');
+                $data['booking_local'] = $local->format('Y-m-d H:i');
+
+                $philippine = $this->convertToPhilippineDateTime($data['booking_date'], $data['booking_time'], $normalized);
+                $data['booking_date'] = $philippine['date'];
+                $data['booking_time'] = $philippine['time'];
+            } catch (\Exception $e) {
+                // If conversion fails, ignore and let validation handle any issues.
+            }
+        }
 
         $booking->update($data);
 

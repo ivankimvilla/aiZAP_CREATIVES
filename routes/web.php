@@ -86,6 +86,8 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::post('/bookings/{booking}/status', [BookingController::class, 'updateStatus'])->name('bookings.status.update');
     Route::delete('/bookings/{booking}', [BookingController::class, 'destroy'])->name('bookings.destroy');
     Route::get('/contacts', [ContactMessageController::class, 'adminIndex'])->name('contacts.index');
+    Route::post('/contacts/mark-read', [ContactMessageController::class, 'markAllRead'])->name('contacts.mark_read');
+    Route::post('/contacts/{contactMessage}/seen', [ContactMessageController::class, 'markRead'])->name('contacts.mark_read_single');
     Route::post('/contacts/{contactMessage}/reply', [ContactMessageController::class, 'reply'])->name('contacts.reply');
     Route::delete('/contacts/{contactMessage}', [ContactMessageController::class, 'destroy'])->name('contacts.destroy');
     Route::redirect('/projects', '/', 302);
@@ -99,6 +101,7 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::post('/section-videos/{key}', [App\Http\Controllers\SectionVideoController::class, 'update'])->name('section-videos.update');
     Route::get('/packages', [App\Http\Controllers\Admin\PackageController::class, 'index'])->name('packages.index');
     Route::post('/packages/mark-read', [App\Http\Controllers\Admin\PackageController::class, 'markAllRead'])->name('packages.mark_read');
+    Route::post('/packages/{packageRequest}/seen', [App\Http\Controllers\Admin\PackageController::class, 'markRead'])->name('packages.mark_read_single');
     Route::post('/packages/{packageRequest}/reply', [App\Http\Controllers\Admin\PackageController::class, 'reply'])->name('packages.reply');
     Route::delete('/packages/{packageRequest}', [App\Http\Controllers\Admin\PackageController::class, 'destroy'])->name('packages.destroy');
 });

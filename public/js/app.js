@@ -480,6 +480,31 @@
         return `${displayHour}:${m} ${period}`;
     }
 
+    function getTimeZoneOffsetMinutes(timeZone, date) {
+        try {
+            const formatter = new Intl.DateTimeFormat('en-US', {
+                timeZone,
+                timeZoneName: 'shortOffset',
+            });
+            const parts = formatter.formatToParts(date);
+            const zoneName = parts.find((part) => part.type === 'timeZoneName')?.value || 'GMT';
+            const offsetMatch = zoneName.match(/GMT([+-])(\d{1,2})(?::?(\d{2}))?/);
+            if (!offsetMatch) return 0;
+            const sign = offsetMatch[1] === '-' ? -1 : 1;
+            const hours = Number(offsetMatch[2] || 0);
+            const minutes = Number(offsetMatch[3] || 0);
+            return sign * ((hours * 60) + minutes);
+        } catch (e) {
+            return 0;
+        }
+    }
+
+    function getUtcTimestampForSelection(day, monthIndex, yearNumber, hour, minute, timeZone = 'Asia/Manila') {
+        const baseDate = new Date(Date.UTC(yearNumber, monthIndex, day, hour, minute));
+        const offsetMinutes = getTimeZoneOffsetMinutes(timeZone, baseDate);
+        return new Date(baseDate.getTime() - (offsetMinutes * 60 * 1000));
+    }
+
     // Fetch booked times for a specific date and timezone
     function fetchBookedTimes(date, timezone) {
         const bookingTimes = document.getElementById('bookingTimes');
@@ -556,6 +581,7 @@
         const bookingForm = document.querySelector('.booking-form');
         const bookingSlots = document.querySelector('.booking-slots');
         const bookingFormFooter = document.querySelector('.booking-form-footer');
+        const calendarErrorMessage = document.getElementById('calendarErrorMessage');
 
         const timeZoneOptions = [
             { label: 'Philippine Standard Time (PHT)', value: 'Asia/Manila', description: 'Philippines' },
@@ -563,45 +589,17 @@
             { label: 'Mountain Time (MT)', value: 'America/Denver', description: 'USA (Denver)' },
             { label: 'Central Time (CT)', value: 'America/Chicago', description: 'USA (Chicago, Dallas)' },
             { label: 'Eastern Time (ET)', value: 'America/New_York', description: 'USA (New York, Miami)' },
-            { label: 'Alaska Time (AKT)', value: 'America/Anchorage', description: 'Alaska' },
-            { label: 'Hawaii Time (HST)', value: 'Pacific/Honolulu', description: 'Hawaii' },
-            { label: 'Atlantic Time (AT)', value: 'America/Halifax', description: 'Canada (Halifax)' },
-            { label: 'Eastern Standard Time (EST)', value: 'America/Toronto', description: 'Canada (Toronto)' },
-            { label: 'Newfoundland Time (NT)', value: 'America/St_Johns', description: 'Newfoundland, Canada' },
-            { label: 'Greenwich Mean Time (GMT)', value: 'Europe/London', description: 'UK, Portugal' },
-            { label: 'Irish Standard Time (IST)', value: 'Europe/Dublin', description: 'Ireland' },
-            { label: 'Central European Time (CET)', value: 'Europe/Paris', description: 'Germany, France, Italy, Spain' },
-            { label: 'Eastern European Time (EET)', value: 'Europe/Athens', description: 'Greece, Finland, Poland' },
-            { label: 'Moscow Time (MSK)', value: 'Europe/Moscow', description: 'Russia (Moscow)' },
+            { label: 'UTC / GMT', value: 'UTC', description: 'Coordinated Universal Time' },
+            { label: 'Central European Time (CET/CEST)', value: 'Europe/Paris', description: 'Germany, France, Italy, Spain' },
+            { label: 'Eastern European Time (EET/EEST)', value: 'Europe/Athens', description: 'Greece, Finland, Poland' },
             { label: 'Gulf Standard Time (GST)', value: 'Asia/Dubai', description: 'UAE, Dubai, Saudi Arabia' },
-            { label: 'Pakistan Standard Time (PKT)', value: 'Asia/Karachi', description: 'Pakistan' },
             { label: 'India Standard Time (IST)', value: 'Asia/Kolkata', description: 'India' },
-            { label: 'Bangladesh Standard Time (BST)', value: 'Asia/Dhaka', description: 'Bangladesh' },
-            { label: 'Thailand Standard Time (ICT)', value: 'Asia/Bangkok', description: 'Thailand, Cambodia, Laos' },
-            { label: 'Vietnam Standard Time (ICT)', value: 'Asia/Ho_Chi_Minh', description: 'Vietnam' },
-            { label: 'Malaysia Standard Time (MYT)', value: 'Asia/Kuala_Lumpur', description: 'Malaysia' },
             { label: 'Singapore Standard Time (SGT)', value: 'Asia/Singapore', description: 'Singapore' },
             { label: 'Hong Kong Standard Time (HKT)', value: 'Asia/Hong_Kong', description: 'Hong Kong' },
             { label: 'China Standard Time (CST)', value: 'Asia/Shanghai', description: 'China, Mongolia' },
-            { label: 'Taiwan Standard Time (CST)', value: 'Asia/Taipei', description: 'Taiwan' },
             { label: 'Japan Standard Time (JST)', value: 'Asia/Tokyo', description: 'Japan' },
             { label: 'Korea Standard Time (KST)', value: 'Asia/Seoul', description: 'South Korea, North Korea' },
-            { label: 'Australian Central Time (ACST)', value: 'Australia/Adelaide', description: 'Australia (Adelaide, Darwin)' },
-            { label: 'Australian Eastern Time (AET)', value: 'Australia/Sydney', description: 'Sydney, Melbourne, Brisbane' },
-            { label: 'New Zealand Time (NZST)', value: 'Pacific/Auckland', description: 'New Zealand' },
-            { label: 'Fiji Standard Time (FJT)', value: 'Pacific/Fiji', description: 'Fiji' },
-            { label: 'South Africa Standard Time (SAST)', value: 'Africa/Johannesburg', description: 'South Africa, Botswana, Zimbabwe' },
-            { label: 'Egypt Standard Time (EET)', value: 'Africa/Cairo', description: 'Egypt' },
-            { label: 'Nigeria Standard Time (WAT)', value: 'Africa/Lagos', description: 'Nigeria, Ghana, Ivory Coast' },
-            { label: 'Kenya Standard Time (EAT)', value: 'Africa/Nairobi', description: 'Kenya, Uganda, Ethiopia' },
-            { label: 'Brazil Standard Time (BRT)', value: 'America/Sao_Paulo', description: 'Brazil (São Paulo, Rio)' },
-            { label: 'Brazil Time (AMT)', value: 'America/Manaus', description: 'Brazil (Amazon)' },
-            { label: 'Mexico Standard Time (CST)', value: 'America/Mexico_City', description: 'Mexico' },
-            { label: 'Argentina Standard Time (ART)', value: 'America/Argentina/Buenos_Aires', description: 'Argentina, Uruguay' },
-            { label: 'Peru Standard Time (PET)', value: 'America/Lima', description: 'Peru' },
-            { label: 'Colombia Standard Time (COT)', value: 'America/Bogota', description: 'Colombia, Ecuador' },
-            { label: 'Venezuela Time (VET)', value: 'America/Caracas', description: 'Venezuela' },
-            { label: 'UTC', value: 'UTC', description: 'Coordinated Universal Time' }
+            { label: 'Australian Eastern Time (AET)', value: 'Australia/Sydney', description: 'Sydney, Melbourne, Brisbane' }
         ];
 
         const getDetectedTimeZone = () => {
@@ -842,6 +840,38 @@
                         if (display) {
                             display.innerHTML = `<h5 class="booking-day-name">${dayName}</h5><p class="booking-day-num">${day}</p>`;
                         }
+
+                        // Determine if selected date is in the past (date-only comparison)
+                        const selectedDateObj = new Date(year, month, day);
+                        const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                        const isPast = selectedDateObj < todayOnly;
+
+                        if (isPast) {
+                            if (calendarErrorMessage) {
+                                calendarErrorMessage.textContent = 'Please Select a Valid Date';
+                                calendarErrorMessage.hidden = false;
+                            }
+                            if (bookingFormErrorEl) {
+                                bookingFormErrorEl.hidden = true;
+                                bookingFormErrorEl.textContent = '';
+                            }
+                            // Do not proceed to fetch times for past dates
+                            if (bookingDateInput) {
+                                bookingDateInput.value = dateStr;
+                            }
+                            return;
+                        }
+
+                        // clear any prior error for valid (non-past) selections
+                        if (calendarErrorMessage) {
+                            calendarErrorMessage.hidden = true;
+                            calendarErrorMessage.textContent = '';
+                        }
+                        if (bookingFormErrorEl) {
+                            bookingFormErrorEl.hidden = true;
+                            bookingFormErrorEl.textContent = '';
+                        }
+
                         if (bookingDateInput) {
                             bookingDateInput.value = dateStr;
                         }
@@ -956,20 +986,69 @@
 
             document.querySelectorAll('.time-slot').forEach((item) => item.classList.remove('selected'));
             slot.classList.add('selected');
-            const timeText = slot.textContent.trim().split('\n')[0];
+
+            const originalTime = (slot.dataset.originalTime || slot.textContent || '').trim().split('\n')[0];
+            const match = originalTime.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+            if (!match) return;
+            const [hours, minutes, period] = match.slice(1);
+            let hour = parseInt(hours, 10);
+            if (period && period.toUpperCase() === 'PM' && hour !== 12) {
+                hour += 12;
+            } else if (period && period.toUpperCase() === 'AM' && hour === 12) {
+                hour = 0;
+            }
+
             const bookingTimeInput = document.getElementById('bookingTimeInput');
-            if (bookingTimeInput && timeText) {
-                const time12 = timeText;
-                const match = time12.match(/(\d+):(\d+)\s*(AM|PM)?/i);
-                if (!match) return;
-                const [hours, minutes, period] = match.slice(1);
-                let hour = parseInt(hours, 10);
-                if (period && period.toUpperCase() === 'PM' && hour !== 12) {
-                    hour += 12;
-                } else if (period && period.toUpperCase() === 'AM' && hour === 12) {
-                    hour = 0;
-                }
+            if (bookingTimeInput) {
                 bookingTimeInput.value = String(hour).padStart(2, '0') + ':' + minutes;
+            }
+
+            // Determine selected date (from hidden input) or fallback to today
+            const bookingDateInput = document.getElementById('bookingDateInput');
+            let _year, _monthIndex, _day;
+            if (bookingDateInput && bookingDateInput.value) {
+                const parts = bookingDateInput.value.split('-').map(Number);
+                if (parts.length === 3) {
+                    _year = parts[0];
+                    _monthIndex = parts[1] - 1;
+                    _day = parts[2];
+                }
+            }
+            if (!_year) {
+                const now = new Date();
+                _year = now.getFullYear();
+                _monthIndex = now.getMonth();
+                _day = now.getDate();
+            }
+
+            const tz = document.getElementById('bookingTimezoneInput')?.value
+                || document.getElementById('selectedTimezone')?.value
+                || getDetectedTimeZone();
+
+            const utcForSlot = getUtcTimestampForSelection(_day, _monthIndex, _year, hour, parseInt(minutes, 10), tz);
+
+            const bookingUtcInput = document.getElementById('bookingUtcInput');
+            if (bookingUtcInput) bookingUtcInput.value = utcForSlot.toISOString();
+
+            const bookingLocalInput = document.getElementById('bookingLocalInput');
+            if (bookingLocalInput) {
+                bookingLocalInput.value = `${_year}-${String(_monthIndex + 1).padStart(2, '0')}-${String(_day).padStart(2, '0')} ${String(hour).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+            }
+
+            const selectedTimezoneInput = document.getElementById('selectedTimezone');
+            if (selectedTimezoneInput) selectedTimezoneInput.value = tz;
+            const bookingTimezoneInput = document.getElementById('bookingTimezoneInput');
+            if (bookingTimezoneInput) bookingTimezoneInput.value = tz;
+
+            // Update booking display with local, PHT and UTC values
+            const display = document.getElementById('bookingDateDisplay');
+            if (display) {
+                const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const dayName = dayNames[new Date(_year, _monthIndex, _day).getDay()];
+                display.innerHTML = `
+                    <h5 class="booking-day-name">${dayName}</h5>
+                    <p class="booking-day-num">${_day}</p>
+                `;
             }
         };
 

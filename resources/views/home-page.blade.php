@@ -16,8 +16,7 @@
             <link rel="stylesheet" href="{{ asset('css/footer.css') }}" />
             <link rel="stylesheet" href="{{ asset('css/button.css') }}" />
             <link rel="stylesheet" href="{{ asset('css/contact-drop-down.css') }}" />
-            <script src="{{ asset('js/app.js') }}?v={{ filemtime(public_path('js/app.js')) }}"></script>
-
+            <script type="module" src="{{ asset('js/app.js') }}"></script>
         @endif
     </head>
     <body class="home-page-page home-page antialiased">

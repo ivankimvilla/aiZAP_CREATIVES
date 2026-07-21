@@ -14,7 +14,7 @@
             <link rel="stylesheet" href="{{ asset('css/header.css') }}" />
             <link rel="stylesheet" href="{{ asset('css/contact-drop-down.css') }}" />
             <link rel="stylesheet" href="{{ asset('css/home-page.css') }}" />
-            <script src="{{ asset('js/app.js') }}"></script>
+            <script type="module" src="{{ asset('js/app.js') }}"></script>
             <link rel="stylesheet" href="{{ asset('css/process.css') }}" />
              <link rel="stylesheet" href="{{ asset('css/footer.css') }}" />
             <link rel="stylesheet" href="{{ asset('css/button.css') }}" />

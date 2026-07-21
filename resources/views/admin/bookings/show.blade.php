@@ -53,12 +53,16 @@
                     <span class="admin-detail-value">{{ $booking->booking_timezone }}</span>
                 </div>
                 <div class="admin-booking-detail">
-                    <span class="admin-detail-label">Booking date</span>
+                    <span class="admin-detail-label">Booking date (PHT)</span>
                     <span class="admin-detail-value">{{ $booking->booking_date }}</span>
                 </div>
                 <div class="admin-booking-detail">
-                    <span class="admin-detail-label">Booking time</span>
+                    <span class="admin-detail-label">Booking time (PHT)</span>
                     <span class="admin-detail-value">{{ $booking->display_booking_time ?? date('g:i A', strtotime('1970-01-01 ' . $booking->booking_time)) }}</span>
+                </div>
+                <div class="admin-booking-detail">
+                    <span class="admin-detail-label">Original time</span>
+                    <span class="admin-detail-value">{{ $booking->booking_original_time ?? ($booking->booking_local ? date('g:i A', strtotime($booking->booking_local)) : '--:--') }}</span>
                 </div>
             </div>
 

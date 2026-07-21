@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\ContactMessage;
+use App\Models\PackageRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
@@ -29,5 +31,21 @@ class AppServiceProvider extends ServiceProvider
                 'password' => Hash::make('admin'),
             ]);
         }
+
+        $adminUnreadMessagesCount = 0;
+        $adminUnreadPackagesCount = 0;
+
+        if (Schema::hasTable('contact_messages')) {
+            $adminUnreadMessagesCount = ContactMessage::where('seen', false)->count();
+        }
+
+        if (Schema::hasTable('package_requests')) {
+            $adminUnreadPackagesCount = PackageRequest::where('seen', false)->count();
+        }
+
+        view()->share([
+            'adminUnreadMessagesCount' => $adminUnreadMessagesCount,
+            'adminUnreadPackagesCount' => $adminUnreadPackagesCount,
+        ]);
     }
 }

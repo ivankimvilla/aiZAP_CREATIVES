@@ -1,3 +1,7 @@
+/* ==========================================================================
+   Messages page — admin card + chat styles
+   ========================================================================== */
+
 :root {
     --c-black: #111111;
     --c-white: #ffffff;
@@ -6,6 +10,24 @@
     --c-border: #e5e5e5;
     --c-gray: #6b6b6b;
 }
+
+/* Bootstrap's .container wraps the whole admin layout with a centered
+   max-width, which squeezes the sidebar+content area into a narrow
+   column regardless of what width rules are set on .msg-page below.
+   .admin-shell is a dedicated class added only to that wrapper on admin
+   pages (see admin/layout.blade.php), so this override is scoped and
+   won't affect .container anywhere else on the site (e.g. the public
+   homepage). */
+.admin-shell {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Layout
+   -------------------------------------------------------------------------- */
 
 .admin-main {
     padding-top: 0 !important;
@@ -28,6 +50,10 @@
     padding: 0 1.5rem 3rem;
     box-sizing: border-box;
 }
+
+/* --------------------------------------------------------------------------
+   Hero + alerts
+   -------------------------------------------------------------------------- */
 
 .msg-hero {
     margin: 0 0 1.5rem;
@@ -90,34 +116,68 @@
     color: var(--c-black);
 }
 
+.alert-error {
+    background: #fdf1f1;
+    color: #7a2b23;
+    border: 1px solid #f3c8c4;
+}
+
+.alert-error .alert-icon {
+    background: #c0392b;
+    color: var(--c-white);
+}
+
+/* --------------------------------------------------------------------------
+   Grid — one card per row, full width
+   -------------------------------------------------------------------------- */
+
 .msg-list {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1rem;
-}
-
-@media (max-width: 1200px) {
-    .msg-list {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 700px) {
-    .msg-list {
-        grid-template-columns: 1fr;
-    }
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
 }
 
 .msg-card {
-    background: var(--c-white);
-    border-radius: 12px;
-    padding: 1.25rem 1.4rem 1.4rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: transparent;
+    border-radius: 14px;
+    padding: 0.75rem 0;
+    box-shadow: none;
     position: relative;
+    box-sizing: border-box;
+    border: none;
+    transition: transform 0.18s ease, box-shadow 0.18s ease,
+        background-color 0.18s ease, padding 0.18s ease;
+}
+
+.msg-card :where(p, ul, ol, li, span, div) {
+    margin: 0;
+}
+
+.msg-card:not(.collapsed) {
+    background: var(--c-white);
+    border: 1px solid rgba(17, 17, 17, 0.05);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.2);
+    padding: 1.2rem 1.25rem 1.3rem;
+    transform: translateY(-1px);
+    overflow: hidden;
+    width: 100%;
+    max-width: none;
     box-sizing: border-box;
 }
 
-.msg-card::before {
+.msg-conversation,
+.chat-history,
+.msg-actions-row,
+.msg-reply-form {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+}
+
+.msg-card:not(.collapsed)::before {
     content: "";
     position: absolute;
     top: 0;
@@ -128,26 +188,149 @@
     background: var(--c-yellow);
 }
 
+.msg-card:not(.collapsed) .msg-conversation {
+    display: block;
+}
+
+/* When the card is expanded, the email/phone/snippet under the name are
+   redundant — the same info already appears in the chat thread below,
+   so hide them to avoid the duplication. */
+.msg-card:not(.collapsed) .msg-email,
+.msg-card:not(.collapsed) .msg-phone,
+.msg-card:not(.collapsed) .msg-snippet {
+    display: none;
+}
+
+/* With email/phone/snippet hidden, the identity block is just an avatar
+   next to a single line of name text — center them on the same line
+   instead of top-aligning. */
+.msg-card:not(.collapsed) .msg-identity {
+    align-items: center;
+}
+
+/* Center the "2 hours ago" timestamp with the name line too, instead of
+   pinning it to the top of the header row. */
+.msg-card:not(.collapsed) .msg-card-top {
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   Collapsed state
+   -------------------------------------------------------------------------- */
+
+.msg-card.collapsed {
+    cursor: pointer;
+    padding: 0.65rem 0;
+    background: transparent;
+    border: none;
+    min-height: 92px;
+    max-height: 92px;
+    overflow: hidden;
+}
+
+.msg-card.collapsed .msg-conversation,
+.msg-card.collapsed .msg-actions-row,
+.msg-card.collapsed .msg-status,
+.msg-card.collapsed .msg-date,
+.msg-card.collapsed .msg-created,
+.msg-card.collapsed .msg-email,
+.msg-card.collapsed .msg-phone {
+    display: none;
+}
+
+.msg-card.collapsed .msg-card-top {
+    min-height: 86px;
+    padding: 0 1rem;
+}
+
+.msg-card.collapsed .msg-name {
+    color: rgba(255, 255, 255, 0.92) !important;
+}
+
+.msg-card.collapsed .msg-snippet {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+    max-width: 100%;
+    transition: color 0.24s ease, opacity 0.24s ease, transform 0.24s ease;
+}
+
+.msg-card[data-card-seen="false"] .msg-snippet {
+    color: rgba(255, 255, 255, 0.96) !important;
+    font-weight: 700;
+    opacity: 1;
+}
+
+.msg-card[data-card-seen="true"] .msg-snippet {
+    color: rgba(255, 255, 255, 0.72) !important;
+    font-weight: 500;
+    opacity: 0.88;
+}
+
+.msg-card.collapsed .msg-summary-time {
+    color: rgba(255, 255, 255, 0.68) !important;
+    display: inline-flex;
+}
+
+@media (max-width: 640px) {
+    .msg-card.collapsed .msg-snippet {
+        max-width: 100%;
+    }
+}
+
+.msg-card[data-card-seen="false"] .msg-new {
+    display: inline-block;
+}
+
+.msg-card[data-card-seen="true"] .msg-new {
+    display: none !important;
+}
+
+.msg-new {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    background: #2f80ed;
+    border-radius: 50%;
+    margin-left: 0.4rem;
+    flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Card top: avatar + name/badge/snippet on the left, time on the right
+   -------------------------------------------------------------------------- */
+
 .msg-card-top {
     display: flex;
-    align-items: flex-start;
     justify-content: space-between;
-    gap: 1rem;
+    align-items: flex-start;
+    gap: 0.9rem;
     flex-wrap: wrap;
-    margin-bottom: 0.9rem;
+    padding: 0 1rem;
+    min-height: 86px;
+    margin-bottom: 0.95rem;
 }
 
 .msg-identity {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.7rem;
+    min-width: 0;
+    flex: 1;
 }
 
 .msg-avatar {
-    width: 38px;
-    height: 38px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
-    background: var(--c-black);
+    background: linear-gradient(135deg, var(--c-black), #2a2a2a);
     color: var(--c-yellow);
     display: flex;
     align-items: center;
@@ -157,17 +340,95 @@
     flex-shrink: 0;
 }
 
-.msg-name {
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: var(--c-black);
-    margin: 0 0 0.1rem;
+.msg-contact-info {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    overflow: hidden;
 }
 
-.msg-email {
+.msg-name-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-bottom: 0.1rem;
+}
+
+.msg-name {
+    font-size: 0.93rem;
+    font-weight: 700;
+    color: var(--c-black);
+    margin: 0;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   Recipient + subject — shown inline under the name, no border/background,
+   no labels. Inputs are wired to the reply form via the `form="..."`
+   attribute so they still submit correctly even though they live outside
+   the <form> element in the DOM.
+   -------------------------------------------------------------------------- */
+
+.msg-recipient-subject-inline {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    margin: 0.15rem 0 0.25rem;
+}
+
+.msg-inline-field {
+    border: none;
+    background: transparent;
+    padding: 0;
+    font-size: 0.82rem;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.msg-inline-field:focus {
+    outline: none;
+}
+
+.msg-inline-recipient {
+    color: var(--c-gray);
+}
+
+/* Hide in the collapsed summary row — only relevant once the card is
+   expanded and the reply form is in use. */
+.msg-card.collapsed .msg-recipient-subject-inline {
+    display: none;
+}
+
+.msg-snippet {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 0.1rem;
+    font-size: 0.82rem;
+    color: var(--c-gray);
+    max-width: 100%;
+}
+
+.msg-email,
+.msg-phone {
     font-size: 0.78rem;
     color: var(--c-gray);
     text-decoration: none;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.msg-phone {
+    color: #555555;
 }
 
 .msg-email:hover {
@@ -177,21 +438,34 @@
 
 .msg-meta {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.35rem;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.msg-summary-time {
+    font-size: 0.78rem;
+    color: var(--c-gray);
+    white-space: nowrap;
 }
 
 .msg-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
     font-size: 0.7rem;
     font-weight: 700;
+    line-height: 1;
     letter-spacing: 0.02em;
-    padding: 0.25rem 0.6rem;
+    padding: 0.32rem 0.6rem;
     border-radius: 999px;
     white-space: nowrap;
     background: #f2f2f2;
     color: var(--c-gray);
     border: 1px solid var(--c-border);
+    box-sizing: border-box;
 }
 
 .msg-status.status-new,
@@ -204,61 +478,212 @@
 
 .msg-status.status-replied,
 .msg-status.status-resolved,
-.msg-status.status-closed {
+.msg-status.status-closed,
+.msg-status.status-sent {
     background: #eafaf0;
     color: #157347;
     border-color: #a4e6c1;
 }
 
+.msg-status.status-not-sent {
+    background: #f2f2f2;
+    color: var(--c-gray);
+    border-color: var(--c-border);
+}
+
 .msg-date {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
     font-size: 0.72rem;
     color: var(--c-gray);
-}
-
-.msg-new {
-    display: inline-flex;
-    background: #ffd400;
-    color: #111111;
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    padding: 0.15rem 0.55rem;
+    font-weight: 600;
+    white-space: nowrap;
+    padding: 0.32rem 0.6rem;
     border-radius: 999px;
-    margin-left: 0.5rem;
+    background: #f8f8f8;
+    border: 1px solid var(--c-border);
+    box-sizing: border-box;
 }
 
-.package-subtitle {
-    margin: 0.65rem 0 0.5rem;
+.msg-created {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.75rem;
     color: var(--c-gray);
+    line-height: 1.3;
+}
+
+.btn-view {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--c-white);
+    border-radius: 999px;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.btn-view:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+/* --------------------------------------------------------------------------
+   Expanded conversation
+   -------------------------------------------------------------------------- */
+
+.msg-conversation {
+    transition: max-height 0.25s ease, opacity 0.25s ease;
+}
+
+/* --------------------------------------------------------------------------
+   Chat thread — Messenger-style bubbles
+   -------------------------------------------------------------------------- */
+
+/* Fixed height so the card's overall size stays consistent no matter how
+   long the conversation gets — extra messages scroll inside this box
+   instead of growing the card. Scrollbar is hidden for a clean look while
+   scrolling still works (via wheel/touch/keyboard). */
+.chat-history {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem 0.35rem;
+    margin-bottom: 0.75rem;
+    background: #f7f7f8;
+    border-radius: 16px;
+}
+
+.chat-message {
+    display: flex;
+    flex-direction: column;
+    max-width: 78%;
+}
+
+.chat-message.user {
+    align-self: flex-start;
+    align-items: flex-start;
+}
+
+.chat-message.admin {
+    align-self: flex-end;
+    align-items: flex-end;
+}
+
+.chat-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.chat-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--c-black), #2a2a2a);
+    color: var(--c-yellow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.65rem;
+    flex-shrink: 0;
+}
+
+.chat-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    color: var(--c-gray);
+    font-size: 0.68rem;
+    margin: 0 0 0.15rem 2.15rem;
+}
+
+.chat-message.admin .chat-meta {
+    margin: 0 0.15rem 0.15rem 0;
+}
+
+/* max-width/overflow-wrap keep a single very long unbroken string (e.g. no
+   spaces) from stretching the bubble — and therefore the card — wider than
+   its column; it force-wraps onto new lines instead. */
+.chat-bubble {
+    max-width: 100%;
+    padding: 0.65rem 0.95rem;
+    border-radius: 18px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: anywhere;
     font-size: 0.88rem;
 }
 
-.package-features {
-    margin: 0 0 1rem;
-    padding-left: 1.25rem;
+.chat-bubble-user {
+    background: #eef0f2;
     color: var(--c-black);
 }
 
-.package-features li {
-    margin-bottom: 0.35rem;
+/* Admin bubble: black background with white reply text. */
+.chat-bubble-admin,
+.chat-bubble-admin * {
+    background: var(--c-black) !important;
+    color: var(--c-white, #ffffff) !important;
+}
+
+.chat-bubble-admin {
+    min-height: 1.4em;
+}
+
+/* --------------------------------------------------------------------------
+   Plain message body (used where the raw message is shown outside the
+   chat-bubble thread, e.g. legacy/detail views)
+   -------------------------------------------------------------------------- */
+
+.msg-body-block {
+    background: #fcfcfc;
+    border: 1px solid var(--c-border);
+    border-radius: 10px;
+    padding: 0.9rem 0.95rem;
+    margin-bottom: 1rem;
 }
 
 .msg-body {
     font-size: 0.88rem;
-    line-height: 1.55;
+    line-height: 1.6;
     color: var(--c-black);
-    margin: 0 0 1rem;
+    margin: 0;
     white-space: pre-line;
 }
+
+.msg-body p {
+    margin: 0 0 0.5rem;
+}
+
+.msg-body p:last-child {
+    margin-bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Existing reply display
+   -------------------------------------------------------------------------- */
 
 .msg-reply-existing {
     background: #fafafa;
     border: 1px solid var(--c-border);
     border-left: 3px solid var(--c-yellow);
     border-radius: 8px;
-    padding: 0.65rem 0.85rem;
+    padding: 0.7rem 0.85rem;
     margin-bottom: 1rem;
+    width: auto;
+    max-width: 100%;
+}
+
+.msg-reply-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-bottom: 0.35rem;
 }
 
 .msg-reply-label {
@@ -268,70 +693,48 @@
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--c-gray);
-    margin-bottom: 0.3rem;
 }
 
-.msg-reply-existing p {
+.msg-reply-timestamp {
+    font-size: 0.72rem;
+    color: var(--c-gray);
+    font-weight: 600;
+}
+
+.msg-reply-existing p,
+.msg-reply-text {
     font-size: 0.85rem;
     color: var(--c-black);
     margin: 0;
     line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 
-.msg-actions-row {
-    display: flex;
-    align-items: flex-end;
-    gap: 0.75rem;
-}
+/* --------------------------------------------------------------------------
+   Actions row: reply textarea + send button
+   -------------------------------------------------------------------------- */
 
 .msg-reply-form {
-    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.85rem;
 }
 
-.msg-reply-form .msg-reply-input-row {
+/* Message textarea + send button, stays at the bottom in its original
+   position, below the conversation thread */
+.msg-actions-row {
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
-}
-
-.msg-reply-form label {
-    font-size: 0.75rem;
-    color: var(--c-gray);
-}
-
-.msg-reply-form input[type="email"],
-.msg-reply-form input[type="text"] {
-    width: 100%;
-    padding: 0.55rem 0.7rem;
-    border: 1.5px solid var(--c-border);
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-family: inherit;
-    color: var(--c-black);
-    background: #fff;
-    box-sizing: border-box;
-    transition: border-color 0.15s ease;
-}
-
-.msg-reply-form input[type="email"][readonly] {
-    background: #f4f4f5;
-}
-
-.msg-reply-form input[type="email"]:focus,
-.msg-reply-form input[type="text"]:focus,
-.msg-reply-form textarea:focus {
-    outline: none;
-    border-color: var(--c-yellow-dark);
+    align-items: stretch;
+    gap: 0.6rem;
 }
 
 .msg-reply-form textarea {
     width: 100%;
     resize: vertical;
-    min-height: 2.4rem;
-    padding: 0.55rem 0.7rem;
+    min-height: 3.5rem;
+    padding: 0.6rem 0.7rem;
     border: 1.5px solid var(--c-border);
     border-radius: 8px;
     font-size: 0.85rem;
@@ -341,8 +744,17 @@
     transition: border-color 0.15s ease;
 }
 
+.msg-reply-form textarea:focus {
+    outline: none;
+    border-color: var(--c-yellow-dark);
+}
+
+.msg-reply-form textarea::placeholder {
+    color: var(--c-gray);
+}
+
 .btn-primary {
-    align-self: flex-start;
+    align-self: flex-end;
     padding: 0.55rem 1rem;
     background: var(--c-black);
     color: var(--c-yellow);
@@ -361,6 +773,22 @@
 
 .btn-primary:active {
     transform: translateY(1px);
+}
+
+.btn-secondary {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--c-white);
+    padding: 0.65rem 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 .msg-delete-form {
@@ -391,6 +819,44 @@
     border-color: #e7a8a1;
 }
 
+/* Compact variant used in the card's top-right meta row (always visible,
+   even when the card is collapsed) */
+.msg-meta .msg-delete-form {
+    flex-shrink: 0;
+}
+
+.msg-meta .btn-delete {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+}
+
+.msg-meta .btn-delete svg {
+    width: 14px;
+    height: 14px;
+}
+
+.msg-card.collapsed .msg-meta .btn-delete {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ff8a80;
+    border-color: rgba(255, 255, 255, 0.16);
+}
+
+.msg-card.collapsed .msg-meta .btn-delete:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.28);
+}
+
+/* Delete button: only visible in the collapsed (summary) row on the right
+   side. It's hidden entirely once the card is expanded. */
+.msg-card:not(.collapsed) .msg-meta .msg-delete-form {
+    display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Empty state
+   -------------------------------------------------------------------------- */
+
 .msg-empty {
     grid-column: 1 / -1;
     background: var(--c-white);
@@ -412,6 +878,10 @@
     color: var(--c-gray);
 }
 
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+
 @media (max-width: 640px) {
     .msg-page {
         padding: 0 1rem 2rem;
@@ -421,6 +891,18 @@
         font-size: 1.5rem;
     }
 
+    .msg-card-top {
+        flex-wrap: wrap;
+    }
+
+    .msg-name-row {
+        flex-wrap: wrap;
+    }
+
+    .chat-message {
+        max-width: 88%;
+    }
+
     .msg-actions-row {
         flex-direction: column;
         align-items: stretch;
@@ -428,9 +910,5 @@
 
     .msg-delete-form {
         align-self: flex-end;
-    }
-
-    .msg-meta {
-        align-items: flex-start;
     }
 }
