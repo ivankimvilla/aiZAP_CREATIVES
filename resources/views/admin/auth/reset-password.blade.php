@@ -49,6 +49,8 @@
 
                 <button type="submit">Reset Password</button>
             </form>
+
+            <a href="{{ route('login') }}">Back to login</a>
         </div>
     </body>
 </html>

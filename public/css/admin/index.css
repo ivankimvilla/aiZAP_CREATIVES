@@ -58,17 +58,53 @@ body {
     min-width: 140px;
 }
 
-.alert.success,
-.admin-alert {
+.alert,
+.admin-alert,
+.alert-dash {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     margin-top: 24px;
-    padding: 16px 18px;
-    border-radius: 14px;
-    border: 1px solid rgba(247, 197, 32, 0.35);
-    border-left: 4px solid var(--gold);
-    background: rgba(247, 197, 32, 0.08);
-    color: #fdf3cf;
-    font-size: 13px;
+    padding: 0.65rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
     font-weight: 600;
+    margin-bottom: 1.5rem;
+    animation: admin-notification-fade 3s ease forwards !important;
+    background: var(--gold);
+    color: var(--ink);
+}
+
+.alert-success {
+    background: #fff9e0;
+    color: var(--ink);
+    border: 1px solid var(--gold);
+}
+
+.alert-error {
+    background: #fdf1f1;
+    color: #7a2b23;
+    border: 1px solid #f3c8c4;
+}
+
+.alert-error .alert-icon {
+    background: #c0392b;
+    color: #fff;
+}
+
+@keyframes admin-notification-fade {
+    0% {
+        opacity: 1;
+    }
+
+    70% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        visibility: hidden;
+    }
 }
 
 .admin-projects-section {

@@ -4,6 +4,7 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/admin/bookings.css') }}" />
+<link rel="stylesheet" href="{{ asset('css/admin/bulk-actions.css') }}" />
     <main class="bk-page">
         <section class="bk-hero">
             <h1 class="hero-title">Bookings</h1>
@@ -39,6 +40,10 @@
 
         <section class="bk-stats">
             <div class="bk-stat">
+                <span class="bk-stat-value">{{ $bookings->count() }}</span>
+                <span class="bk-stat-label">Total</span>
+            </div>
+            <div class="bk-stat">
                 <span class="bk-stat-value">{{ $stats['pending'] }}</span>
                 <span class="bk-stat-label">Pending</span>
             </div>
@@ -64,11 +69,23 @@
             </div>
         </section>
 
+        <section class="bulk-toolbar" data-bulk-item-selector="tbody tr" data-empty-state-selector=".bk-empty">
+            <label class="bulk-select">
+                <input type="checkbox" class="bulk-select-all" aria-label="Select all bookings" />
+                Select all
+            </label>
+            <div class="bulk-actions">
+                <span class="bulk-selected-count">0 selected</span>
+                <button type="button" class="btn-delete-selected" data-delete-url="{{ route('admin.bookings.bulk_destroy', [], false) }}" disabled>Delete selected</button>
+            </div>
+        </section>
+
         <section class="bk-panel">
             <div class="bk-table-wrap">
                 <table class="bk-table">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>ID</th>
                             <th>Customer</th>
                             <th>Service</th>
@@ -81,6 +98,9 @@
                     <tbody>
                         @forelse ($bookings as $booking)
                             <tr>
+                                <td>
+                                    <input type="checkbox" class="bulk-item-checkbox" data-item-id="{{ $booking->id }}" aria-label="Select booking #{{ $booking->id }}" />
+                                </td>
                                 <td class="bk-id">#{{ $booking->id }}</td>
                                 <td>
                                     <p class="bk-cust-name">{{ $booking->name }}</p>
@@ -143,5 +163,13 @@
                 </table>
             </div>
         </section>
+
     </main>
+
+    @push('scripts')
+        <script type="module">
+            import adminBulkDelete from '/js/admin/bulk-delete.js';
+            try { adminBulkDelete(); } catch (e) { console.error('adminBulkDelete init failed', e); }
+        </script>
+    @endpush
 @endsection

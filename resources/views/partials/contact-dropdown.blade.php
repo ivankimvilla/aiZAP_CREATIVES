@@ -6,13 +6,13 @@
     @php
         $requestType = old('request_type') ?: request()->input('request_type');
         $package = old('package') ?: request()->input('package');
-        $openContactDropdown = session('status') || ($errors->any() && in_array($requestType, ['contact', 'book_call']));
+        $openContactDropdown = $errors->any() && in_array($requestType, ['contact', 'book_call']);
     @endphp
 <div class="contact-dropdown" id="contactDropdown" aria-hidden="true" data-initial-open="{{ $openContactDropdown ? 'true' : 'false' }}">
         <div class="contact-dropdown-inner">
             <button type="button" class="contact-dropdown-close" aria-label="Close contact form">×</button>
             @if(session('status'))
-                <div class="contact-dropdown-status">{{ session('status') }}</div>
+                <div class="contact-dropdown-status" id="contactDropdownStatus">{{ session('status') }}</div>
             @endif
             @if($errors->any())
                 <div class="contact-dropdown-errors">

@@ -42,7 +42,7 @@
                 <button type="submit">Send reset link</button>
             </form>
 
-            <a href="{{ route('admin.login') }}">Back to login</a>
+            <a href="{{ route('login') }}">Back to login</a>
         </div>
     </body>
 </html>

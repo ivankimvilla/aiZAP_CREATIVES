@@ -57,7 +57,6 @@
                 video.autoplay = true;
                 video.setAttribute('autoplay', '');
             } catch (error) {
-                // ignore autoplay restrictions
             }
 
             const updateToggle = () => {
@@ -96,13 +95,11 @@
                 try {
                     video.load();
                 } catch (error) {
-                    // ignore
                 }
 
                 try {
                     video.play().catch(() => { });
                 } catch (error) {
-                    // ignore
                 }
             };
 
@@ -149,7 +146,6 @@
                     try {
                         video.play();
                     } catch (error) {
-                        // ignore autoplay restrictions
                     }
                 }
                 updateToggle();
@@ -183,6 +179,18 @@
         })();
 
         let selectedCard = null;
+
+        // ADDED — this was missing, and its absence was the actual bug.
+        // Calling an undefined function threw a ReferenceError that halted
+        // the rest of initPricingPage(), so closeOverlay() never ran.
+        const animateToast = (toast, delay = 3200) => {
+            if (!toast) return;
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                setTimeout(() => toast.remove(), 360);
+            }, delay);
+        };
 
         const getSummaryElements = () => {
             return {
@@ -349,6 +357,19 @@
         } else if (serverOpen) {
             openOverlay();
         }
+
+        // FIXED — close first (unconditionally, synchronously), then animate the toast.
+        // Also hides the leftover server-rendered success/error banners so they
+        // don't reappear if the panel is opened again later in the same session.
+        const pricingToast = document.getElementById('pricingSuccessToast');
+        if (pricingToast) {
+            closeOverlay();
+            animateToast(pricingToast, 3400);
+
+            document.querySelectorAll('.pricing-form-success:not([id]), .pricing-form-errors:not([id])').forEach((el) => {
+                el.hidden = true;
+            });
+        }
     }
 
     function initProcessPage() {
@@ -437,6 +458,26 @@
             dropdown.setAttribute('aria-hidden', open ? 'false' : 'true');
         };
 
+        const showToast = (message) => {
+            const toast = document.createElement('div');
+            toast.className = 'contact-toast';
+            toast.setAttribute('role', 'status');
+            toast.innerHTML = `
+                <div class="contact-toast-content">
+                    <span class="contact-toast-icon">&#10003;</span>
+                    <div>${message}</div>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                setTimeout(() => {
+                    toast.remove();
+                }, 360);
+            }, 3200);
+        };
+
         const toggleDropdown = (event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -464,7 +505,14 @@
             }
         });
 
-        if (dropdown.dataset.initialOpen === 'true') {
+        const statusEl = dropdown.querySelector('#contactDropdownStatus');
+        const statusMessage = statusEl ? statusEl.textContent.trim() : '';
+
+        if (statusMessage) {
+            statusEl.classList.add('fade-out');
+            setOpen(false);
+            showToast(statusMessage);
+        } else if (dropdown.dataset.initialOpen === 'true') {
             setOpen(true);
             const firstInput = dropdown.querySelector('input, textarea');
             if (firstInput) firstInput.focus();
@@ -505,37 +553,43 @@
         return new Date(baseDate.getTime() - (offsetMinutes * 60 * 1000));
     }
 
-    // Fetch booked times for a specific date and timezone
+    // Fetch availability for a specific date and timezone
     function fetchBookedTimes(date, timezone) {
         const bookingTimes = document.getElementById('bookingTimes');
         if (!bookingTimes) return;
 
-        fetch(`/api/booked-times?date=${date}&timezone=${timezone}`)
+        const service = document.getElementById('serviceInput')?.value || 'Discovery Call';
+        const tzForRequest = document.getElementById('bookingTimezoneInput')?.value
+            || document.getElementById('selectedTimezone')?.value
+            || timezone
+            || 'Asia/Manila';
+        const url = `/bookings/availability?booking_date=${encodeURIComponent(date)}&booking_timezone=${encodeURIComponent(tzForRequest)}&service=${encodeURIComponent(service)}`;
+        fetch(url)
             .then(response => response.json())
-            .then(data => {
-                // Store booked times in data attribute
-                bookingTimes.dataset.bookedTimes = JSON.stringify(data.booked_times || []);
+            .then((data) => {
+                bookingTimes.dataset.bookedTimes = JSON.stringify(data.booked || []);
+                bookingTimes.dataset.availableTimes = JSON.stringify(data.available || []);
                 updateTimeSlotStates();
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error('Error fetching booked times:', error);
                 bookingTimes.dataset.bookedTimes = JSON.stringify([]);
+                bookingTimes.dataset.availableTimes = JSON.stringify([]);
                 updateTimeSlotStates();
             });
     }
 
-    // Update time slot disabled states based on booked times
+    // Update time slot disabled states based on the availability payload
     function updateTimeSlotStates() {
         const bookingTimes = document.getElementById('bookingTimes');
         if (!bookingTimes) return;
 
-        const bookedTimesStr = bookingTimes.dataset.bookedTimes || '[]';
-        const bookedTimes = JSON.parse(bookedTimesStr);
+        const availableTimes = new Set((JSON.parse(bookingTimes.dataset.availableTimes || '[]')).map((time) => String(time).slice(0, 5)));
 
         document.querySelectorAll('.time-slot').forEach((slot) => {
             let originalTime = slot.dataset.originalTime;
             if (!originalTime) {
-                originalTime = slot.textContent.replace(/not available/gi, '').trim();
+                originalTime = slot.textContent.replace(/booked/gi, '').trim();
                 slot.dataset.originalTime = originalTime;
             }
 
@@ -550,12 +604,12 @@
                 hour = 0;
             }
             const time24 = String(hour).padStart(2, '0') + ':' + minutes;
-            const isBooked = bookedTimes.includes(time24);
+            const isAvailable = availableTimes.has(time24);
 
-            if (isBooked) {
+            if (!isAvailable) {
                 slot.classList.add('disabled');
                 slot.setAttribute('data-available', 'false');
-                slot.innerHTML = `${originalTime}<br><span class="time-slot-unavailable">Not Available</span>`;
+                slot.innerHTML = `${originalTime}<br><span class="time-slot-unavailable">Booked</span>`;
             } else {
                 slot.classList.remove('disabled');
                 slot.setAttribute('data-available', 'true');
@@ -582,6 +636,7 @@
         const bookingSlots = document.querySelector('.booking-slots');
         const bookingFormFooter = document.querySelector('.booking-form-footer');
         const calendarErrorMessage = document.getElementById('calendarErrorMessage');
+        const bookingFormErrorEl = document.querySelector('.booking-form-error');
 
         const timeZoneOptions = [
             { label: 'Philippine Standard Time (PHT)', value: 'Asia/Manila', description: 'Philippines' },
@@ -622,7 +677,6 @@
             if (timezoneDropdown) timezoneDropdown.hidden = true;
             if (timezoneSelector) timezoneSelector.setAttribute('aria-expanded', 'false');
 
-            // Reload booked times for the new timezone if a date is already selected
             const bookingDateInput = document.getElementById('bookingDateInput');
             if (bookingDateInput && bookingDateInput.value) {
                 fetchBookedTimes(bookingDateInput.value, optionValue);
@@ -668,7 +722,6 @@
             bookingCalendar.classList.add('open');
             bookingCalendar.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
-            // Ensure timezone dropdown starts hidden
             if (timezoneDropdown) timezoneDropdown.hidden = true;
             if (timezoneSelector) timezoneSelector.setAttribute('aria-expanded', 'false');
             if (timezoneInput) {
@@ -722,7 +775,6 @@
                     timezoneDropdown.hidden = false;
                     timezoneSelector.setAttribute('aria-expanded', 'true');
                 }
-                // Show all timezones when button is clicked, not filtered
                 renderTimezoneOptions('');
             });
         }
@@ -841,7 +893,6 @@
                             display.innerHTML = `<h5 class="booking-day-name">${dayName}</h5><p class="booking-day-num">${day}</p>`;
                         }
 
-                        // Determine if selected date is in the past (date-only comparison)
                         const selectedDateObj = new Date(year, month, day);
                         const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
                         const isPast = selectedDateObj < todayOnly;
@@ -855,14 +906,12 @@
                                 bookingFormErrorEl.hidden = true;
                                 bookingFormErrorEl.textContent = '';
                             }
-                            // Do not proceed to fetch times for past dates
                             if (bookingDateInput) {
                                 bookingDateInput.value = dateStr;
                             }
                             return;
                         }
 
-                        // clear any prior error for valid (non-past) selections
                         if (calendarErrorMessage) {
                             calendarErrorMessage.hidden = true;
                             calendarErrorMessage.textContent = '';
@@ -978,14 +1027,10 @@
 
         const handleTimeSlotClick = (event) => {
             const slot = event.currentTarget;
-            // Prevent clicking on disabled/unavailable slots
             const isBooked = slot.classList.contains('disabled') || slot.getAttribute('data-available') === 'false';
             if (isBooked) {
                 return;
             }
-
-            document.querySelectorAll('.time-slot').forEach((item) => item.classList.remove('selected'));
-            slot.classList.add('selected');
 
             const originalTime = (slot.dataset.originalTime || slot.textContent || '').trim().split('\n')[0];
             const match = originalTime.match(/(\d+):(\d+)\s*(AM|PM)?/i);
@@ -998,12 +1043,6 @@
                 hour = 0;
             }
 
-            const bookingTimeInput = document.getElementById('bookingTimeInput');
-            if (bookingTimeInput) {
-                bookingTimeInput.value = String(hour).padStart(2, '0') + ':' + minutes;
-            }
-
-            // Determine selected date (from hidden input) or fallback to today
             const bookingDateInput = document.getElementById('bookingDateInput');
             let _year, _monthIndex, _day;
             if (bookingDateInput && bookingDateInput.value) {
@@ -1027,6 +1066,36 @@
 
             const utcForSlot = getUtcTimestampForSelection(_day, _monthIndex, _year, hour, parseInt(minutes, 10), tz);
 
+            if (utcForSlot.getTime() <= Date.now()) {
+                if (bookingFormErrorEl) {
+                    bookingFormErrorEl.innerHTML = 'Please Select a Valid Time';
+                    bookingFormErrorEl.hidden = false;
+                }
+                document.querySelectorAll('.time-slot').forEach((item) => item.classList.remove('selected'));
+                const bookingTimeInputInvalid = document.getElementById('bookingTimeInput');
+                if (bookingTimeInputInvalid) {
+                    bookingTimeInputInvalid.value = '';
+                }
+                const bookingUtcInputInvalid = document.getElementById('bookingUtcInput');
+                if (bookingUtcInputInvalid) {
+                    bookingUtcInputInvalid.value = '';
+                }
+                return;
+            }
+
+            if (bookingFormErrorEl) {
+                bookingFormErrorEl.hidden = true;
+                bookingFormErrorEl.textContent = '';
+            }
+
+            document.querySelectorAll('.time-slot').forEach((item) => item.classList.remove('selected'));
+            slot.classList.add('selected');
+
+            const bookingTimeInput = document.getElementById('bookingTimeInput');
+            if (bookingTimeInput) {
+                bookingTimeInput.value = String(hour).padStart(2, '0') + ':' + minutes;
+            }
+
             const bookingUtcInput = document.getElementById('bookingUtcInput');
             if (bookingUtcInput) bookingUtcInput.value = utcForSlot.toISOString();
 
@@ -1040,7 +1109,6 @@
             const bookingTimezoneInput = document.getElementById('bookingTimezoneInput');
             if (bookingTimezoneInput) bookingTimezoneInput.value = tz;
 
-            // Update booking display with local, PHT and UTC values
             const display = document.getElementById('bookingDateDisplay');
             if (display) {
                 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];

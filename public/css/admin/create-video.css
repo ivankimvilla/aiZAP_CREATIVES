@@ -102,6 +102,17 @@
             color: var(--c-black);
         }
 
+        .alert-info {
+            background: rgba(255, 255, 255, 0.08);
+            color: #f8f8f8;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+        }
+
+        .alert-info .alert-icon {
+            background: rgba(255, 255, 255, 0.12);
+            color: #f8f8f8;
+        }
+
         .alert-error {
             background: #fdf1f1;
             color: #8a2c22;
@@ -356,10 +367,12 @@
             font-size: 0.82rem;
             letter-spacing: 0.02em;
             cursor: pointer;
-            transition: box-shadow 0.15s ease, transform 0.05s ease;
+            transition: background 0.2s ease, color 0.2s ease, box-shadow 0.15s ease, transform 0.05s ease;
         }
 
         .btn-primary:hover {
+            background: #111;
+            color: var(--c-yellow);
             box-shadow: 0 0 0 3px rgba(255, 212, 0, 0.35);
         }
 

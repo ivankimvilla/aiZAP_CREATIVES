@@ -1,0 +1,671 @@
+:root {
+    --c-black: #111111;
+    --c-white: #ffffff;
+    --c-yellow: #ffd400;
+    --c-yellow-dark: #e6bf00;
+    --c-border: #e5e5e5;
+    --c-gray: #6b6b6b;
+    --c-gray-light: #f5f5f5;
+    --c-radius-lg: 16px;
+    --c-radius-md: 10px;
+}
+
+html,
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.pw-page {
+    /* Sidebar is position:fixed and out of normal flow, so this
+    page has to manually reserve the 264px it occupies — otherwise
+    the sidebar sits on top of the content instead of beside it. */
+    --sidebar-width: 264px;
+    margin-top: 60px;
+    margin-left: var(--sidebar-width);
+    padding: 4rem 2.5rem 3rem;
+    box-sizing: border-box;
+    width: calc(100% - var(--sidebar-width));
+    max-width: none;
+}
+
+/* Sidebar collapses to a normal, full-width, in-flow block below
+900px (see .admin-sidebar.dash-sidebar's own breakpoint), so drop
+the reserved margin at the same breakpoint to match. */
+@media (max-width: 900px) {
+    .pw-page {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+.pw-hero {
+    display: none;
+}
+
+.admin-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0;
+    margin-bottom: 1.35rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 1.35rem;
+}
+
+.hero-title {
+    color: var(--c-white) !important;
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    margin: 0 0 0.25rem;
+}
+
+.hero-sub {
+    color: rgba(255, 255, 255, 0.65) !important;
+    font-size: 0.92rem;
+    margin: 0;
+}
+
+.hero-add-btn {
+    border-radius: 999px;
+    padding: 0.8rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--c-white);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    cursor: pointer;
+    transition: background 0.18s ease, transform 0.15s ease;
+}
+
+.hero-add-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-1px);
+}
+
+.pw-cards-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+    align-items: start;
+}
+
+@media (max-width: 1100px) {
+    .pw-cards-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .pw-cards-row {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+}
+
+.password-card {
+    background: var(--c-white) !important;
+    border-radius: var(--c-radius-lg);
+    padding: 1.5rem 1.6rem 1.7rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    border-top: 3px solid var(--c-yellow);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s ease;
+}
+
+.password-card:hover {
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.1);
+}
+
+.card-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    margin-bottom: 1.1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--c-border);
+}
+
+.card-icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--c-radius-md);
+    background: #fdf1cc;
+    color: var(--c-yellow-dark);
+}
+
+.card-icon svg {
+    width: 19px;
+    height: 19px;
+}
+
+.card-title {
+    font-size: 1.08rem;
+    font-weight: 800;
+    color: var(--c-black) !important;
+    margin: 0 0 0.2rem;
+}
+
+.card-sub {
+    font-size: 0.83rem;
+    color: var(--c-gray) !important;
+    margin: 0;
+    line-height: 1.45;
+}
+
+.alert {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.65rem 0.95rem;
+    border-radius: 10px;
+    font-size: 0.83rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.alert-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 0.68rem;
+    flex-shrink: 0;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #1e7e34;
+}
+
+.alert-success .alert-icon {
+    background: #1e7e34;
+    color: var(--c-white);
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #a12622;
+}
+
+.alert-error .alert-icon {
+    background: #a12622;
+    color: var(--c-white);
+}
+
+.password-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.form-group label {
+    font-size: 0.79rem;
+    font-weight: 700;
+    color: var(--c-black) !important;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+    font-size: 0.88rem;
+    padding: 0.65rem 0.85rem;
+    border: 1.5px solid var(--c-border);
+    border-radius: var(--c-radius-md);
+    color: var(--c-black);
+    background: var(--c-white);
+    font-family: inherit;
+    box-sizing: border-box;
+    width: 100%;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--c-yellow-dark);
+    box-shadow: 0 0 0 3px rgba(255, 212, 0, 0.25);
+}
+
+.input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrap input {
+    padding-right: 2.6rem !important;
+}
+
+.eye-toggle {
+    position: absolute;
+    right: 0.65rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--c-gray);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2rem;
+}
+
+.form-group.invalid label {
+    color: #a12622 !important;
+}
+
+.form-group.invalid input[type="text"],
+.form-group.invalid input[type="email"],
+.form-group.invalid input[type="password"],
+.form-group input.invalid {
+    border-color: #c72b2b;
+    box-shadow: 0 0 0 2px rgba(199, 43, 43, 0.12);
+}
+
+.form-group .live-error {
+    color: #a12622;
+    font-size: 0.82rem;
+    margin-top: 0.3rem;
+    line-height: 1.3;
+}
+
+.eye-toggle svg {
+    width: 18px;
+    height: 18px;
+}
+
+.eye-toggle:hover {
+    color: var(--c-black);
+}
+
+.btn-primary {
+    margin-top: auto;
+    background: var(--c-black) !important;
+    color: var(--c-yellow) !important;
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.8rem 1.25rem;
+    border-radius: var(--c-radius-md);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: #262626 !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.admin-list-card {
+    justify-content: flex-start;
+    background: #14171c !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-top: none !important;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+    padding-top: 2.2rem;
+    padding-bottom: 1.7rem;
+}
+
+.admin-list-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1.1rem;
+}
+
+.admin-list-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.btn-small {
+    margin-top: 0;
+    padding: 0.62rem 1rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--c-white);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.btn-small:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.admin-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    margin-bottom: 0;
+}
+
+.admin-list-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(260px, 1fr) auto;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--c-radius-md);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+/*
+FIX: removed `backdrop-filter: blur(8px)` and `isolation: isolate`.
+The blur was compositing with the open dropdown menu (which sits on
+top of neighboring rows) and bleeding a soft white glow onto the
+rows underneath it. Since this list sits on a solid dark background,
+the blur wasn't adding meaningful visual value anyway.
+*/
+.admin-list-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(260px, 1fr) auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--c-radius-md);
+    background: rgba(255, 255, 255, 0.03);
+    transition: border-color 0.15s ease, background 0.15s ease;
+    position: relative;
+}
+
+.admin-list-item:hover {
+    border-color: rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/*
+FIX: when a row's dropdown is open, lift that row above its
+siblings so the menu renders cleanly on top instead of getting
+clipped/blurred by neighboring rows' stacking contexts.
+*/
+.admin-list-item:has(.admin-dropdown.open) {
+    z-index: 60;
+}
+
+.admin-list-email-wrap,
+.admin-list-password-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+.admin-list-email-wrap {
+    max-width: 100%;
+}
+
+.admin-list-password-wrap {
+    justify-self: start;
+}
+
+.admin-list-email {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--c-white) !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.admin-list-password {
+    font-size: 0.83rem;
+    color: rgba(255, 255, 255, 0.65) !important;
+    letter-spacing: 0.1em;
+    font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+    /*
+    FIX: reserved width + no-wrap + ellipsis means toggling between
+    masked dots and the real password never changes this element's
+    box size, so the copy/eye icons beside it stay perfectly still
+    instead of jumping left/right when the eye icon is clicked.
+    */
+    display: inline-block;
+    min-width: 14ch;
+    max-width: 240px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+.icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    color: rgba(255, 255, 255, 0.75);
+    background: transparent;
+    border: none;
+    padding: 0.35rem;
+    min-width: 0;
+    width: auto;
+    height: auto;
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease, opacity 0.18s ease;
+}
+
+.icon-btn:hover,
+.icon-btn.copied {
+    color: var(--c-white);
+    transform: translateY(-1px);
+}
+
+.icon-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.admin-list-menu {
+    position: relative;
+    flex-shrink: 0;
+    justify-self: end;
+    z-index: 30;
+}
+
+.admin-list-empty {
+    font-size: 0.85rem;
+    color: var(--c-gray) !important;
+    padding: 0.6rem 0;
+}
+
+.dots-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--c-gray);
+    padding: 0.35rem;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.dots-btn:hover {
+    background: var(--c-gray-light);
+    color: var(--c-black);
+}
+
+.dots-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.admin-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    background: var(--c-white);
+    border: 1px solid var(--c-border);
+    border-radius: 10px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
+    min-width: 170px;
+    z-index: 50;
+    overflow: hidden;
+}
+
+.admin-dropdown.open {
+    display: block;
+}
+
+.admin-dropdown .dropdown-item,
+.admin-dropdown form {
+    width: 100%;
+    margin: 0;
+}
+
+.dropdown-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--c-black);
+    padding: 0.65rem 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.dropdown-item:hover {
+    background: var(--c-gray-light);
+}
+
+.admin-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.56);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.admin-modal-overlay.open {
+    display: flex;
+}
+
+.admin-modal {
+    background: var(--c-white);
+    border-radius: var(--c-radius-lg);
+    width: min(430px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 3rem 1.6rem 1.7rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------- Center the modal content: header + form ---------- */
+.admin-modal-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0;
+    margin-bottom: 1.6rem;
+    padding-bottom: 0;
+    position: relative;
+}
+
+.admin-modal-head h3 {
+    font-size: 1.08rem;
+    font-weight: 800;
+    color: var(--c-black) !important;
+    margin: 0;
+}
+
+.modal-subtitle {
+    font-size: 0.83rem;
+    color: var(--c-gray) !important;
+    margin: 0.35rem 0 0;
+}
+
+.admin-modal-close {
+    position: absolute;
+    top: -0.6rem;
+    right: -0.2rem;
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    line-height: 1;
+    color: var(--c-gray);
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+}
+
+.admin-modal-close:hover {
+    color: var(--c-black);
+}
+
+.admin-modal .password-form {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+.admin-modal .form-group {
+    text-align: left;
+}
+
+.admin-modal .btn-primary {
+    width: 100%;
+    margin-top: 0.4rem;
+}
+
+@media (max-width: 700px) {
+    .pw-page {
+        padding: 3rem 1rem 2rem;
+    }
+
+    .admin-list-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-small {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .admin-list-item {
+        align-items: flex-start;
+    }
+}

@@ -94,12 +94,16 @@ class ProjectController extends Controller
         $project->title = $request->title;
         $project->subtitle = $request->subtitle;
         $project->featured = $request->boolean('featured');
+        $project->categories = $request->input('categories', []);
+
+        $updated = $project->isDirty();
 
         if ($request->hasFile('image')) {
             if ($project->image) {
                 Storage::disk('public')->delete($project->image);
             }
             $project->image = $request->file('image')->store('projects/images', 'public');
+            $updated = true;
         }
 
         if ($request->hasFile('video')) {
@@ -107,9 +111,12 @@ class ProjectController extends Controller
                 Storage::disk('public')->delete($project->video_path);
             }
             $project->video_path = $request->file('video')->store('projects/videos', 'public');
+            $updated = true;
         }
 
-        $project->categories = $request->input('categories', []);
+        if (!$updated) {
+            return redirect()->back()->with('info', 'No changes were made.');
+        }
 
         $project->save();
 
@@ -129,5 +136,29 @@ class ProjectController extends Controller
         $project->delete();
 
         return redirect()->route('admin.dashboard')->with('success', 'Project removed successfully.');
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $data = $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['integer', 'exists:projects,id'],
+        ]);
+
+        Project::whereIn('id', $data['ids'])->get()->each(function (Project $project) {
+            if ($project->image) {
+                Storage::disk('public')->delete($project->image);
+            }
+            if ($project->video_path) {
+                Storage::disk('public')->delete($project->video_path);
+            }
+            $project->delete();
+        });
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['ok' => true]);
+        }
+
+        return redirect()->route('admin.dashboard')->with('success', 'Selected videos deleted.');
     }
 }

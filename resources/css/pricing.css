@@ -293,6 +293,11 @@
     transform: translateY(0);
 }
 
+.pricing-toast.fade-out {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
 .pricing-toast-icon {
     display: inline-flex;
     align-items: center;

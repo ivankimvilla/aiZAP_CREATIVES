@@ -17,7 +17,6 @@
     </div>
 
     <section class="cp-hero">
-        <p class="eyebrow">Admin</p>
         <h1 class="hero-title">Edit <span class="gold">video</span></h1>
         <p class="hero-sub">Update video details, upload a new video, or toggle featured status.</p>
     </section>
@@ -26,6 +25,13 @@
         <div class="alert alert-success">
             <span class="alert-icon">&#10003;</span>
             {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('info'))
+        <div class="alert alert-info">
+            <span class="alert-icon">&#8505;</span>
+            {{ session('info') }}
         </div>
     @endif
 

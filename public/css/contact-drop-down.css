@@ -84,6 +84,9 @@
     box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
     padding: 24px;
     color: var(--off-white);
+    position: relative;
+    overflow: hidden;
+    /* keeps the floating toast clipped to the rounded corners */
 }
 
 /* ===== Close button ===== */
@@ -128,17 +131,101 @@
     margin: 0 0 18px;
 }
 
-/* ===== Status and error messages ===== */
+/* ===== Status message (floats inside the panel, over the top) ===== */
 .contact-dropdown-status {
-    background: rgba(212, 175, 55, 0.15);
-    border: 1px solid var(--gold-dark);
-    color: var(--gold-light);
-    border-radius: 8px;
-    padding: 10px 14px;
-    margin-bottom: 14px;
-    font-size: 0.9rem;
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    right: 14px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #f8fafc;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 0;
+    font-size: 0.92rem;
+    box-shadow: 0 14px 30px rgba(16, 185, 129, 0.35);
+    opacity: 1;
+    visibility: visible;
+    animation: contact-status-float-in 0.28s ease;
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s ease;
 }
 
+.contact-dropdown-status.fade-out {
+    opacity: 0;
+    transform: translateY(-8px);
+    visibility: hidden;
+}
+
+@keyframes contact-status-float-in {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.contact-toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    z-index: 3100;
+    min-width: min(360px, calc(100% - 48px));
+    max-width: 380px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
+    border-radius: 14px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s ease, transform 0.35s ease, visibility 0.35s ease;
+}
+
+.contact-toast.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.contact-toast.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(-10px);
+}
+
+.contact-toast-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.contact-toast-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.22);
+    color: #fff;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+/* ===== Error messages ===== */
 .contact-dropdown-errors {
     background: rgba(255, 90, 90, 0.1);
     border: 1px solid #a83232;

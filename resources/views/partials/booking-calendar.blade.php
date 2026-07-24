@@ -12,9 +12,18 @@
         setTimeout(() => {
             const notification = document.querySelector('.booking-success-notification');
             if (notification) {
-                notification.style.display = 'none';
+                notification.style.opacity = '0';
+                notification.style.visibility = 'hidden';
+                notification.style.transform = 'translateX(-50%) translateY(-10px)';
             }
-        }, 5000);
+
+            const bookingCalendar = document.getElementById('bookingCalendar');
+            if (bookingCalendar) {
+                bookingCalendar.classList.remove('open');
+                bookingCalendar.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+        }, 3000);
     </script>
 @endif
 
@@ -36,7 +45,7 @@
     </script>
 @endif
 
-@if(session('success') || $errors->any())
+@if($errors->any())
     <style>body { overflow: hidden !important; }</style>
 @endif
 
@@ -58,7 +67,7 @@
     </script>
 @endif
 
-<div class="booking-calendar-container @if(session('success') || $errors->any()) open @endif" id="bookingCalendar" aria-hidden="@if(session('success') || $errors->any())false @else true @endif">
+<div class="booking-calendar-container @if($errors->any()) open @endif" id="bookingCalendar" aria-hidden="@if($errors->any())false @else true @endif">
     <div class="booking-calendar-overlay"></div>
 
     <div class="booking-calendar-modal">

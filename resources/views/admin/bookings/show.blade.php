@@ -20,8 +20,8 @@
         </section>
 
         @if (session('success'))
-            <div class="alert-dash alert-dash-success">
-                <span class="alert-dash-icon">✓</span>
+            <div class="alert alert-success">
+                <span class="alert-icon">✓</span>
                 {{ session('success') }}
             </div>
         @endif

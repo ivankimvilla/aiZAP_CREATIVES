@@ -197,6 +197,11 @@ class BookingController extends Controller
         ];
     }
 
+    private function getActiveBookingStatuses(): array
+    {
+        return ['pending', 'confirmed', 'rescheduled'];
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -250,13 +255,15 @@ class BookingController extends Controller
         }
 
         try {
-            $selectedDate = new \DateTimeImmutable($bookingDate, new \DateTimeZone($timeZone));
+            // Compare the full selected date and time in the provided timezone
+            $selectedDateTime = new \DateTimeImmutable("{$bookingDate} {$bookingTime}", new \DateTimeZone($timeZone));
             $now = new \DateTimeImmutable('now', new \DateTimeZone($timeZone));
-            if ($selectedDate < $now) {
+
+            if ($selectedDateTime <= $now) {
                 return back()->withErrors(['booking_time' => 'Please select a valid future date.']);
             }
 
-            if ((int) $selectedDate->format('w') === 0) {
+            if ((int) $selectedDateTime->format('w') === 0) {
                 return back()->withErrors(['booking_time' => 'Sunday bookings are not available. Please choose another day.']);
             }
         } catch (\Exception $exception) {
@@ -267,7 +274,7 @@ class BookingController extends Controller
         $bookingDate = $philippineDateTime['date'];
         $bookingTime = $philippineDateTime['time'];
 
-        $exists = Booking::whereIn('status', ['pending', 'confirmed', 'rescheduled', 'completed'])
+        $exists = Booking::whereIn('status', $this->getActiveBookingStatuses())
             ->get()
             ->contains(function (Booking $booking) use ($bookingDate, $bookingTime): bool {
                 $existingDateTime = $this->resolvePhilippineDateTime($booking);
@@ -376,7 +383,7 @@ class BookingController extends Controller
         if (!empty($data['booking_date']) && !empty($data['booking_time'])) {
             $philippineDateTime = $this->convertToPhilippineDateTime($data['booking_date'], $data['booking_time'], $data['booking_timezone'] ?? 'Asia/Manila');
             $exists = Booking::where('id', '!=', $booking->id)
-                ->whereIn('status', ['pending', 'confirmed', 'rescheduled', 'completed'])
+                ->whereIn('status', $this->getActiveBookingStatuses())
                 ->get()
                 ->contains(function (Booking $existingBooking) use ($philippineDateTime): bool {
                     $existingDateTime = $this->resolvePhilippineDateTime($existingBooking);
@@ -428,6 +435,22 @@ class BookingController extends Controller
         return redirect()->route('admin.bookings.index')->with('success', 'Booking deleted.');
     }
 
+    public function bulkDestroy(Request $request)
+    {
+        $data = $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['integer', 'exists:bookings,id'],
+        ]);
+
+        Booking::whereIn('id', $data['ids'])->delete();
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['ok' => true]);
+        }
+
+        return redirect()->route('admin.bookings.index')->with('success', 'Selected bookings deleted.');
+    }
+
     public function availability(Request $request)
     {
         $date = $request->query('booking_date');
@@ -436,7 +459,7 @@ class BookingController extends Controller
         $friendlyTimezone = $this->formatTimeZoneLabel($timezone);
 
         $bookedTimes = Booking::where('service', $service)
-            ->whereIn('status', ['pending', 'confirmed', 'rescheduled', 'completed'])
+            ->whereIn('status', $this->getActiveBookingStatuses())
             ->get()
             ->filter(function (Booking $booking) use ($date, $timezone): bool {
                 $philippineDateTime = $this->resolvePhilippineDateTime($booking);
@@ -485,7 +508,7 @@ class BookingController extends Controller
 
         $normalizedTimeZone = $this->normalizeTimeZone($timezone);
 
-        $bookedTimes = Booking::whereIn('status', ['pending', 'confirmed', 'rescheduled', 'completed'])
+        $bookedTimes = Booking::whereIn('status', $this->getActiveBookingStatuses())
             ->get()
             ->filter(function (Booking $booking) use ($date, $normalizedTimeZone): bool {
                 $philippineDateTime = $this->resolvePhilippineDateTime($booking);

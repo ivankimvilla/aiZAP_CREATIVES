@@ -878,3 +878,77 @@
         font-size: 20px;
     }
 }
+
+/* ============================================================
+   Pricing success toast — styled to match .contact-toast
+   ============================================================ */
+.pricing-toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    z-index: 3100;
+    min-width: min(360px, calc(100% - 48px));
+    max-width: 380px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
+    border-radius: 14px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s ease, transform 0.35s ease, visibility 0.35s ease;
+}
+
+.pricing-toast.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.pricing-toast.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(-10px);
+}
+
+.pricing-toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+}
+
+.pricing-toast-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.22);
+    color: #fff;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+.pricing-toast strong {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+    color: #fff;
+}
+
+.pricing-toast p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: rgba(248, 250, 252, 0.92);
+}
+
+@media (max-width: 480px) {
+    .pricing-toast {
+        min-width: calc(100vw - 32px);
+    }
+}

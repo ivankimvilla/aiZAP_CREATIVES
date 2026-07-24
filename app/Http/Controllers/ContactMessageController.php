@@ -156,4 +156,20 @@ class ContactMessageController extends Controller
 
         return redirect()->route('admin.contacts.index')->with('success', 'Contact message deleted.');
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $data = $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['integer', 'exists:contact_messages,id'],
+        ]);
+
+        ContactMessage::whereIn('id', $data['ids'])->delete();
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['ok' => true]);
+        }
+
+        return redirect()->route('admin.contacts.index')->with('success', 'Selected messages deleted.');
+    }
 }

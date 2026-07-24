@@ -6,6 +6,17 @@ export function initBookingCalendar() {
     const closeBtn = document.querySelector('.booking-calendar-close');
     const bookingToggles = document.querySelectorAll('[data-request-type="book_call"]');
     const timezoneInput = document.getElementById('timezoneSearch');
+
+    const animateToast = (toast, delay = 3200) => {
+        if (!toast) return;
+        requestAnimationFrame(() => toast.classList.add('show'));
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => {
+                toast.remove();
+            }, 360);
+        }, delay);
+    };
     const timezoneDropdown = document.getElementById('timezoneDropdown');
     const timezoneSelector = document.getElementById('timezoneSelector');
     const timezoneSelectedLabel = document.getElementById('timezoneSelectedLabel');
@@ -170,7 +181,13 @@ export function initBookingCalendar() {
             bookingForm.hidden = false;
         }
 
-        if (!selectedDay || !selectedMonth || !selectedYear || selectedHour === null || selectedMinute === null) {
+        // FIX: use strict null checks instead of falsy checks.
+        // selectedDay/selectedMonth/selectedYear/selectedHour/selectedMinute can
+        // legitimately be 0 (e.g. selectedMonth === 0 for January, or
+        // selectedHour === 0 / selectedMinute === 0 for midnight slots), and a
+        // falsy check like `!selectedMonth` would incorrectly treat those valid
+        // values as "not selected," which is what was blocking submission.
+        if (selectedDay === null || selectedMonth === null || selectedYear === null || selectedHour === null || selectedMinute === null) {
             display.innerHTML = `
                 <h5 class="booking-day-name">Select a date & time</h5>
                 <p class="booking-day-num"></p>
@@ -336,7 +353,12 @@ export function initBookingCalendar() {
             if (selectedUtc.getTime() < Date.now()) {
                 event.preventDefault();
                 showBookingFormError('Please select a future booking date and time.');
+                return;
             }
+
+            bookingCalendar.classList.remove('open');
+            bookingCalendar.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
         });
     }
 
@@ -364,7 +386,16 @@ export function initBookingCalendar() {
         const service = serviceInput ? serviceInput.value : 'Discovery Call';
 
         try {
-            const response = await fetch(`/bookings/availability?booking_date=${encodeURIComponent(dateValue)}&booking_timezone=${encodeURIComponent(selectedTimeZone)}&service=${encodeURIComponent(service)}`);
+            // Use canonical timezone value from hidden inputs when available
+            const tzForRequest = (bookingTimezoneInput && bookingTimezoneInput.value)
+                || (selectedTimezoneInput && selectedTimezoneInput.value)
+                || selectedTimeZone
+                || 'Asia/Manila';
+
+            const url = `/bookings/availability?booking_date=${encodeURIComponent(dateValue)}&booking_timezone=${encodeURIComponent(tzForRequest)}&service=${encodeURIComponent(service)}`;
+            // console.debug('Availability request:', url);
+
+            const response = await fetch(url);
             const payload = await response.json();
             const slotValues = [
                 { hour: 8, minute: 0 }, { hour: 8, minute: 30 }, { hour: 9, minute: 0 }, { hour: 9, minute: 30 },
@@ -374,7 +405,10 @@ export function initBookingCalendar() {
                 { hour: 16, minute: 0 }, { hour: 16, minute: 30 }, { hour: 17, minute: 0 }, { hour: 17, minute: 30 }
             ];
 
-            const availableTimes = new Set(payload.available || []);
+            const availableTimes = new Set((payload.available || []).map((time) => String(time).slice(0, 5)));
+            const selectedSlotKey = selectedHour !== null && selectedMinute !== null
+                ? `${String(selectedHour).padStart(2, '0')}:${String(selectedMinute).padStart(2, '0')}`
+                : null;
 
             slotValues.forEach((slot) => {
                 const slotLabel = `${String(slot.hour).padStart(2, '0')}:${String(slot.minute).padStart(2, '0')}`;
@@ -406,6 +440,12 @@ export function initBookingCalendar() {
                 });
                 bookingTimes.appendChild(slotEl);
             });
+
+            if (selectedSlotKey && !availableTimes.has(selectedSlotKey)) {
+                selectedHour = null;
+                selectedMinute = null;
+                updateBookingSelection();
+            }
         } catch (error) {
             bookingTimes.innerHTML = '<div class="time-slot disabled">Availability unavailable</div>';
         }

@@ -2,9 +2,12 @@
 
 @section('title', 'Dashboard')
 
-@section('content')
-<link rel="stylesheet" href="{{ asset('css/admin/admin-dashboard.css') }}" />
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/admin/admin-dashboard.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/admin/bulk-actions.css') }}" />
+@endpush
 
+@section('content')
 <div class="admin-dashboard">
 
     <div class="admin-topbar">
@@ -50,8 +53,8 @@
     </div>
 
     @if(session('success'))
-        <div class="alert-dash alert-dash-success">
-            <span class="alert-dash-icon">&#10003;</span>
+        <div class="alert alert-success">
+            <span class="alert-icon">&#10003;</span>
             {{ session('success') }}
         </div>
     @endif
@@ -61,9 +64,23 @@
             <h2>All Videos</h2>
         </div>
 
+        <section class="bulk-toolbar" data-bulk-item-selector=".admin-project-card" data-empty-state-selector=".admin-empty-state">
+            <label class="bulk-select">
+                <input type="checkbox" class="bulk-select-all" aria-label="Select all videos" />
+                Select all
+            </label>
+            <div class="bulk-actions">
+                <span class="bulk-selected-count">0 selected</span>
+                <button type="button" class="btn-delete-selected" data-delete-url="{{ route('admin.projects.bulk_destroy', [], false) }}" disabled>Delete selected</button>
+            </div>
+        </section>
+
         <div class="admin-projects-grid">
             @forelse($projects as $project)
                 <article class="admin-project-card">
+                    <div class="admin-card-checkbox">
+                        <input type="checkbox" class="bulk-item-checkbox" data-item-id="{{ $project->id }}" aria-label="Select video project #{{ $project->id }}" />
+                    </div>
                     <div class="project-thumb admin-project-thumb">
 
                         {{-- Category pill + featured star share one row so they can never overlap --}}
@@ -128,5 +145,12 @@
         </div>
     </section>
 </div>
+
+@push('scripts')
+    <script type="module">
+        import adminBulkDelete from '/js/admin/bulk-delete.js';
+        try { adminBulkDelete(); } catch (e) { console.error('adminBulkDelete init failed', e); }
+    </script>
+@endpush
 
 @endsection

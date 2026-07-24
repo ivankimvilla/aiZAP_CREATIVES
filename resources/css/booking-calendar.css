@@ -397,15 +397,17 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: #fff;
-    background: #dc2626;
-    border-color: #dc2626;
+    color: #dc2626;
+    background: #fafafa;
+    border-color: #f0f0f0;
     font-weight: 700;
+    cursor: not-allowed;
 }
 
 .calendar-date.sunday-unavailable .calendar-day-number {
     display: block;
     font-size: 0.95rem;
+    color: #dc2626;
 }
 
 .calendar-date.sunday-unavailable .calendar-day-label {
@@ -414,7 +416,8 @@
     margin-top: 2px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    opacity: 0.85;
+    opacity: 1;
+    color: #dc2626;
 }
 
 .calendar-footer {
@@ -441,6 +444,41 @@
     flex-direction: column;
     background: #fafafa;
     border-left: 1px solid #e0e0e0;
+    position: relative;
+}
+
+.booking-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.booking-form-error {
+    position: absolute;
+    top: 32px;
+    left: 24px;
+    right: 24px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #dc2626;
+    border: none;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    box-shadow: 0 10px 24px rgba(220, 38, 38, 0.15);
+    z-index: 10;
+}
+
+.booking-form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.booking-form-footer {
+    margin-top: auto;
+    padding-top: 8px;
 }
 
 .booking-date-display {

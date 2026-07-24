@@ -89,6 +89,9 @@ html {
     transform: translateX(-50%);
     z-index: 3000;
     animation: slideDown 0.3s ease-out;
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    opacity: 1;
+    visibility: visible;
 }
 
 .booking-error-notification .success-content {
@@ -119,6 +122,7 @@ html {
     box-shadow: 0 10px 24px rgba(16, 185, 129, 0.2);
     font-weight: 500;
     font-size: 14px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .success-content svg {
@@ -142,8 +146,21 @@ html {
     opacity: 0.8;
 }
 
-/* Inline form error shown inside the booking modal */
+/* Inline form error shown inside the booking modal.
+   Floats above the content (absolute) instead of taking up space in
+   normal flow, so it doesn't push the fields below it around when it
+   appears/disappears. Positioned relative to .booking-calendar-right
+   (see that rule's `position: relative` below).
+   `right` is pulled in further than `left` so the bar stays clear of
+   .booking-calendar-close (28px button + 12px offset ≈ 40px) instead
+   of running underneath it — centering via left:50%/transform ignored
+   that asymmetry and let the bar's edge sit under the button. */
 .booking-form-error {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 44px;
+    z-index: 6;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -151,26 +168,17 @@ html {
     background: #dc2626;
     /* red */
     color: #ffffff;
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
+    padding: 0.55rem 0.85rem;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 13px;
     box-shadow: 0 8px 20px rgba(220, 38, 38, 0.18);
-    margin: 0 auto 12px;
-    max-width: 440px;
+    margin: 0;
+    white-space: normal;
 }
 
 .booking-form-error[hidden] {
     display: none;
-}
-
-.booking-form-error::before {
-    content: "\26A0";
-    /* warning triangle */
-    display: inline-block;
-    margin-right: 10px;
-    font-size: 16px;
-    vertical-align: middle;
 }
 
 .booking-calendar-overlay {
@@ -698,8 +706,11 @@ html {
     color: var(--bc-gold);
 }
 
-/* Right side - Time slots + form */
+/* Right side - Time slots + form.
+   position: relative so .booking-form-error (position: absolute) floats
+   relative to this panel instead of the whole modal. */
 .booking-calendar-right {
+    position: relative;
     flex: 0 0 240px;
     padding: 8px 10px 8px;
     display: flex;

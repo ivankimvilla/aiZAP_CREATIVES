@@ -4,10 +4,22 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/admin/packages.css') }}" />
+<link rel="stylesheet" href="{{ asset('css/admin/bulk-actions.css') }}" />
     <main class="msg-page">
         <section class="msg-hero">
             <h1 class="hero-title">Packages</h1>
             <p class="hero-sub">View and manage users who selected a pricing package.</p>
+        </section>
+
+        <section class="bulk-toolbar" data-bulk-item-selector=".msg-card" data-empty-state-selector=".msg-empty">
+            <label class="bulk-select">
+                <input type="checkbox" class="bulk-select-all" aria-label="Select all package requests" />
+                Select all
+            </label>
+            <div class="bulk-actions">
+                <span class="bulk-selected-count">0 selected</span>
+                <button type="button" class="btn-delete-selected" data-delete-url="{{ route('admin.packages.bulk_destroy', [], false) }}" disabled>Delete selected</button>
+            </div>
         </section>
 
         @if (session('success'))
@@ -32,6 +44,9 @@
                      data-card-seen="{{ $request->seen ? 'true' : 'false' }}"
                      data-mark-read-url="{{ route('admin.packages.mark_read_single', $request) }}">
                     <div class="msg-card-top">
+                        <div class="msg-card-select">
+                            <input type="checkbox" class="bulk-item-checkbox" data-item-id="{{ $request->id }}" aria-label="Select package request" />
+                        </div>
                         <div class="msg-identity">
                             <div class="msg-avatar">{{ strtoupper(substr($request->name, 0, 1)) }}</div>
                             <div class="msg-contact-info">
@@ -133,8 +148,10 @@
     <script type="module">
         import adminReply from '/js/admin/reply.js';
         import adminCardToggle from '/js/admin/card-toggle.js';
+        import adminBulkDelete from '/js/admin/bulk-delete.js';
         try { adminCardToggle(); } catch (e) { console.error('adminCardToggle init failed', e); }
         try { adminReply(); } catch (e) { console.error('adminReply init failed', e); }
+        try { adminBulkDelete(); } catch (e) { console.error('adminBulkDelete init failed', e); }
     </script>
 
 @endsection

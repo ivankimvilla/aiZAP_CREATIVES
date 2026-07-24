@@ -12,6 +12,24 @@ export function initContactDropdown() {
         dropdown.setAttribute('aria-hidden', open ? 'false' : 'true');
     };
 
+    const showToast = (message) => {
+        const toast = document.createElement('div');
+        toast.className = 'contact-toast';
+        toast.setAttribute('role', 'status');
+        toast.innerHTML = `
+            <div class="contact-toast-content">
+                <span class="contact-toast-icon">&#10003;</span>
+                <div>${message}</div>
+            </div>
+        `;
+        document.body.appendChild(toast);
+        requestAnimationFrame(() => toast.classList.add('show'));
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 360);
+        }, 3200);
+    };
+
     const toggleDropdown = (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -42,7 +60,14 @@ export function initContactDropdown() {
         }
     });
 
-    if (dropdown.dataset.initialOpen === 'true') {
+    const statusEl = dropdown.querySelector('#contactDropdownStatus, .contact-dropdown-status');
+    const statusMessage = statusEl ? statusEl.textContent.trim() : '';
+
+    if (statusMessage) {
+        statusEl.classList.add('fade-out');
+        setOpen(false);
+        showToast(statusMessage);
+    } else if (dropdown.dataset.initialOpen === 'true') {
         setOpen(true);
         const firstInput = dropdown.querySelector('input, textarea');
         if (firstInput) {

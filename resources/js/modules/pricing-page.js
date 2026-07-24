@@ -1,4 +1,6 @@
-export function initPricingPage() {
+function initPricingPage() {
+    if (!isPricingPage) return;
+
     const glow = document.querySelector('.pricing-heading-glow');
     if (glow) {
         glow.addEventListener('pointermove', (event) => {
@@ -11,7 +13,6 @@ export function initPricingPage() {
     const cards = document.querySelectorAll('.pricing-card');
     const overlay = document.getElementById('pricingOverlay');
     const pricingPanel = document.getElementById('pricingInquiryPanel');
-
     if (!cards.length || !overlay || !pricingPanel) return;
 
     const pricingPlans = (() => {
@@ -24,36 +25,28 @@ export function initPricingPage() {
 
     let selectedCard = null;
 
-    const getPlanMeta = (packageValue) => pricingPlans[packageValue] || null;
-
-    const clearActiveState = () => {
-        cards.forEach((card) => {
-            card.classList.remove('is-active', 'is-selected');
-        });
-
-        document.querySelectorAll('.pricing-card .pricing-select-button').forEach((button) => {
-            button.classList.remove('is-active');
-            button.setAttribute('aria-pressed', 'false');
-        });
+    // --- ADDED: was missing, caused a ReferenceError that blocked closeOverlay() ---
+    const animateToast = (toast, delay = 3200) => {
+        if (!toast) return;
+        requestAnimationFrame(() => toast.classList.add('show'));
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 360);
+        }, delay);
     };
 
-    const openOverlay = () => {
-        overlay.hidden = false;
-        overlay.classList.add('is-open');
-        pricingPanel.classList.add('is-open');
-    };
-
-    const closeOverlay = () => {
-        overlay.classList.remove('is-open');
-        pricingPanel.classList.remove('is-open');
-        overlay.hidden = true;
+    const getSummaryElements = () => {
+        return {
+            title: pricingPanel.querySelector('.pricing-inquiry-header .section-title'),
+            subtitle: pricingPanel.querySelector('.pricing-inquiry-header .summary-subtitle'),
+            featuresEl: pricingPanel.querySelector('.summary-features'),
+            packageInput: pricingPanel.querySelector('.pricing-inquiry-form input[name="package"]'),
+        };
     };
 
     const updatePricingSummary = (packageValue) => {
-        const title = pricingPanel.querySelector('.pricing-inquiry-header .section-title');
-        const subtitle = pricingPanel.querySelector('.pricing-inquiry-header .summary-subtitle');
-        const featuresEl = pricingPanel.querySelector('.summary-features');
-        const packageInput = pricingPanel.querySelector('.pricing-inquiry-form input[name="package"]');
+        const { title, subtitle, featuresEl, packageInput } = getSummaryElements();
+        const meta = pricingPlans[packageValue] || null;
 
         if (title && packageValue) {
             title.textContent = packageValue;
@@ -63,7 +56,6 @@ export function initPricingPage() {
             packageInput.value = packageValue;
         }
 
-        const meta = getPlanMeta(packageValue);
         if (subtitle) {
             subtitle.textContent = meta ? meta.subtitle : 'Submit your package request and we’ll respond with pricing details.';
         }
@@ -86,47 +78,56 @@ export function initPricingPage() {
         }
     };
 
+    const clearActiveState = () => {
+        cards.forEach((card) => card.classList.remove('is-active', 'is-selected'));
+        document.querySelectorAll('.pricing-card .pricing-select-button').forEach((button) => {
+            button.classList.remove('is-active');
+            button.setAttribute('aria-pressed', 'false');
+        });
+    };
+
+    const openOverlay = () => {
+        overlay.hidden = false;
+        overlay.classList.add('is-open');
+        pricingPanel.classList.add('is-open');
+    };
+
+    const closeOverlay = () => {
+        overlay.classList.remove('is-open');
+        pricingPanel.classList.remove('is-open');
+        overlay.hidden = true;
+    };
+
     const activateCard = (card, persistent, withOverlay = false) => {
         if (!card) return;
-
         clearActiveState();
         card.classList.add('is-active');
-
         if (persistent) {
             card.classList.add('is-selected');
             selectedCard = card;
         }
-
         const button = card.querySelector('.pricing-select-button');
         if (button) {
             button.classList.add('is-active');
             button.setAttribute('aria-pressed', 'true');
         }
-
-        const packageValue = button?.dataset.plan || '';
+        const packageValue = card.querySelector('.pricing-select-button')?.dataset.plan || '';
         if (packageValue) {
             updatePricingSummary(packageValue);
         }
-
         if (withOverlay) {
             openOverlay();
         }
     };
 
     const openOverlayForPlan = (packageValue, triggerButton) => {
-        const matchingButton = triggerButton || document.querySelector(`.pricing-select-button[data-plan="${packageValue}"]`);
-        const matchingCard = matchingButton ? matchingButton.closest('.pricing-card') : null;
+        const button = triggerButton || document.querySelector(`.pricing-select-button[data-plan="${packageValue}"]`);
+        const card = button ? button.closest('.pricing-card') : null;
+        if (!card || !packageValue) return;
 
-        if (!packageValue || !matchingCard) return;
-
-        activateCard(matchingCard, true);
-        if (matchingButton) {
-            matchingButton.classList.add('is-active');
-            matchingButton.setAttribute('aria-pressed', 'true');
-        }
-
-        updatePricingSummary(packageValue);
-        openOverlay();
+        button.classList.add('is-active');
+        button.setAttribute('aria-pressed', 'true');
+        activateCard(card, true, true);
 
         const nameInput = pricingPanel.querySelector('.pricing-inquiry-form input[name="name"]');
         if (nameInput) {
@@ -138,31 +139,13 @@ export function initPricingPage() {
         }
     };
 
-    const restoreSelectedPackage = () => {
-        const initialPackage = overlay.dataset.initialPackage || '';
-        const serverOpen = overlay.dataset.serverOpen === '1';
-
-        if (initialPackage) {
-            openOverlayForPlan(initialPackage);
-        }
-
-        if (serverOpen && overlay.hidden) {
-            openOverlay();
-        }
-    };
-
     cards.forEach((card) => {
         card.addEventListener('mouseenter', () => activateCard(card, false));
-
         card.addEventListener('mouseleave', (event) => {
             const relatedCard = event.relatedTarget && event.relatedTarget.closest
                 ? event.relatedTarget.closest('.pricing-card')
                 : null;
-
-            if (relatedCard) {
-                return;
-            }
-
+            if (relatedCard) return;
             if (selectedCard) {
                 activateCard(selectedCard, true);
             } else {
@@ -179,131 +162,9 @@ export function initPricingPage() {
         }
     });
 
-    const pricingForm = document.getElementById('pricingInquiryForm');
-    const ajaxSuccess = document.getElementById('pricingAjaxSuccess');
-    const ajaxErrors = document.getElementById('pricingAjaxErrors');
-    const ajaxErrorsList = document.getElementById('pricingAjaxErrorsList');
-    const submitBtn = pricingForm?.querySelector('button[type="submit"]');
-
-    const clearFormMessages = () => {
-        if (ajaxSuccess) {
-            ajaxSuccess.hidden = true;
-            ajaxSuccess.textContent = '';
-        }
-        if (ajaxErrors) {
-            ajaxErrors.hidden = true;
-        }
-        if (ajaxErrorsList) {
-            ajaxErrorsList.innerHTML = '';
-        }
-    };
-
-    const showFormErrors = (messages) => {
-        if (!ajaxErrors || !ajaxErrorsList) return;
-        messages.forEach((message) => {
-            const li = document.createElement('li');
-            li.textContent = message;
-            ajaxErrorsList.appendChild(li);
-        });
-        ajaxErrors.hidden = false;
-    };
-
-    const ensurePackageSelected = () => {
-        const packageInput = pricingForm?.querySelector('input[name="package"]');
-        if (!packageInput || !packageInput.value) {
-            const err = document.querySelector('.pricing-no-package-error');
-            if (!err) {
-                const message = document.createElement('div');
-                message.className = 'pricing-no-package-error';
-                message.style.color = '#ffc9c9';
-                message.style.marginBottom = '12px';
-                message.textContent = 'Please select a package before requesting pricing.';
-                const content = document.querySelector('.pricing-inquiry-content');
-                if (content) content.insertBefore(message, content.firstChild);
-            }
-            packageInput?.focus();
-            return false;
-        }
-
-        return true;
-    };
-
-    if (pricingForm) {
-        pricingForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            clearFormMessages();
-
-            if (!ensurePackageSelected()) return;
-
-            const formData = new FormData(pricingForm);
-            const tokenInput = pricingForm.querySelector('input[name="_token"]');
-            const token = tokenInput ? tokenInput.value : '';
-
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.dataset.originalText = submitBtn.dataset.originalText || submitBtn.textContent;
-                submitBtn.textContent = 'Sending...';
-            }
-
-            fetch(pricingForm.action, {
-                method: 'POST',
-                body: formData,
-                credentials: 'same-origin',
-                headers: {
-                    Accept: 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': token,
-                },
-            })
-                .then(async (response) => {
-                    if (response.status === 422) {
-                        const data = await response.json().catch(() => null);
-                        const messages = data && data.errors
-                            ? Object.values(data.errors).flat()
-                            : ['Please check the form and try again.'];
-                        showFormErrors(messages);
-                        return;
-                    }
-
-                    if (!response.ok) {
-                        showFormErrors(['Something went wrong. Please try again.']);
-                        return;
-                    }
-
-                    let message = 'Thanks! We received your request and will be in touch shortly.';
-                    const contentType = response.headers.get('content-type') || '';
-                    if (contentType.includes('application/json')) {
-                        const data = await response.json().catch(() => null);
-                        if (data && data.message) {
-                            message = data.message;
-                        }
-                    }
-
-                    if (ajaxSuccess) {
-                        ajaxSuccess.textContent = message;
-                        ajaxSuccess.hidden = false;
-                    }
-
-                    const packageInput = pricingForm.querySelector('input[name="package"]');
-                    const currentPackage = packageInput ? packageInput.value : '';
-                    pricingForm.reset();
-                    if (packageInput) packageInput.value = currentPackage;
-                })
-                .catch(() => {
-                    showFormErrors(['Network error. Please check your connection and try again.']);
-                })
-                .finally(() => {
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = submitBtn.dataset.originalText;
-                    }
-                });
-        });
-    }
-
-    const closeBtn = pricingPanel.querySelector('.pricing-close');
-    if (closeBtn) {
-        closeBtn.addEventListener('click', (event) => {
+    const closeButton = pricingPanel.querySelector('.pricing-close');
+    if (closeButton) {
+        closeButton.addEventListener('click', (event) => {
             event.preventDefault();
             closeOverlay();
         });
@@ -314,6 +175,8 @@ export function initPricingPage() {
         summaryCancel.addEventListener('click', (event) => {
             event.preventDefault();
             clearActiveState();
+            const packageInput = pricingPanel.querySelector('.pricing-inquiry-form input[name="package"]');
+            if (packageInput) packageInput.value = '';
             closeOverlay();
         });
     }
@@ -330,13 +193,22 @@ export function initPricingPage() {
         }
     });
 
-    const successToast = document.getElementById('pricingSuccessToast');
-    if (successToast) {
-        successToast.classList.add('show');
-        setTimeout(() => {
-            successToast.classList.remove('show');
-        }, 5000);
+    const initialPackage = overlay.dataset.initialPackage || '';
+    const serverOpen = overlay.dataset.serverOpen === '1';
+    if (initialPackage) {
+        openOverlayForPlan(initialPackage);
+    } else if (serverOpen) {
+        openOverlay();
     }
 
-    restoreSelectedPackage();
+    // --- FIXED: close first, then animate the toast; hide leftover server-flash banners ---
+    const pricingToast = document.getElementById('pricingSuccessToast');
+    if (pricingToast) {
+        closeOverlay();
+        animateToast(pricingToast, 3400);
+
+        document.querySelectorAll('.pricing-form-success:not([id]), .pricing-form-errors:not([id])').forEach((el) => {
+            el.hidden = true;
+        });
+    }
 }

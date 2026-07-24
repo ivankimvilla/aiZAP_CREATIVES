@@ -75,6 +75,12 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
     Route::get('/change-password', [AdminAuthController::class, 'showChangePasswordForm'])->name('password.change');
     Route::post('/change-password', [AdminAuthController::class, 'changePassword'])->name('password.change.update');
+    Route::post('/account', [AdminAuthController::class, 'updateAccount'])->name('account.update');
+    Route::post('/admins/{user}/forgot-password', [AdminAuthController::class, 'sendPasswordResetToAdmin'])->name('admins.forgot_password');
+    Route::post('/admins/{user}/reset-password', [AdminAuthController::class, 'resetAdminPassword'])->name('admins.reset_password');
+    Route::post('/admins/{user}/change-password', [AdminAuthController::class, 'changeAdminPassword'])->name('admins.change_password');
+    Route::delete('/admins/{user}', [AdminAuthController::class, 'destroyAdmin'])->name('admins.destroy');
+    Route::post('/admins/check', [AdminAuthController::class, 'checkAdminUnique'])->name('admins.check');
 
     Route::get('/', [ProjectController::class, 'adminIndex'])->name('dashboard');
 
@@ -84,15 +90,18 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::get('/bookings', [BookingController::class, 'adminIndex'])->name('bookings.index');
     Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
     Route::post('/bookings/{booking}/status', [BookingController::class, 'updateStatus'])->name('bookings.status.update');
+    Route::delete('/bookings/bulk-delete', [BookingController::class, 'bulkDestroy'])->name('bookings.bulk_destroy');
     Route::delete('/bookings/{booking}', [BookingController::class, 'destroy'])->name('bookings.destroy');
     Route::get('/contacts', [ContactMessageController::class, 'adminIndex'])->name('contacts.index');
     Route::post('/contacts/mark-read', [ContactMessageController::class, 'markAllRead'])->name('contacts.mark_read');
     Route::post('/contacts/{contactMessage}/seen', [ContactMessageController::class, 'markRead'])->name('contacts.mark_read_single');
     Route::post('/contacts/{contactMessage}/reply', [ContactMessageController::class, 'reply'])->name('contacts.reply');
+    Route::delete('/contacts/bulk-delete', [ContactMessageController::class, 'bulkDestroy'])->name('contacts.bulk_destroy');
     Route::delete('/contacts/{contactMessage}', [ContactMessageController::class, 'destroy'])->name('contacts.destroy');
     Route::redirect('/projects', '/', 302);
     Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
     Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
+    Route::delete('/projects/bulk-delete', [ProjectController::class, 'bulkDestroy'])->name('projects.bulk_destroy');
     Route::get('/projects/{project}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
     Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
     Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
@@ -103,5 +112,6 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::post('/packages/mark-read', [App\Http\Controllers\Admin\PackageController::class, 'markAllRead'])->name('packages.mark_read');
     Route::post('/packages/{packageRequest}/seen', [App\Http\Controllers\Admin\PackageController::class, 'markRead'])->name('packages.mark_read_single');
     Route::post('/packages/{packageRequest}/reply', [App\Http\Controllers\Admin\PackageController::class, 'reply'])->name('packages.reply');
+    Route::delete('/packages/bulk-delete', [App\Http\Controllers\Admin\PackageController::class, 'bulkDestroy'])->name('packages.bulk_destroy');
     Route::delete('/packages/{packageRequest}', [App\Http\Controllers\Admin\PackageController::class, 'destroy'])->name('packages.destroy');
 });

@@ -143,4 +143,20 @@ class PackageController extends Controller
 
         return redirect()->route('admin.packages.index')->with('success', 'Package request removed.');
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $data = $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['integer', 'exists:package_requests,id'],
+        ]);
+
+        PackageRequest::whereIn('id', $data['ids'])->delete();
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['ok' => true]);
+        }
+
+        return redirect()->route('admin.packages.index')->with('success', 'Selected package requests deleted.');
+    }
 }
