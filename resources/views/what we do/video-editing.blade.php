@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Video Editing - aiZAP CREATIVES</title>
+        <title>Video Editing - aizap creatives studios</title>
         <link rel="stylesheet" href="{{ asset('css/what we do/video-editing.css') }}" />
                 <link rel="stylesheet" href="{{ asset('css/what-we-do.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/footer.css') }}" />

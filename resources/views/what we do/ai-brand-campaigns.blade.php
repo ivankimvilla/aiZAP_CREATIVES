@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>AI Brand Campaigns - aiZAP CREATIVES</title>
+        <title>AI Brand Campaigns - aizap creatives studios</title>
        
         <link rel="stylesheet" href="{{ asset('css/what we do/ai-brand-campaigns.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/what-we-do.css') }}" />

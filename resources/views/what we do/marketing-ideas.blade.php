@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Marketing Ideas - aiZAP CREATIVES</title>
+        <title>Marketing Ideas - aizap creatives studios</title>
        <link rel="stylesheet" href="{{ asset('css/what we do/marketing-ideas.css') }}" />
               <link rel="stylesheet" href="{{ asset('css/what-we-do.css') }}" /> 
         <link rel="stylesheet" href="{{ asset('css/footer.css') }}" />

@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>AI Commercial Ads - aiZAP CREATIVES</title>
+        <title>AI Commercial Ads - aizap creatives studios</title>
         <link rel="stylesheet" href="{{ asset('css/what we do/ai-commercial-ads.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/footer.css') }}" />
           <link rel="stylesheet" href="{{ asset('css/what-we-do.css') }}" />

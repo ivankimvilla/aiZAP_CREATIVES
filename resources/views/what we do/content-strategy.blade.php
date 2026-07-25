@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Content Strategy - aiZAP CREATIVES</title>
+        <title>Content Strategy - aizap creatives studios</title>
       <link rel="stylesheet" href="{{ asset('css/what we do/content-strategy.css') }}" />
               <link rel="stylesheet" href="{{ asset('css/what-we-do.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/footer.css') }}" />

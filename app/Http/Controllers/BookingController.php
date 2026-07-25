@@ -347,9 +347,11 @@ class BookingController extends Controller
             // Preserve and expose the original local time (from booking_local) for admin display.
             if (!empty($booking->booking_local)) {
                 // booking_local expected format: 'Y-m-d H:i'
-                $booking->booking_original_time = date('g:i A', strtotime($booking->booking_local));
+                $booking->booking_original_time = date('D, M j · g:i A', strtotime($booking->booking_local));
+            } elseif (!empty($booking->booking_date) && !empty($booking->booking_time)) {
+                // Fallback to stored booking_date + booking_time when original local datetime is unavailable.
+                $booking->booking_original_time = date('D, M j · g:i A', strtotime($booking->booking_date . ' ' . $booking->booking_time));
             } else {
-                // Fallback to the stored booking_time (which may be PHT) if original not available
                 $booking->booking_original_time = $booking->booking_time ? date('g:i A', strtotime('1970-01-01 ' . $booking->booking_time)) : '--:--';
             }
 
