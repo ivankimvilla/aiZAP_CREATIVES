@@ -8,10 +8,11 @@
     --off-white: #faf7ee;
 }
 
-/* Keep the whole contact widget pinned to the upper-right corner */
+/* Keep the whole contact widget pinned to the upper-right corner,
+   vertically centered against the .site-header bar (64px tall) */
 .contact-dropdown-component {
     position: fixed;
-    top: 24px;
+    top: 12px;
     right: 24px;
     z-index: 1100;
     font-family: inherit;
@@ -23,7 +24,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 24px;
+    padding: 9px 20px;
     border: 2px solid var(--gold);
     border-radius: 999px;
     z-index: 1101;
@@ -57,7 +58,7 @@
     top: calc(100% + 12px);
     right: 0;
     left: auto;
-    min-width: min(360px, calc(100vw - 40px));
+    min-width: min(680px, calc(100vw - 40px));
     z-index: 1100;
     transform-origin: top right;
     display: none;
@@ -107,6 +108,75 @@
 .contact-dropdown-close:focus-visible {
     color: var(--gold);
     transform: scale(1.1);
+}
+
+/* ===== Two-column layout: contact info (left) + form (right) ===== */
+.contact-dropdown-grid {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 28px;
+}
+
+.contact-form-col {
+    min-width: 0;
+}
+
+/* ===== Contact info column ===== */
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    padding-right: 24px;
+    border-right: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+.contact-info .eyebrow {
+    margin: 0 0 20px;
+}
+
+.contact-info__list {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.contact-info__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.88rem;
+    line-height: 1.4;
+    color: rgba(250, 247, 238, 0.85);
+    white-space: nowrap;
+}
+
+.contact-info__item a {
+    color: rgba(250, 247, 238, 0.85);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.contact-info__item a:hover,
+.contact-info__item a:focus-visible {
+    color: var(--gold-light);
+}
+
+.contact-info__icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    color: var(--gold);
+}
+
+.contact-info__icon svg {
+    width: 18px;
+    height: 18px;
+    display: block;
 }
 
 /* ===== Headings and copy ===== */
@@ -318,11 +388,38 @@
 /* ===== Small screens ===== */
 @media (max-width: 480px) {
     .contact-dropdown-component {
-        top: 16px;
+        top: 8px;
         right: 16px;
     }
 
     .contact-dropdown {
         min-width: calc(100vw - 32px);
+    }
+
+    .contact-dropdown-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .contact-info {
+        padding-right: 0;
+        padding-bottom: 16px;
+        border-right: none;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+    }
+
+    .contact-info__item {
+        font-size: 0.82rem;
+        gap: 8px;
+    }
+
+    .contact-info__icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .contact-info__icon svg {
+        width: 16px;
+        height: 16px;
     }
 }

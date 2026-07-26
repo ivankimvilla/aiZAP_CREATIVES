@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>AI Movie Trailers - aizap creatives studios</title>
+        <title>AI Movie Trailers - Aizap Creatives Studios</title>
         <link rel="stylesheet" href="{{ asset('css/what we do/ai-movie-trailers.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/what-we-do.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/footer.css') }}" />

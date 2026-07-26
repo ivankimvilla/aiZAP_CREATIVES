@@ -8,22 +8,41 @@
 
 .site-header {
     position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 0;
+    left: 0;
+    right: 0;
+    transform: none;
     z-index: 10;
-    display: grid;
-    grid-template-columns: auto 1fr;
+    display: flex;
     align-items: center;
-    gap: 32px;
-    padding: 14px 32px;
+    height: 64px;
+    padding: 0 32px;
     backdrop-filter: blur(14px);
-    width: max-content;
-    max-width: calc(100vw - 40px);
-    border-radius: 999px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    border-radius: 0;
     background: rgba(0, 0, 0, 0.72);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-    overflow-x: hidden;
+    overflow: hidden;
+}
+
+/* Logo/brand mark, sits on the left, sized to fit inside the header
+   regardless of the source image's native dimensions */
+.site-header__brand {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    height: 100%;
+    max-height: 100%;
+}
+
+.site-header__brand img {
+    height: 58px;
+    width: auto;
+    max-height: 92%;
+    object-fit: contain;
+    display: block;
 }
 
 .site-header__logo {
@@ -38,12 +57,19 @@
     color: var(--gold);
 }
 
+/* Nav is centered independently of the brand's width via absolute
+   positioning, so a wide logo never pushes it off-center */
 .site-header__nav {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-wrap: nowrap;
     gap: 28px;
+    max-width: calc(100% - 220px);
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -59,8 +85,10 @@
 }
 
 .site-header__nav-link {
+    display: inline-flex;
+    align-items: center;
     color: #f4f5f5;
-    padding-bottom: 6px;
+    padding: 2px 0 6px;
     border-bottom: 2px solid transparent;
     text-decoration: none;
     white-space: nowrap;
@@ -89,37 +117,17 @@
 }
 
 /* ============================================================
-   Home page logo (aiZAP mark), rendered outside .site-header
-   so it never enters the pill's background/blur/border, but
-   fixed-positioned on the same row so it lines up visually
-   with the nav pill.
+   Logo/brand mark now lives inside .site-header as
+   .site-header__brand (see rules above) — this section
+   intentionally left as a marker in case any legacy pages
+   still reference the old .home-logo pattern.
    ============================================================ */
-.home-logo {
-    position: absolute;
-    top: 20px;
-    left: 32px;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    height: 60px;
-    /* matches approx rendered height of .site-header pill */
-}
 
-.home-logo a {
-    display: flex;
-    align-items: center;
-    height: 100%;
-}
 
-.home-logo img {
-    height: 40px;
-    width: auto;
-    display: block;
-}
-
-/* Give the page content room so it doesn't sit under the floating header */
+/* Give the page content room so it doesn't sit under the fixed header
+   (matches .site-header's fixed height) */
 body {
-    padding-top: 90px;
+    padding-top: 64px;
 }
 
 /* Videos here are all autoplay/muted/loop, so the native centered
@@ -148,23 +156,17 @@ video::-webkit-media-controls-overlay-play-button {
 /* ===== Small screens ===== */
 @media (max-width: 640px) {
     .site-header {
-        top: 12px;
-        padding: 12px 20px;
-        gap: 18px;
-        grid-template-columns: auto auto;
+        top: 0;
+        height: 56px;
+        padding: 0 20px;
     }
 
     .site-header__nav {
         gap: 18px;
+        max-width: calc(100% - 160px);
     }
 
-    .home-logo {
-        top: 12px;
-        left: 16px;
+    .site-header__brand img {
         height: 50px;
-    }
-
-    .home-logo img {
-        height: 32px;
     }
 }

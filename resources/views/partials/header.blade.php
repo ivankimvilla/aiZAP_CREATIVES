@@ -1,4 +1,8 @@
 <header class="site-header">
+    <a href="{{ url('/') }}" class="site-header__brand" aria-label="Home">
+        <img src="{{ asset('logo.png') }}" alt="aiZAP Creatives logo" />
+    </a>
+
     <nav class="site-header__nav">
         <a href="{{ url('/') }}" class="site-header__nav-link {{ request()->is('/') ? 'site-header__nav-link--active' : '' }}">Home</a>
         <a href="{{ url('/about-us') }}" class="site-header__nav-link {{ request()->is('about-us') ? 'site-header__nav-link--active' : '' }}">About Us</a>

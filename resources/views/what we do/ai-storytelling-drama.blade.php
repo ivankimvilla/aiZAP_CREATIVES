@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>AI Storytelling / Drama - aizap creatives studios</title>
+        <title>AI Storytelling / Drama - Aizap Creatives Studios</title>
         <link rel="stylesheet" href="{{ asset('css/what we do/ai-storytelling-drama.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/what-we-do.css') }}" />     
         <link rel="stylesheet" href="{{ asset('css/footer.css') }}" />

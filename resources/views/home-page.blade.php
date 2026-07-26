@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>aizap creatives studios</title>
+        <title>Aizap Creatives Studios</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net" />
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700,800" rel="stylesheet" />
@@ -21,11 +21,6 @@
     </head>
     <body class="home-page-page home-page antialiased">
         <div class="background-glow">
-            <div class="home-logo">
-                <a href="{{ url('/') }}">
-                    <img src="{{ asset('logo.png') }}" alt="aiZAP Creatives logo" />
-                </a>
-            </div>
             <div class="container">
 
                 @include('partials.header')

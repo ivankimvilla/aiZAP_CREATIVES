@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Scriptwriting - aizap creatives studios</title>
+        <title>Scriptwriting - Aizap Creatives Studios</title>
        <link rel="stylesheet" href="{{ asset('css/what we do/scriptwriting.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/footer.css') }}" />
                 <link rel="stylesheet" href="{{ asset('css/what-we-do.css') }}" />

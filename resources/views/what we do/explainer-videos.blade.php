@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Explainer Videos - aizap creatives studios</title>
+        <title>Explainer Videos - Aizap Creatives Studios</title>
        <link rel="stylesheet" href="{{ asset('css/what we do/explainer-videos.css') }}" />
                <link rel="stylesheet" href="{{ asset('css/what-we-do.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/footer.css') }}" />
