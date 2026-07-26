@@ -42,9 +42,9 @@
         <div>
             <p class="footer-heading">Get in Touch</p>
             <div class="footer-contact">
-                <p>hello@aicreatives.studio</p>
+                <p>Davao City, Philippines</p>
+                <p>aizapcreatives@gmail.com</p>
                 <p>+63 912 345 6789</p>
-                <p>Manila, Philippines</p>
             </div>
             <div class="footer-social">
                 <a href="#" class="social-icon fb" aria-label="Facebook">

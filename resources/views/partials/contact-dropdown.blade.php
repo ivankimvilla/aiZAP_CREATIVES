@@ -26,7 +26,7 @@
                                     <circle cx="12" cy="9.5" r="2.4" stroke="currentColor" stroke-width="1.6"/>
                                 </svg>
                             </span>
-                            <span>Manila, Philippines</span>
+                            <span>Davao City, Philippines</span>
                         </li>
                         <li class="contact-info__item">
                             <span class="contact-info__icon" aria-hidden="true">
@@ -35,7 +35,7 @@
                                     <path d="m4 6.5 8 6.2 8-6.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                             </span>
-                            <a href="mailto:hello@aicreatives.studio">hello@aicreatives.studio</a>
+                            <a href="mailto:aizapcreatives@gmail.com">aizapcreatives@gmail.com</a>
                         </li>
                         <li class="contact-info__item">
                             <span class="contact-info__icon" aria-hidden="true">

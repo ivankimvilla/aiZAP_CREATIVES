@@ -47,7 +47,7 @@
                                 <span class="plate-label">Avg. Client Rating</span>
                             </div>
                             <div class="plate-stat">
-                                <span class="plate-num">48hr</span>
+                                <span class="plate-num">24hr</span>
                                 <span class="plate-label">Avg. First Draft</span>
                             </div>
                         </div>

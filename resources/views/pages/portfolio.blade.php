@@ -146,9 +146,9 @@
                         <div class="stats-bar-inner">
                             <div class="stats-grid">
                                 @foreach ([
-                                    ['value' => '12', 'label' => 'Campaigns Launched'],
-                                    ['value' => '8', 'label' => 'Industry Categories'],
-                                    ['value' => '15M', 'label' => 'Average Reach'],
+                                    ['value' => 'Fast', 'label' => 'Turnaround Time'],
+                                    ['value' => 'End-to-End', 'label' => 'Content Creation'],
+                                    ['value' => '24/7', 'label' => ' Creative Support'],
                                 ] as $metric)
                                     <div class="stat-item">
                                         <p class="stat-value">{{ $metric['value'] }}</p>

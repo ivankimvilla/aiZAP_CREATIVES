@@ -106,7 +106,7 @@
                             <div class="stats-grid">
                                 @foreach ([
                                     ['value' => '5', 'label' => 'Steps to launch'],
-                                    ['value' => '48h', 'label' => 'First draft cycle'],
+                                    ['value' => '24h', 'label' => 'First draft cycle'],
                                     ['value' => '100%', 'label' => 'Aim for impact'],
                                 ] as $metric)
                                     <div class="stat-item">
