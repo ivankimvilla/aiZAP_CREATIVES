@@ -26,15 +26,15 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $appUrl = config('app.url');
-        $isHttpsUrl = is_string($appUrl) && str_starts_with($appUrl, 'https://');
         $forwardedProto = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? null;
+        $request = $this->app->has('request') ? $this->app['request'] : null;
 
-        if ($isHttpsUrl || $forwardedProto === 'https' || $forwardedProto === 'https,http') {
+        $isHttpsUrl = is_string($appUrl) && str_starts_with($appUrl, 'https://');
+        $hasForwardedHttps = is_string($forwardedProto) && str_contains($forwardedProto, 'https');
+        $isSecureRequest = $request?->isSecure() ?? false;
+
+        if ($isHttpsUrl || $hasForwardedHttps || $isSecureRequest) {
             URL::forceScheme('https');
-        }
-
-        if ($appUrl) {
-            URL::forceRootUrl($appUrl);
         }
 
         $adminUnreadMessagesCount = 0;
