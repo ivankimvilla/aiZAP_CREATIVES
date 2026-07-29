@@ -49,8 +49,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (muteBtn) muteBtn.textContent = '🔇';
     }
 
-    qsa('.expand-btn').forEach(btn => {
+    qsa('.expand-btn, .expand-toggle').forEach(btn => {
         btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             const container = btn.closest('article, .project-card, .value-card, .category-item, .project-item');
             const video = container ? container.querySelector('video') : null;
             if (!video) return;

@@ -5,8 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Creative Concepts - Aizap Creatives Studios</title>
        <link rel="stylesheet" href="{{ asset('css/what we do/creative-concepts.css') }}" />
-               <link rel="stylesheet" href="{{ asset('css/what-we-do.css') }}" />
-        <link rel="stylesheet" href="{{ asset('css/footer.css') }}" />
     </head>
     <body class="page-main antialiased">
         <div class="container">

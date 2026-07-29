@@ -8,7 +8,27 @@ document.addEventListener('DOMContentLoaded', function () {
     const content = qs('.video-modal__content', modal);
     const closeBtn = qs('.video-modal__close', modal);
 
+    function getVideoSource(video) {
+        if (!video) return '';
+
+        const dataSrc = video.getAttribute('data-src');
+        if (dataSrc) return dataSrc;
+
+        const directSrc = video.getAttribute('src');
+        if (directSrc) return directSrc;
+
+        const source = video.querySelector('source');
+        if (source) {
+            const sourceSrc = source.getAttribute('src');
+            if (sourceSrc) return sourceSrc;
+        }
+
+        return video.currentSrc || '';
+    }
+
     function openModalWithSrc(src, poster) {
+        if (!src) return;
+
         // clear
         content.innerHTML = '';
         const vid = document.createElement('video');
@@ -17,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
         vid.controls = true;
         vid.autoplay = true;
         vid.playsInline = true;
-        // Start unmuted so user hears audio when allowed; controls include mute toggle
+        // Start unmuted so user hears audio when allowed; native controls include mute toggle
         vid.muted = false;
         vid.style.maxWidth = '100%';
         vid.style.maxHeight = '80vh';
@@ -26,16 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.setAttribute('aria-hidden', 'false');
         document.body.classList.add('video-modal-open');
         vid.focus();
-        // update modal mute button state
-        const muteBtn = qs('.video-modal__mute', modal);
-        if (muteBtn) {
-            const updateIcon = () => { muteBtn.textContent = vid.muted ? '🔇' : '🔊'; };
-            updateIcon();
-            muteBtn.onclick = () => {
-                vid.muted = !vid.muted;
-                updateIcon();
-            };
-        }
     }
 
     function closeModal() {
@@ -47,21 +57,48 @@ document.addEventListener('DOMContentLoaded', function () {
         content.innerHTML = '';
         modal.setAttribute('aria-hidden', 'true');
         document.body.classList.remove('video-modal-open');
-        // reset mute button
-        const muteBtn = qs('.video-modal__mute', modal);
-        if (muteBtn) muteBtn.textContent = '🔇';
     }
 
-    // open buttons
-    qsa('.expand-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const container = btn.closest('article, .project-card, .value-card, .category-item, .project-item');
+    function updateMuteButton(button, video) {
+        if (!button || !video) return;
+        const muted = Boolean(video.muted);
+        button.textContent = muted ? '🔇' : '🔊';
+        button.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
+    }
+
+    // button interactions
+    document.addEventListener('click', (e) => {
+        const muteBtn = e.target.closest('.mute-toggle');
+        if (muteBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const container = muteBtn.closest('article, .project-card, .value-card, .category-item, .project-item, .pf-project-card, .pf-project-thumb, .project-thumb');
             const video = container ? container.querySelector('video') : null;
             if (!video) return;
-            const src = video.getAttribute('data-src') || video.currentSrc || video.getAttribute('src');
-            const poster = video.getAttribute('poster');
-            openModalWithSrc(src, poster);
-        });
+            video.muted = !video.muted;
+            updateMuteButton(muteBtn, video);
+            return;
+        }
+
+        const btn = e.target.closest('.expand-btn, .expand-toggle');
+        if (!btn) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const container = btn.closest('article, .project-card, .value-card, .category-item, .project-item, .pf-project-card, .pf-project-thumb, .project-thumb');
+        const video = container ? container.querySelector('video') : null;
+
+        let src = '';
+        let poster = '';
+        if (video) {
+            src = getVideoSource(video);
+            poster = video.getAttribute('poster');
+        } else if (btn.dataset && btn.dataset.src) {
+            src = btn.dataset.src;
+        }
+
+        if (!src) return;
+        if (window.console && console.log) console.log('video-modal: expand clicked', src, poster);
+        openModalWithSrc(src, poster);
     });
 
     // close interactions

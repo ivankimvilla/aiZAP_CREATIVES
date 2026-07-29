@@ -5,8 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Video Editing - Aizap Creatives Studios</title>
         <link rel="stylesheet" href="{{ asset('css/what we do/video-editing.css') }}" />
-                <link rel="stylesheet" href="{{ asset('css/what-we-do.css') }}" />
-        <link rel="stylesheet" href="{{ asset('css/footer.css') }}" />
     </head>
     <body class="home-page-page page-main antialiased">
         <div class="background-glow">

@@ -11,13 +11,9 @@
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/header.css', 'resources/css/home-page.css', 'resources/css/footer.css', 'resources/css/button.css', 'resources/css/about-us.css', 'resources/js/pages/about-us.js'])
             @else
-            <link rel="stylesheet" href="{{ asset('css/header.css') }}" />
-            <link rel="stylesheet" href="{{ asset('css/contact-drop-down.css') }}" />
             <link rel="stylesheet" href="{{ asset('css/home-page.css') }}" />
             <script type="module" src="{{ asset('js/app.js') }}"></script>
             <link rel="stylesheet" href="{{ asset('css/about-us.css') }}" />
-             <link rel="stylesheet" href="{{ asset('css/footer.css') }}" />
-            <link rel="stylesheet" href="{{ asset('css/button.css') }}" />
         @endif
     </head>
     <body class="home-page-page antialiased">
@@ -28,138 +24,107 @@
                 <main class="page-main">
 
                     {{-- ============ PAGE HERO ============ --}}
-                    <section class="page-hero">
-                        <div class="hero-copy">
+                    <section class="hero-section about-hero-section">
+                        <div class="hero-left">
                             <p class="eyebrow">About Us</p>
-                            <h1 class="hero-title">Learn More About <span class="brand-mark"><span class="brand-ai">ai</span><span class="brand-zap">ZAP</span></span></h1>
-                            <p class="hero-sub">We are a creative studio specializing in AI-powered content, brand storytelling, and digital campaigns that help businesses connect with modern audiences.</p>
+                            <h1 class="hero-title">
+                                We're More Than<br>
+                                Creators.<br>
+                                <span class="gold">We're Your Creative<br>Partners.</span>
+                            </h1>
+                            <p class="hero-sub">At AI Creatives, we combine the power of artificial intelligence with human imagination to create content that connects, inspires, and delivers real results.</p>
+                            <p class="hero-sub">From high-converting ads to cinematic storytelling, we help brands communicate with impact in the digital world.</p>
                         </div>
 
-                        <div class="hero-plate">
-                            <p class="plate-mark"><span class="brand-ai">ai</span><span class="brand-zap">ZAP</span> Creatives</p>
-                            <div class="plate-line"></div>
-                            <div class="plate-stat">
-                                <span class="plate-num">120+</span>
-                                <span class="plate-label">Campaigns Shipped</span>
-                            </div>
-                            <div class="plate-stat">
-                                <span class="plate-num">4.9/5</span>
-                                <span class="plate-label">Avg. Client Rating</span>
-                            </div>
-                            <div class="plate-stat">
-                                <span class="plate-num">24hr</span>
-                                <span class="plate-label">Avg. First Draft</span>
-                            </div>
+                        <div class="hero-panels">
+                            <div class="hero-panel-media" style="background-image:url('{{ asset('about-us.png') }}')"></div>
                         </div>
                     </section>
 
-                    {{-- ============ OUR MISSION ============ --}}
-                    <section class="services-strip">
-                        <div class="section-header-row">
-                            <div>
-                                <p class="section-eyebrow">Our Mission</p>
-                                <h2 class="section-title">We Turn AI Ideas Into Unforgettable Stories</h2>
-                            </div>
-                            <p class="section-copy">AI Creatives blends strategic insight, cinematic visuals, and rapid execution to help brands launch campaigns that feel premium and perform fast.</p>
-                        </div>
-
+                    {{-- ============ WHY WE'RE DIFFERENT ============ --}}
+                    <section class="features-section">
                         <div class="value-grid">
                             @foreach ([
-                                ['title' => 'Strategy & Concept', 'text' => 'Build campaign concepts grounded in business goals, audience insights, and brand voice.', 'key' => 'strategy-concept'],
-                                ['title' => 'AI Video Production', 'text' => 'Create next-gen commercial ads, trailers, and social films using AI-powered workflows.'],
-                                ['title' => 'Brand Storytelling', 'text' => 'Craft memorable narratives that connect emotionally across every channel.'],
-                                ['title' => 'Digital Growth', 'text' => 'Launch performance-driven content that delivers reach, engagement, and conversions.'],
-                            ] as $index => $value)
-                                @php
-                                    $sectionVideo = isset($value['key']) ? ($sectionVideos[$value['key']] ?? null) : null;
-                                @endphp
-                                <div class="value-card{{ $sectionVideo ? ' value-card--feature' : '' }}">
-                                        @if ($sectionVideo && $sectionVideo->video_url)
-                                        <video
-                                            class="value-video"
-                                            src="{{ $sectionVideo->video_url }}"
-                                            poster="{{ $sectionVideo->poster_url }}"
-                                            autoplay
-                                            muted
-                                            loop
-                                            playsinline
-                                            preload="metadata"
-                                        ></video>
-                                        <div class="value-video-overlay"></div>
-                                        <button type="button" class="expand-btn" aria-label="Expand video">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                                <path d="M3 9V3h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M21 15v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M21 3l-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M3 21l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-                                        </button>
-                                    @endif
-                                    <span class="value-index">{{ sprintf('%02d', $index + 1) }}</span>
-                                    <p class="value-title">{{ $value['title'] }}</p>
-                                    <p class="value-text">{{ $value['text'] }}</p>
+                                [
+                                    'icon' => '<path d="M9 4a3 3 0 00-3 3v1a3 3 0 00-2 2.8V13a3 3 0 002 2.8v1A3 3 0 009 20h1V4H9z"/><path d="M15 4a3 3 0 013 3v1a3 3 0 012 2.8V13a3 3 0 01-2 2.8v1a3 3 0 01-3 3.2h-1V4h1z"/><path d="M9 8h2M9 12h2M9 16h2M13 8h2M13 12h2M13 16h2"/>',
+                                    'title' => 'AI-Powered Creativity',
+                                    'text' => 'We leverage cutting-edge AI tools to produce high-quality content faster, smarter, and better.',
+                                ],
+                                [
+                                    'icon' => '<circle cx="8.5" cy="8" r="3"/><path d="M2.5 19c0-3 2.7-5 6-5s6 2 6 5"/><circle cx="16.5" cy="9" r="2.4"/><path d="M14.5 19c.3-2.2 2-4 4-4.3"/>',
+                                    'title' => "Human Touch, Real Impact",
+                                    'text' => 'Behind every AI-generated piece is a team of storytellers, editors, and designers who care.',
+                                ],
+                                [
+                                    'icon' => '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>',
+                                    'title' => 'Focused On Results',
+                                    'text' => "We create content that doesn't just look good — it works. Built for engagement, conversions, and growth.",
+                                ],
+                                [
+                                    'icon' => '<path d="M12 2c3 2 5 6 5 10 0 2-1 4-2 5l-1 3-2-2-2 2-1-3c-1-1-2-3-2-5 0-4 2-8 5-10z"/><circle cx="12" cy="10" r="1.6"/><path d="M9 17l-2 3M15 17l2 3"/>',
+                                    'title' => 'Built For The Future',
+                                    'text' => 'We stay ahead of trends and technology so your brand always stays one step ahead.',
+                                ],
+                            ] as $feature)
+                                <div class="value-card">
+                                    <div class="value-icon">
+                                        <svg viewBox="0 0 24 24">{!! $feature['icon'] !!}</svg>
+                                    </div>
+                                    <p class="value-title">{{ $feature['title'] }}</p>
+                                    <p class="value-text">{{ $feature['text'] }}</p>
                                 </div>
                             @endforeach
                         </div>
                     </section>
 
-                    {{-- ============ WHY CLIENTS CHOOSE US ============ --}}
-                    <section class="reasons-section">
-                        <div class="reasons-layout">
-                            <div class="reasons-list">
+                    {{-- ============ NUMBERS THAT TELL OUR STORY ============ --}}
+                    <section class="impact-section">
+                        <div class="impact-panel">
+                            <div class="impact-intro">
+                                <p class="section-eyebrow">Our Impact</p>
+                                <h2>Numbers That<br>Tell Our Story</h2>
+                            </div>
+
+                            <div class="impact-stats">
                                 @foreach ([
-                                    ['title' => 'Fast Turnarounds', 'subtitle' => 'High-quality content ready in days, not weeks.'],
-                                    ['title' => 'Creative Control', 'subtitle' => 'Flexible iterations until the story feels right.'],
-                                    ['title' => 'Data-Led Decisions', 'subtitle' => 'Content optimized for both brand and performance.'],
-                                    ['title' => 'Growth-Focused', 'subtitle' => 'Every asset is designed to move audiences and sales.'],
-                                ] as $index => $item)
-                                    <div class="reason-row">
-                                        <span class="reason-num">{{ sprintf('%02d', $index + 1) }}</span>
-                                        <div class="reason-copy">
-                                            <h3>{{ $item['title'] }}</h3>
-                                            <p>{{ $item['subtitle'] }}</p>
+                                    [
+                                        'icon' => '<rect x="3" y="3" width="18" height="18" rx="4"/><path d="M10 8.5l6 3.5-6 3.5v-7z"/>',
+                                        'num' => '500+',
+                                        'label' => 'Projects Completed',
+                                        'desc' => 'Across different industries and platforms',
+                                    ],
+                                    [
+                                        'icon' => '<circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M2.5 19c0-3 2.7-5 5.5-5s5.5 2 5.5 5M10.5 19c0-2.8 2.4-5 5.5-5s5.5 2.2 5.5 5"/>',
+                                        'num' => '100+',
+                                        'label' => 'Happy Clients',
+                                        'desc' => 'Brands that trust us with their story',
+                                    ],
+                                    [
+                                        'icon' => '<path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="3"/>',
+                                        'num' => '50M+',
+                                        'label' => 'Views Generated',
+                                        'desc' => 'Content that connects and gets results',
+                                    ],
+                                    [
+                                        'icon' => '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 4 5.8 4 9s-1.5 6.5-4 9c-2.5-2.5-4-5.8-4-9s1.5-6.5 4-9z"/>',
+                                        'num' => 'Global',
+                                        'label' => 'Client Reach',
+                                        'desc' => 'Working with brands around the world',
+                                    ],
+                                ] as $stat)
+                                    <div class="impact-stat">
+                                        <div class="impact-icon">
+                                            <svg viewBox="0 0 24 24">{!! $stat['icon'] !!}</svg>
                                         </div>
-                                        <span class="reason-check">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M5 12.5l4.5 4.5L19 7"/>
-                                            </svg>
-                                        </span>
+                                        <span class="impact-num">{{ $stat['num'] }}</span>
+                                        <span class="impact-label">{{ $stat['label'] }}</span>
+                                        <p class="impact-desc">{{ $stat['desc'] }}</p>
                                     </div>
                                 @endforeach
                             </div>
-
-                            <div class="reasons-intro">
-                                <span class="reasons-tag">The aiZAP Difference</span>
-                                <h2>Why Clients Choose Us</h2>
-                                <p class="reasons-lead">Four things that hold true on every project we take on, from the first call to final delivery.</p>
-
-                                <div class="reasons-video">
-                                    @php $reasonsVideo = $sectionVideos['why-clients-choose-us'] ?? null; @endphp
-                                    @if ($reasonsVideo && $reasonsVideo->video_url)
-                                        <video
-                                            src="{{ $reasonsVideo->video_url }}"
-                                            poster="{{ $reasonsVideo->poster_url }}"
-                                            autoplay
-                                            muted
-                                            loop
-                                            playsinline
-                                            preload="metadata"
-                                        ></video>
-                                    @else
-                                        <video
-                                            src="{{ asset('videos/why-clients-choose-us.mp4') }}"
-                                            poster="{{ asset('images/why-clients-choose-us-poster.jpg') }}"
-                                            autoplay
-                                            muted
-                                            loop
-                                            playsinline
-                                            preload="metadata"
-                                        ></video>
-                                    @endif
-                                </div>
-                            </div>
                         </div>
                     </section>
+
                 </main>
                 @include('partials.footer')
 

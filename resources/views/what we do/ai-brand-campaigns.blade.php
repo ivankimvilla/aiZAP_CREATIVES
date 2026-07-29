@@ -6,8 +6,6 @@
         <title>AI Brand Campaigns - Aizap Creatives Studios</title>
        
         <link rel="stylesheet" href="{{ asset('css/what we do/ai-brand-campaigns.css') }}" />
-        <link rel="stylesheet" href="{{ asset('css/what-we-do.css') }}" />
-        <link rel="stylesheet" href="{{ asset('css/footer.css') }}" />
     </head>
     <body class="page-main antialiased">
         <div class="container">

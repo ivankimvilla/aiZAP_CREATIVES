@@ -5,8 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>AI Storytelling / Drama - Aizap Creatives Studios</title>
         <link rel="stylesheet" href="{{ asset('css/what we do/ai-storytelling-drama.css') }}" />
-        <link rel="stylesheet" href="{{ asset('css/what-we-do.css') }}" />     
-        <link rel="stylesheet" href="{{ asset('css/footer.css') }}" />
     </head>
     <body class="page-main antialiased">
         <div class="container">

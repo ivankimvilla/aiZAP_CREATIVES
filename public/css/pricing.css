@@ -9,12 +9,38 @@
 /* ---------- Hero: copy left, pricing gallery right ---------- */
 .page-hero {
     display: grid;
-    grid-template-columns: 0.9fr 1.1fr;
+    grid-template-columns: 0.7fr 1.3fr;
     align-items: center;
     gap: 48px;
     text-align: left;
     max-width: none;
     margin: 0 0 12px;
+    padding-top: 0;
+}
+
+.pricing-page .page-main {
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.pricing-page .page-hero {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+.pricing-page .hero-media,
+.pricing-page .hero-panels {
+    margin-top: 0 !important;
+}
+
+.pricing-page .hero-copy,
+.pricing-page .eyebrow,
+.pricing-page .hero-title {
+    margin-top: 0 !important;
+}
+
+.pricing-page .container {
+    padding-top: 0 !important;
 }
 
 .page-hero .hero-copy {
@@ -25,6 +51,8 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    font-size: 14px;
+    letter-spacing: 0.25em;
 }
 
 .page-hero .hero-title,
@@ -32,6 +60,16 @@
     text-align: left;
     margin-left: 0;
     margin-right: 0;
+}
+
+.page-hero .hero-title {
+    font-size: 56px;
+    line-height: 1.1;
+}
+
+.page-hero .hero-sub {
+    font-size: 19px;
+    line-height: 1.6;
 }
 
 @media (max-width: 1024px) {
@@ -45,7 +83,7 @@
     min-width: 0;
 }
 
-/* ---- Horizontally-scrolling pricing gallery (used in the hero) ---- */
+/* ---- Full-bleed diagonal image strip (3 panels, edge-to-edge) ---- */
 .process-media-label {
     display: flex;
     align-items: center;
@@ -66,65 +104,66 @@
 
 .process-scroll {
     display: flex;
-    align-items: center;
-    gap: 16px;
+    align-items: stretch;
+    gap: 0;
     overflow-x: auto;
-    scroll-snap-type: x proximity;
+    scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
-    padding-top: 18px;
-    padding-bottom: 18px;
-    margin: 0 -4px;
-    padding-left: 4px;
-    padding-right: 4px;
+    height: 480px;
+    margin: 0;
+    padding: 0;
     cursor: grab;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(247, 197, 32, 0.4) transparent;
-    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
-    mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+}
+
+.process-scroll::-webkit-scrollbar {
+    display: none;
 }
 
 .process-scroll:active {
     cursor: grabbing;
 }
 
-.process-scroll::-webkit-scrollbar {
-    height: 6px;
-}
-
-.process-scroll::-webkit-scrollbar-thumb {
-    background: rgba(247, 197, 32, 0.35);
-    border-radius: 999px;
-}
-
-.process-scroll::-webkit-scrollbar-track {
-    background: transparent;
-}
-
 @keyframes scroll-item-in {
     from {
         opacity: 0;
-        transform: translateX(24px) scale(0.96);
     }
 
     to {
         opacity: 1;
-        transform: translateX(0) scale(1);
     }
 }
 
 .process-scroll-item {
     position: relative;
-    flex: 0 0 auto;
-    width: 200px;
-    height: 260px;
-    border-radius: 18px;
+    flex: 1 0 34%;
+    min-width: 220px;
+    height: 100%;
     overflow: hidden;
     scroll-snap-align: start;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
-    transform-origin: center center;
-    transition: transform .6s var(--ease-smooth), box-shadow .6s var(--ease-smooth), filter .5s ease, z-index 0s;
-    animation: scroll-item-in .7s var(--ease-smooth) both;
-    will-change: transform;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: none;
+    transition: flex-grow .6s var(--ease-smooth);
+    animation: scroll-item-in .6s ease both;
+    will-change: flex-grow;
+    clip-path: polygon(22px 0, 100% 0, calc(100% - 22px) 100%, 0 100%);
+}
+
+.process-scroll-item:first-child {
+    clip-path: polygon(0 0, 100% 0, calc(100% - 22px) 100%, 0 100%);
+}
+
+.process-scroll-item:last-child {
+    clip-path: polygon(22px 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.process-scroll-item:not(:first-child) {
+    margin-left: -22px;
 }
 
 .process-scroll-item:nth-child(1) {
@@ -139,197 +178,68 @@
     animation-delay: .19s;
 }
 
-.process-scroll-item:nth-child(4) {
-    animation-delay: .26s;
-}
-
-.process-scroll-item:nth-child(5) {
-    animation-delay: .33s;
-}
-
 .process-scroll-item:hover {
-    transform: scale(1.12);
-    box-shadow: 0 30px 55px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(247, 197, 32, 0.4);
+    flex-grow: 1.6;
     z-index: 4;
 }
 
-.process-scroll-item img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform .6s var(--ease-smooth), filter .5s ease;
-}
-
-.process-scroll-item:hover img {
-    transform: scale(1.08);
-    filter: saturate(1.1) brightness(1.03);
-}
-
+/* Dark gradient overlay — same as the image's bottom fade */
 .process-scroll-item::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.65), transparent 58%);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.1) 55%, transparent 75%);
 }
 
-.process-scroll-number {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    z-index: 2;
-    background: var(--gold);
-    color: #0a0a0a;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    padding: 3px 9px;
-    border-radius: 6px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+/* ---- Suppress any numbered badges and captions on pricing-page panels ---- */
+.pricing-page .process-scroll-number,
+.pricing-page .process-scroll-info {
+    display: none !important;
 }
 
-.process-scroll-info {
-    position: absolute;
-    left: 14px;
-    right: 14px;
-    bottom: 12px;
-    z-index: 1;
-    transition: transform .4s var(--ease-smooth);
+/* ---- Always show panels sharp (no blur from process.css) ---- */
+.pricing-page .process-scroll-item,
+.pricing-page .process-scroll-item img {
+    filter: none !important;
+    -webkit-filter: none !important;
 }
 
-.process-scroll-item:hover .process-scroll-info {
-    transform: translateY(-3px);
-}
-
-.process-scroll-caption {
-    display: block;
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #fff;
-    margin-bottom: 4px;
-}
-
-.process-scroll-text {
-    display: block;
-    font-size: 10.5px;
-    line-height: 1.45;
-    color: rgba(255, 255, 255, 0.75);
-}
-
-/* The gallery's true center item — kept in sync with scroll position via JS.
-   Uses transform (not width/height) so enlarging never shifts sibling layout.
-   It also gently floats up and down while it holds the center spot. */
-.process-scroll-item.is-center {
-    z-index: 2;
-    box-shadow: 0 30px 65px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(247, 197, 32, 0.25);
-    animation: process-center-float 2.8s ease-in-out infinite;
-}
-
-@keyframes process-center-float {
-
-    0%,
-    100% {
-        transform: scale(1.2) translateY(0);
-    }
-
-    50% {
-        transform: scale(1.2) translateY(-10px);
-    }
-}
-
-.process-scroll-item.is-center .process-scroll-caption {
-    font-size: 14px;
-}
-
-.process-scroll-item.is-center .process-scroll-text {
-    font-size: 11.5px;
-}
-
-.process-scroll-item.is-center:hover {
-    animation-play-state: paused;
-    transform: scale(1.28) translateY(-10px);
-    z-index: 5;
-}
-
-/* Center scroll-hint arrow, echoing the drag indicator in the reference layout */
-.process-scroll-arrow {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 54px;
-    height: 54px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    z-index: 5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #0a0a0a;
-    background: rgba(255, 255, 255, 0.92);
-    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.4);
-    animation: process-arrow-pulse 2.4s ease-in-out infinite;
-    transition: transform .35s var(--ease-smooth), background .3s ease, opacity .35s ease;
-}
-
-.process-scroll-arrow svg {
-    width: 22px;
-    height: 22px;
-}
-
-.process-scroll-arrow:hover {
-    background: var(--gold);
-    transform: translate(-50%, -50%) scale(1.08);
-}
-
-.process-scroll-arrow.is-hidden {
-    opacity: 0;
-    pointer-events: none;
-    transform: translate(-50%, -50%) scale(0.85);
-}
-
-@keyframes process-arrow-pulse {
-
-    0%,
-    100% {
-        box-shadow: 0 16px 34px rgba(0, 0, 0, 0.4);
-    }
-
-    50% {
-        box-shadow: 0 16px 34px rgba(247, 197, 32, 0.45);
-    }
+.pricing-page .process-scroll-item:hover,
+.pricing-page .process-scroll-item.is-center {
+    filter: none !important;
+    -webkit-filter: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .process-scroll-arrow {
-        animation: none;
-    }
-
     .process-scroll-item {
         animation: none;
-    }
-
-    .process-scroll-item.is-center {
-        animation: none;
-        transform: scale(1.2);
     }
 }
 
 @media (max-width: 640px) {
-    .process-scroll-arrow {
-        width: 44px;
-        height: 44px;
+    .process-scroll {
+        height: 400px;
     }
 
     .process-scroll-item {
-        width: 170px;
-        height: 220px;
+        min-width: 160px;
+        clip-path: polygon(14px 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
+    }
+
+    .process-scroll-item:first-child {
+        clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
+    }
+
+    .process-scroll-item:last-child {
+        clip-path: polygon(14px 0, 100% 0, 100% 100%, 0 100%);
+    }
+
+    .process-scroll-item:not(:first-child) {
+        margin-left: -14px;
     }
 }
 
+/* ---- Heading glow ---- */
 .pricing-heading-glow {
     position: relative;
     padding: 10px 0 6px;
@@ -361,14 +271,21 @@
     color: var(--gold);
 }
 
+/* ---------- Pricing cards (4-up service grid) ---------- */
 .pricing-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 22px;
     margin-top: 34px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1180px) {
+    .pricing-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
     .pricing-grid {
         grid-template-columns: 1fr;
     }
@@ -411,46 +328,56 @@
     box-shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
 }
 
-.pricing-card.featured {
-    border-color: rgba(247, 197, 32, 0.55);
-    background: rgba(247, 197, 32, 0.045);
+/* ---- Icon ---- */
+.pricing-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    width: 68px;
+    height: 68px;
+    margin-bottom: 20px;
+    color: var(--gold);
 }
 
-.pricing-card.featured:hover {
-    border-color: rgba(247, 197, 32, 0.7);
-    box-shadow: 0 26px 56px rgba(247, 197, 32, 0.14);
+.pricing-card-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: 1.3;
 }
 
-.pricing-badge {
-    position: absolute;
-    top: 18px;
-    right: 20px;
-    z-index: 3;
-    background: linear-gradient(135deg, #f8cf56, var(--gold));
-    color: #0a0a0a;
-    font-size: 10px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    padding: 6px 14px;
-    border-radius: 999px;
-    box-shadow: 0 10px 24px rgba(247, 197, 32, 0.24);
-}
-
-.pricing-card h3 {
-    font-size: 18px;
+/* ---- Two-tone stacked title ---- */
+.pricing-card-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 17px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.02em;
+    line-height: 1.3;
     color: #fff;
+    text-align: center;
+}
+
+.pricing-card-title .gold {
+    color: var(--gold);
 }
 
 .pricing-card>p {
     font-size: 13px;
     line-height: 1.6;
     color: #94a3b8;
-    margin-top: 8px;
-    margin-bottom: 24px;
+    margin-top: 10px;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+.pricing-card-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 20px 0;
 }
 
 .pricing-list {
@@ -496,20 +423,17 @@
 .pricing-card .btn {
     margin-top: auto;
     width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     transition: transform .3s var(--ease-smooth), box-shadow .3s ease, border-color .3s ease, background .3s ease, color .3s ease;
 }
 
 .pricing-card .btn-outline {
-    border-color: rgba(247, 197, 32, 0.38);
-    color: #f8cf56;
-    background: rgba(247, 197, 32, 0.08);
-}
-
-.pricing-card .btn-primary {
-    background: linear-gradient(135deg, #f8cf56, var(--gold));
-    color: #0a0a0a;
-    border-color: transparent;
-    box-shadow: 0 10px 24px rgba(247, 197, 32, 0.2);
+    border-color: rgba(255, 255, 255, 0.16);
+    color: #e2e8f0;
+    background: rgba(255, 255, 255, 0.03);
 }
 
 .pricing-card:hover .btn,
@@ -517,12 +441,6 @@
 .pricing-card.is-selected .btn {
     transform: translateY(-2px);
     box-shadow: 0 12px 24px rgba(247, 197, 32, 0.16);
-}
-
-.pricing-card .btn-outline {
-    border-color: rgba(255, 255, 255, 0.16);
-    color: #e2e8f0;
-    background: rgba(255, 255, 255, 0.03);
 }
 
 .pricing-card:hover .btn-outline,
@@ -546,14 +464,16 @@
     box-shadow: 0 20px 46px rgba(247, 197, 32, 0.14);
 }
 
-/* ---------- Stats bar: extra breathing room on this page ---------- */
-.projects-section+.stats-bar {
-    margin-top: 40px;
-    margin-bottom: 40px;
+/* ---- Arrow glyph used on card + perks-bar buttons ---- */
+.icon-arrow {
+    display: inline-flex;
+    font-size: 0.95em;
+    line-height: 1;
+    transition: transform .3s var(--ease-smooth);
 }
 
-.stats-bar-inner {
-    padding: 40px 0;
+.btn:hover .icon-arrow {
+    transform: translate(2px, -2px);
 }
 
 /* ============================================================
@@ -685,6 +605,12 @@
 .summary-note {
     font-size: 13px;
     line-height: 1.6;
+    color: #94a3b8;
+    margin: 0;
+}
+
+.summary-subtitle {
+    font-size: 13.5px;
     color: #94a3b8;
     margin: 0;
 }
@@ -880,7 +806,123 @@
 }
 
 /* ============================================================
-   Pricing success toast — styled to match .contact-toast
+   Perks bar (Fast Turnaround / Premium Quality / Commercial Use /
+   Dedicated Support + free-quote CTAs)
+   ============================================================ */
+
+.projects-section+.pricing-perks-bar {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.pricing-perks-bar {
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.perks-bar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    padding: 30px 36px;
+    flex-wrap: wrap;
+}
+
+.perks-grid {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    gap: 30px;
+    flex: 1 1 640px;
+}
+
+.perk-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.perk-icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-top: 2px;
+    color: var(--gold);
+}
+
+.perk-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: 1.7;
+}
+
+.perk-copy h3 {
+    font-size: 13.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #fff;
+    margin: 0 0 4px;
+}
+
+.perk-copy p {
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: #94a3b8;
+    margin: 0;
+    max-width: 190px;
+}
+
+.perks-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.perks-cta .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+@media (max-width: 1180px) {
+    .perks-grid {
+        grid-template-columns: repeat(2, auto);
+    }
+}
+
+@media (max-width: 640px) {
+    .perks-bar-inner {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 26px 22px;
+    }
+
+    .perks-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .perks-cta {
+        flex-direction: column;
+    }
+
+    .perks-cta .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ============================================================
+   Pricing success toast
    ============================================================ */
 .pricing-toast {
     position: fixed;

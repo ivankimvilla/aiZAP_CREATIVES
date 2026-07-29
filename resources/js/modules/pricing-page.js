@@ -1,4 +1,4 @@
-function initPricingPage() {
+export function initPricingPage() {
     if (!isPricingPage) return;
 
     const glow = document.querySelector('.pricing-heading-glow');

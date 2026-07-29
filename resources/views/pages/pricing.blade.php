@@ -18,8 +18,6 @@
             <link rel="stylesheet" href="{{ asset('css/pages-shared.css') }}" />
             <link rel="stylesheet" href="{{ asset('css/process.css') }}" />
             <link rel="stylesheet" href="{{ asset('css/pricing.css') }}" />
-             <link rel="stylesheet" href="{{ asset('css/footer.css') }}" />
-            <link rel="stylesheet" href="{{ asset('css/button.css') }}" />
         @endif
     </head>
     <body class="home-page-page pricing-page antialiased">
@@ -31,79 +29,128 @@
                     <section class="page-hero">
                         <div class="hero-copy">
                             <p class="eyebrow">Pricing</p>
-                            <h1 class="hero-title">Flexible <span class="gold">Plans</span></h1>
-                            <p class="hero-sub">Explore our tailored pricing options for AI-powered campaigns, creative production, and ongoing content strategy.</p>
+                            <h1 class="hero-title">Flexible <span class="gold">Pricing</span></h1>
+                            <p class="hero-sub">Every project is unique. We create custom AI videos tailored to your vision, timeline, and campaign needs.</p>
                         </div>
 
                         <div class="hero-media">
-                            <div class="process-media-label">
-                                <span>Pick Your Package</span>
-                            </div>
-
-                            @php
-                                $pricingGallery = [
-                                    ['image' => 'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=600&q=80', 'number' => '01', 'caption' => 'Starter', 'text' => 'A focused kickoff for a single campaign.'],
-                                    ['image' => 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80', 'number' => '02', 'caption' => 'Growth', 'text' => 'Ongoing production for scaling brands.'],
-                                    ['image' => 'https://images.unsplash.com/photo-1573497491208-6b1acb260507?auto=format&fit=crop&w=600&q=80', 'number' => '03', 'caption' => 'Premium', 'text' => 'Full-scale support for major launches.'],
-                                    ['image' => 'https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=600&q=80', 'number' => '04', 'caption' => 'Custom', 'text' => 'Pricing shaped around your roadmap.'],
-                                    ['image' => 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80', 'number' => '05', 'caption' => 'Support', 'text' => 'Fast, dedicated help along the way.'],
-                                ];
-                            @endphp
-
-                            <div class="process-scroll-wrap">
-                                <div class="process-scroll">
-                                    @foreach ($pricingGallery as $shot)
-                                        <div class="process-scroll-item">
-                                            <img src="{{ $shot['image'] }}" alt="{{ $shot['caption'] }}" loading="lazy" />
-                                            <span class="process-scroll-number">{{ $shot['number'] }}</span>
-                                            <div class="process-scroll-info">
-                                                <span class="process-scroll-caption">{{ $shot['caption'] }}</span>
-                                                <span class="process-scroll-text">{{ $shot['text'] }}</span>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-
-                                <button type="button" class="process-scroll-arrow" aria-label="Scroll gallery">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M7 8l-4 4 4 4" />
-                                        <path d="M17 8l4 4-4 4" />
-                                        <path d="M3 12h18" />
-                                    </svg>
-                                </button>
+                            <div class="hero-panels">
+                                <div class="hero-panel-media" style="background-image:url('{{ asset('home-bg.png') }}')"></div>
                             </div>
                         </div>
                     </section>
 
                     <section class="projects-section">
-                        <div class="pricing-heading-glow">
-                            <p class="section-eyebrow">Choose A Plan</p>
-                            <h2 class="section-title">Pricing built around your campaign size</h2>
-                        </div>
+                        @php
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Plan icons
+                            |--------------------------------------------------------------------------
+                            | Clean 24x24 line icons, consistent 1.6 stroke weight, rounded caps/joins,
+                            | so every icon reads at the same visual size/weight inside the pricing-card
+                            | icon badge (see .pricing-card-icon in pricing.css).
+                            */
+                            $planIcons = [
+                                // AI Commercial Ads — clapperboard with play triangle
+                                'film' => <<<'SVG'
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 9.7 4.7 4.3a1 1 0 0 1 1.2-.7l12.9 3a1 1 0 0 1 .8 1.1l-.8 3"/>
+    <path d="m8.6 4.6 2.7 4.9M14.2 5.9l2.7 4.9"/>
+    <rect x="3" y="9.7" width="18" height="10" rx="1.6"/>
+    <path d="M10.4 13.3v3.6l3.4-1.8z"/>
+</svg>
+SVG,
+                                // Product Advertising — tote bag with plus
+                                'bag' => <<<'SVG'
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 8V6.5a3 3 0 0 1 6 0V8"/>
+    <path d="M6.4 8h11.2l-1 12.1a2 2 0 0 1-2 1.9H9.4a2 2 0 0 1-2-1.9z"/>
+    <path d="M12 11.2v3.6M10.2 13h3.6"/>
+</svg>
+SVG,
+                                // Storytelling & Short Films — comedy/drama masks
+                                'masks' => <<<'SVG'
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="9" cy="14" r="5.3"/>
+    <circle cx="15" cy="8.5" r="5.3"/>
+    <circle cx="7.3" cy="12.8" r=".55" fill="currentColor" stroke="none"/>
+    <circle cx="10.7" cy="12.8" r=".55" fill="currentColor" stroke="none"/>
+    <path d="M7.3 15q1.7 1.6 3.4 0"/>
+    <circle cx="13.3" cy="7.3" r=".55" fill="currentColor" stroke="none"/>
+    <circle cx="16.7" cy="7.3" r=".55" fill="currentColor" stroke="none"/>
+    <path d="M13.3 10.3q1.7 -1.6 3.4 0"/>
+</svg>
+SVG,
+                                // Custom Projects — diagonal pencil
+                                'pencil' => <<<'SVG'
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m14.6 3.9 5.5 5.5L9.4 20.1H3.9v-5.5z"/>
+    <path d="m12.8 5.7 5.5 5.5"/>
+</svg>
+SVG,
+                            ];
+
+                            $plans = [
+                                [
+                                    'title' => 'AI Commercial Ads',
+                                    'title_top' => 'AI Commercial',
+                                    'title_bottom' => 'Ads',
+                                    'subtitle' => 'High-converting cinematic advertisements for brands.',
+                                    'items' => ['30-60 sec AI commercial', 'Script assistance', 'Cinematic quality', 'Fast turnaround', 'Multiple formats', 'Commercial use'],
+                                    'cta' => 'Request A Quote',
+                                    'icon' => $planIcons['film'],
+                                ],
+                                [
+                                    'title' => 'Product Advertising',
+                                    'title_top' => 'Product',
+                                    'title_bottom' => 'Advertising',
+                                    'subtitle' => 'Showcase your product with premium AI visuals.',
+                                    'items' => ['Product-focused videos', 'Social media ready', 'Multiple aspect ratios', 'High-quality visuals', 'Engaging storytelling', 'Commercial use'],
+                                    'cta' => 'Request A Quote',
+                                    'icon' => $planIcons['bag'],
+                                ],
+                                [
+                                    'title' => 'Storytelling & Short Films',
+                                    'title_top' => 'Storytelling &',
+                                    'title_bottom' => 'Short Films',
+                                    'subtitle' => 'Emotional AI films that connect with audiences.',
+                                    'items' => ['Story development', 'Cinematic scenes', 'Character consistency', 'Creative direction', 'Background score', 'Multiple revisions'],
+                                    'cta' => 'Request A Quote',
+                                    'icon' => $planIcons['masks'],
+                                ],
+                                [
+                                    'title' => 'Custom Projects',
+                                    'title_top' => 'Custom',
+                                    'title_bottom' => 'Projects',
+                                    'subtitle' => "Need something unique? We'll build it together.",
+                                    'items' => ['Brand campaigns', 'Music videos', 'Explainer videos', 'Social media content', 'Creative concepts', 'And more'],
+                                    'cta' => "Let's Talk",
+                                    'icon' => $planIcons['pencil'],
+                                ],
+                            ];
+
+                            $plansAssoc = collect($plans)->keyBy('title')->toArray();
+                        @endphp
 
                         <div class="pricing-grid">
-                            @php
-                                $plans = [
-                                    ['title' => 'Starter', 'subtitle' => 'For small brands and launch campaigns', 'items' => ['1 concept', '1 AI video', '1 platform-ready format', '2 revisions'], 'featured' => false],
-                                    ['title' => 'Growth', 'subtitle' => 'For growing brands and recurring campaigns', 'items' => ['3 concepts', '2 AI videos', 'Multi-format delivery', '4 revisions'], 'featured' => true],
-                                    ['title' => 'Premium', 'subtitle' => 'For full-scale product launches', 'items' => ['5 concepts', '5 AI videos', 'Campaign asset suite', 'Unlimited revisions'], 'featured' => false],
-                                ];
-                                $plansAssoc = collect($plans)->keyBy('title')->map(function($v){ return $v; })->toArray();
-                            @endphp
-
                             @foreach ($plans as $plan)
-                                <article class="pricing-card {{ $plan['featured'] ? 'featured' : '' }}">
-                                    @if ($plan['featured'])
-                                        <span class="pricing-badge">Most Popular</span>
-                                    @endif
-                                    <h3>{{ $plan['title'] }}</h3>
+                                <article class="pricing-card">
+                                    <span class="pricing-card-icon">{!! $plan['icon'] !!}</span>
+                                    <h3 class="pricing-card-title">
+                                        <span>{{ $plan['title_top'] }}</span>
+                                        <span class="gold">{{ $plan['title_bottom'] }}</span>
+                                    </h3>
                                     <p>{{ $plan['subtitle'] }}</p>
+                                    <div class="pricing-card-divider"></div>
                                     <ul class="pricing-list">
                                         @foreach ($plan['items'] as $line)
                                             <li>{{ $line }}</li>
                                         @endforeach
                                     </ul>
-                                    <button type="button" class="btn btn-outline pricing-select-button" data-plan="{{ $plan['title'] }}" aria-pressed="false">Select</button>
+                                    <button type="button" class="btn btn-outline pricing-select-button" data-plan="{{ $plan['title'] }}" aria-pressed="false">
+                                        {{ $plan['cta'] }}
+                                        <span class="icon-arrow" aria-hidden="true">&#8599;</span>
+                                    </button>
                                 </article>
                             @endforeach
                         </div>
@@ -116,11 +163,11 @@
                                             <div class="pricing-inquiry-header">
                                                 <p class="section-eyebrow pricing-selected-label">Selected Package</p>
                                                 <h2 class="section-title">{{ old('package') ?: 'Choose a package to get started' }}</h2>
-                                                <p class="summary-subtitle">@if(old('package') && isset($plansAssoc[old('package')])) {{ $plansAssoc[old('package')]['subtitle'] }} @else Submit your package request and we’ll respond with pricing details. @endif</p>
+                                                <p class="summary-subtitle">@if(old('package') && isset($plansAssoc[old('package')])) {{ $plansAssoc[old('package')]['subtitle'] }} @else Submit your package request and we'll respond with pricing details. @endif</p>
                                             </div>
 
                                             <div class="pricing-summary-body">
-                                                <p class="summary-note">We’ll review your needs and reply with a custom quote and next steps.</p>
+                                                <p class="summary-note">We'll review your needs and reply with a custom quote and next steps.</p>
                                                 <ul class="summary-features">
                                                     @if(old('package') && isset($plansAssoc[old('package')]))
                                                         @foreach($plansAssoc[old('package')]['items'] as $feat)
@@ -199,25 +246,46 @@
                             </div>
                     </section>
 
-                    <section class="stats-bar">
-                        <div class="stats-bar-inner">
-                            <div class="stats-grid">
-                                @foreach ([
-                                    ['value' => '3', 'label' => 'Package tiers'],
-                                    ['value' => '24h', 'label' => 'Fast response'],
-                                    ['value' => '100%', 'label' => 'Custom support available'],
-                                ] as $metric)
-                                    <div class="stat-item">
-                                        <p class="stat-value">{{ $metric['value'] }}</p>
-                                        <p class="stat-label">{{ $metric['label'] }}</p>
+                    @php
+                        $perkIcons = [
+                            'bolt' => <<<'SVG'
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 14h6L9.5 22 19.5 9h-6z"/></svg>
+SVG,
+                            'diamond' => <<<'SVG'
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.3 3h11.4l4.3 6-10 12-10-12z"/><path d="M2.6 9h18.8M9.3 3 7 9l5 12 5-12-2.3-6"/></svg>
+SVG,
+                            'shield' => <<<'SVG'
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v6c0 4.6 3 8.3 7 9.3 4-1 7-4.7 7-9.3V6z"/><path d="m9 12.2 2 2 4-4.2"/></svg>
+SVG,
+                            'headset' => <<<'SVG'
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13v-1.5a8 8 0 0 1 16 0V13"/><rect x="2.3" y="13" width="4.4" height="6.4" rx="1.6"/><rect x="17.3" y="13" width="4.4" height="6.4" rx="1.6"/><path d="M20 19.4v.8a2 2 0 0 1-2 2h-3.6"/></svg>
+SVG,
+                        ];
+
+                        $perks = [
+                            ['icon' => $perkIcons['bolt'], 'title' => 'Fast Turnaround', 'text' => 'Quick delivery without compromising quality.'],
+                            ['icon' => $perkIcons['diamond'], 'title' => 'Premium Quality', 'text' => 'Cinematic AI visuals that stand out.'],
+                            ['icon' => $perkIcons['shield'], 'title' => 'Commercial Use', 'text' => '100% safe for your brand and business.'],
+                            ['icon' => $perkIcons['headset'], 'title' => 'Dedicated Support', 'text' => "We're with you from concept to delivery."],
+                        ];
+                    @endphp
+
+                    <section class="pricing-perks-bar">
+                        <div class="perks-bar-inner">
+                            <div class="perks-grid">
+                                @foreach ($perks as $perk)
+                                    <div class="perk-item">
+                                        <span class="perk-icon">{!! $perk['icon'] !!}</span>
+                                        <div class="perk-copy">
+                                            <h3>{{ $perk['title'] }}</h3>
+                                            <p>{{ $perk['text'] }}</p>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
-                            <div class="stats-cta">
-                                <div>
-                                    <h3>Need a custom plan?</h3>
-                                    <p>We tailor pricing to your brand, timeline, and creative goals.</p>
-                                </div>
+
+                            <div class="perks-cta">
+                                @include('partials.book-call-button', ['class' => 'btn btn-outline', 'label' => 'Book A Consultation'])
                             </div>
                         </div>
                     </section>

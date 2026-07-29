@@ -1,11 +1,3 @@
-/* ============================================================
-   header.css
-   Shared header styles for all pages.
-   Classes are namespaced (site-header__*) so they can't collide
-   with unrelated rules in per-page stylesheets (home-page.css,
-   about-page.css, etc.) that are loaded alongside this file.
-   ============================================================ */
-
 .site-header {
     position: fixed;
     top: 0;
@@ -24,23 +16,22 @@
     border-radius: 0;
     background: rgba(0, 0, 0, 0.72);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-    overflow: hidden;
+    overflow: visible;
 }
 
-/* Logo/brand mark, sits on the left, sized to fit inside the header
-   regardless of the source image's native dimensions */
 .site-header__brand {
     display: flex;
     align-items: center;
     flex-shrink: 0;
     height: 100%;
     max-height: 100%;
+    margin-right: 56px;
 }
 
 .site-header__brand img {
-    height: 58px;
+    height: 168px;
     width: auto;
-    max-height: 92%;
+    max-height: none;
     object-fit: contain;
     display: block;
 }
@@ -57,8 +48,6 @@
     color: var(--gold);
 }
 
-/* Nav is centered independently of the brand's width via absolute
-   positioning, so a wide logo never pushes it off-center */
 .site-header__nav {
     position: absolute;
     left: 50%;
@@ -102,7 +91,6 @@
     color: var(--gold);
 }
 
-/* Header button: keep color/border feedback, drop the hover lift/jump */
 .site-header .btn {
     background: transparent;
 }
@@ -116,23 +104,52 @@
     transform: none;
 }
 
-/* ============================================================
-   Logo/brand mark now lives inside .site-header as
-   .site-header__brand (see rules above) — this section
-   intentionally left as a marker in case any legacy pages
-   still reference the old .home-logo pattern.
-   ============================================================ */
+.site-header__toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    z-index: 1200;
+}
 
+.site-header__toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: #f4f5f5;
+    border-radius: 2px;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+}
 
-/* Give the page content room so it doesn't sit under the fixed header
-   (matches .site-header's fixed height) */
+.site-header__toggle:hover span {
+    background: #fff;
+}
+
+.site-header__toggle--open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.site-header__toggle--open span:nth-child(2) {
+    opacity: 0;
+}
+
+.site-header__toggle--open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
 body {
     padding-top: 64px;
 }
 
-/* Videos here are all autoplay/muted/loop, so the native centered
-   play-button overlay some browsers show by default is unnecessary
-   and gets hidden site-wide. */
 video::-webkit-media-controls-start-playback-button {
     display: none !important;
     -webkit-appearance: none;
@@ -143,8 +160,6 @@ video::-webkit-media-controls {
     display: none !important;
 }
 
-/* Chrome/Android renders a different overlay play button (separate
-   pseudo-element from Safari's) — hide that one too. */
 video::-internal-media-controls-overlay-play-button {
     display: none !important;
 }
@@ -153,20 +168,76 @@ video::-webkit-media-controls-overlay-play-button {
     display: none !important;
 }
 
-/* ===== Small screens ===== */
+@media (max-width: 900px) {
+    .site-header__toggle {
+        display: flex;
+    }
+
+    .site-header__nav {
+        position: fixed;
+        top: 64px;
+        left: 0;
+        right: 0;
+        transform: none;
+        max-width: 100%;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: 0;
+        max-height: calc(100vh - 64px);
+        overflow-y: auto;
+        background: rgba(0, 0, 0, 0.92);
+        backdrop-filter: blur(14px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s;
+    }
+
+    .site-header__nav--open {
+        visibility: visible;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0s;
+    }
+
+    .site-header__nav-link {
+        width: 100%;
+        padding: 14px 24px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .site-header__nav-link--active {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+}
+
 @media (max-width: 640px) {
     .site-header {
         top: 0;
         height: 56px;
-        padding: 0 20px;
+        padding: 0 16px;
+    }
+
+    body {
+        padding-top: 56px;
     }
 
     .site-header__nav {
-        gap: 18px;
-        max-width: calc(100% - 160px);
+        top: 56px;
+        max-height: calc(100vh - 56px);
+    }
+
+    .site-header__brand {
+        margin-right: 28px;
     }
 
     .site-header__brand img {
-        height: 50px;
+        height: 130px;
     }
 }

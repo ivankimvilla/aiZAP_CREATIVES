@@ -11,13 +11,9 @@
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/header.css', 'resources/css/home-page.css', 'resources/css/footer.css', 'resources/css/button.css', 'resources/css/process.css', 'resources/js/pages/process.js'])
             @else
-            <link rel="stylesheet" href="{{ asset('css/header.css') }}" />
-            <link rel="stylesheet" href="{{ asset('css/contact-drop-down.css') }}" />
             <link rel="stylesheet" href="{{ asset('css/home-page.css') }}" />
             <script type="module" src="{{ asset('js/app.js') }}"></script>
             <link rel="stylesheet" href="{{ asset('css/process.css') }}" />
-             <link rel="stylesheet" href="{{ asset('css/footer.css') }}" />
-            <link rel="stylesheet" href="{{ asset('css/button.css') }}" />
         @endif
     </head>
     <body class="home-page-page process-page antialiased">
@@ -26,108 +22,140 @@
                 @include('partials.header')
 
                 <main class="page-main">
-                    <section class="page-hero">
+                    <section class="hero-section">
                         <div class="hero-copy">
-                            <p class="eyebrow">Process</p>
-                            <h1 class="hero-title">Our <span class="gold">Workflow</span></h1>
-                            <p class="hero-sub">Discover how we move from concept to execution with AI-driven creative strategy, production, refinement, and delivery.</p>
+                            <p class="eyebrow">Our Process</p>
+                            <h1 class="hero-title">Our Process.<br /><span class="gold">Simple. Clear.</span><br />Powerful.</h1>
+                            <p class="hero-sub">Our proven process ensures every project is strategic, creative, and delivered with precision from concept to final cut.</p>
                         </div>
 
-                        <div class="hero-media">
-                            <div class="process-media-label">
-                                <span>Behind The Work</span>
-                            </div>
-
-                            @php
-                                $processGallery = [
-                                    ['image' => 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&q=80', 'number' => '01', 'caption' => 'Discovery', 'text' => 'We audit your brand, market, and audience.'],
-                                    ['image' => 'https://images.unsplash.com/photo-1522199755839-a2bacb67c546?auto=format&fit=crop&w=600&q=80', 'number' => '02', 'caption' => 'Concept', 'text' => 'We create bold story ideas that move attention.'],
-                                    ['image' => 'https://images.unsplash.com/photo-1492724441997-5dc865305da7?auto=format&fit=crop&w=600&q=80', 'number' => '03', 'caption' => 'Production', 'text' => 'We build visuals and video with an AI workflow.'],
-                                    ['image' => 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=600&q=80', 'number' => '04', 'caption' => 'Refinement', 'text' => 'We polish and test every asset for impact.'],
-                                    ['image' => 'https://images.unsplash.com/photo-1533750349088-cd871a92f312?auto=format&fit=crop&w=600&q=80', 'number' => '05', 'caption' => 'Launch', 'text' => 'We deploy the work and measure results.'],
-                                ];
-                            @endphp
-
-                            <div class="process-scroll-wrap">
-                                <div class="process-scroll">
-                                    @foreach ($processGallery as $shot)
-                                        <div class="process-scroll-item">
-                                            <img src="{{ $shot['image'] }}" alt="{{ $shot['caption'] }}" loading="lazy" />
-                                            <span class="process-scroll-number">{{ $shot['number'] }}</span>
-                                            <div class="process-scroll-info">
-                                                <span class="process-scroll-caption">{{ $shot['caption'] }}</span>
-                                                <span class="process-scroll-text">{{ $shot['text'] }}</span>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-
-                                <button type="button" class="process-scroll-arrow" aria-label="Scroll gallery">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M7 8l-4 4 4 4" />
-                                        <path d="M17 8l4 4-4 4" />
-                                        <path d="M3 12h18" />
-                                    </svg>
-                                </button>
-                            </div>
+                        <div class="hero-panels">
+                            <div class="hero-panel-media" style="background-image:url('{{ asset('home-bg.png') }}')"></div>
                         </div>
                     </section>
 
-                    <section class="process-section">
-                        <p class="section-eyebrow">How We Deliver</p>
-                        <h2 class="section-title">A five-step process for creative clarity</h2>
+                    <section class="timeline-section">
+                        <p class="section-eyebrow">How We Work</p>
+                        <h2 class="section-title">A Clear Process. Exceptional Results.</h2>
+                        <p class="section-copy">From your idea to a powerful final video — we handle everything.</p>
 
-                        <div class="process-steps">
-                            @foreach ([
-                                ['number' => '1', 'title' => 'Discover', 'text' => 'We audit your brand, market, and audience for every campaign.'],
-                                ['number' => '2', 'title' => 'Concept', 'text' => 'We create bold story ideas that move attention and action.'],
-                                ['number' => '3', 'title' => 'Produce', 'text' => 'We develop visuals, video, and assets with AI performance workflow.'],
-                                ['number' => '4', 'title' => 'Refine', 'text' => 'We polish and test each asset to maximize impact.'],
-                                ['number' => '5', 'title' => 'Launch', 'text' => 'We deploy work across the right channels and measure results.'],
-                            ] as $step)
-                                <div class="process-step">
-                                    <div class="step-icon-wrap">
-                                        <div class="step-icon-box">
-                                            <svg viewBox="0 0 24 24"><path d="M12 2.5c2.5 2 4 5 4 9 0 2-.6 3.6-1.2 4.8L12 19l-2.8-2.7C8.6 15.1 8 13.5 8 11.5c0-4 1.5-7 4-9z"/></svg>
-                                        </div>
-                                        <span class="step-number">{{ $step['number'] }}</span>
-                                    </div>
-                                    <div class="step-content">
-                                        <h4>{{ $step['title'] }}</h4>
-                                        <p>{{ $step['text'] }}</p>
-                                    </div>
+                        @php
+                            $processSteps = [
+                                [
+                                    'icon' => 'phone',
+                                    'number' => '01',
+                                    'title' => 'Discovery Call',
+                                    'image' => 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=500&q=80',
+                                    'text' => 'We get to know your goals, audience, and vision.',
+                                    'checklist' => ['Project brief', 'Goal alignment', 'Scope & timeline'],
+                                ],
+                                [
+                                    'icon' => 'idea',
+                                    'number' => '02',
+                                    'title' => 'Strategy & Concept',
+                                    'image' => 'https://images.unsplash.com/photo-1558655146-9f40138edfeb?auto=format&fit=crop&w=500&q=80',
+                                    'text' => 'We craft the right strategy and creative concept.',
+                                    'checklist' => ['Market & audience insight', 'Creative direction', 'Concept approval'],
+                                ],
+                                [
+                                    'icon' => 'doc',
+                                    'number' => '03',
+                                    'title' => 'Script & Storyboard',
+                                    'image' => 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=500&q=80',
+                                    'text' => 'We write the script and visualize the entire story.',
+                                    'checklist' => ['Scriptwriting', 'Storyboard & shot list', 'Client approval'],
+                                ],
+                                [
+                                    'icon' => 'ai',
+                                    'number' => '04',
+                                    'title' => 'AI Production',
+                                    'image' => 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=500&q=80',
+                                    'text' => 'Our AI tools bring your story to life.',
+                                    'checklist' => ['AI image & video generation', 'Voiceover & SFX', 'Scene composition'],
+                                ],
+                                [
+                                    'icon' => 'edit',
+                                    'number' => '05',
+                                    'title' => 'Editing & Revisions',
+                                    'image' => 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=500&q=80',
+                                    'text' => 'We polish every frame until it\'s perfect.',
+                                    'checklist' => ['Editing & color grading', 'Sound design & music', 'Revisions included'],
+                                ],
+                                [
+                                    'icon' => 'send',
+                                    'number' => '06',
+                                    'title' => 'Final Delivery',
+                                    'image' => 'https://images.unsplash.com/photo-1533750349088-cd871a92f312?auto=format&fit=crop&w=500&q=80',
+                                    'text' => 'We deliver a high-impact final video, ready to perform.',
+                                    'checklist' => ['Final quality check', 'Formats for all platforms', 'On-time delivery'],
+                                ],
+                            ];
+                        @endphp
+
+                        <div class="timeline-row">
+                            @foreach ($processSteps as $step)
+                                <div class="timeline-icon">
+                                    @switch($step['icon'])
+                                        @case('phone')
+                                            <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.5.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.5.1.4 0 .8-.2 1.1L6.6 10.8z" /></svg>
+                                            @break
+                                        @case('idea')
+                                            <svg viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.9V16h5v-1.2c0-.8.4-1.5 1-1.9A6 6 0 0 0 12 2z" /></svg>
+                                            @break
+                                        @case('doc')
+                                            <svg viewBox="0 0 24 24"><path d="M7 2h7l4 4v16H7V2z" /><path d="M14 2v4h4M9 12h6M9 16h6M9 8h2" /></svg>
+                                            @break
+                                        @case('ai')
+                                            <svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.5" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.5 4.5l2 2M17.5 17.5l2 2M4.5 19.5l2-2M17.5 6.5l2-2" /></svg>
+                                            @break
+                                        @case('edit')
+                                            <svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5" /><circle cx="6" cy="18" r="2.5" /><path d="M20 4L8.5 12 20 20M8.5 12l3.5 0" /></svg>
+                                            @break
+                                        @case('send')
+                                            <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" /></svg>
+                                            @break
+                                    @endswitch
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <div class="timeline-cards">
+                            @foreach ($processSteps as $step)
+                                <div class="step-card">
+                                    <p class="step-card-number">{{ $step['number'] }}</p>
+                                    <h3 class="step-card-title">{{ $step['title'] }}</h3>
+                                    <div class="step-card-image" style="background-image:url('{{ $step['image'] }}')"></div>
+                                    <p class="step-card-text">{{ $step['text'] }}</p>
+                                    <ul class="step-checklist">
+                                        @foreach ($step['checklist'] as $item)
+                                            <li>
+                                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M8 12.5l2.5 2.5L16 9.5" /></svg>
+                                                <span>{{ $item }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
                                 </div>
                             @endforeach
                         </div>
                     </section>
 
-                    <section class="stats-bar">
-                        <div class="stats-bar-inner">
-                            <div class="stats-grid">
-                                @foreach ([
-                                    ['value' => '5', 'label' => 'Steps to launch'],
-                                    ['value' => '24h', 'label' => 'First draft cycle'],
-                                    ['value' => '100%', 'label' => 'Aim for impact'],
-                                ] as $metric)
-                                    <div class="stat-item">
-                                        <p class="stat-value">{{ $metric['value'] }}</p>
-                                        <p class="stat-label">{{ $metric['label'] }}</p>
-                                    </div>
-                                @endforeach
-                            </div>
-                            <div class="stats-cta">
-                                <div>
-                                    <h3>Want a smoother creative process?</h3>
-                                    <p>We keep entire campaigns on track with clear milestones and fast review loops.</p>
-                                </div>
+                    <section class="cta-bar">
+                        <div class="cta-bar-left">
+                            <svg viewBox="0 0 24 24" class="cta-bar-icon"><path d="M12 2c2.5 2 4 5 4 9 0 2-.6 3.6-1.2 4.8L12 19l-2.8-2.7C8.6 15.1 8 13.5 8 11.5c0-4 1.5-7 4-9z" /><circle cx="12" cy="10" r="1.6" /><path d="M9 17l-2 3M15 17l2 3" /></svg>
+                            <div>
+                                <h3>Ready to bring your story to life?</h3>
+                                <p>Let's create something extraordinary together.</p>
                             </div>
                         </div>
+                        <button type="button" class="btn btn-primary contact-toggle">
+                            Let's Work Together
+                            <svg viewBox="0 0 24 24" class="btn-arrow"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                        </button>
                     </section>
                 </main>
 
                 @include('partials.footer')
             </div>
         </div>
-
     </body>
 </html>

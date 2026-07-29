@@ -47,7 +47,47 @@
         .projects-by-category .project-thumb video,
         .projects-by-category .project-video,
         .projects-by-category .category-video{width:100% !important;height:100% !important;max-width:none !important;object-fit:cover !important;display:block !important;position:absolute;inset:0}
-        .projects-by-category .mute-toggle{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,0.6);color:#fff;border:none;padding:6px 8px;border-radius:8px;cursor:pointer;z-index:2}
+        .projects-by-category .expand-btn,
+        .projects-by-category .expand-toggle,
+        .projects-by-category .mute-toggle {
+            position:absolute;
+            z-index:3;
+            width:30px;
+            height:30px;
+            padding:0;
+            border-radius:50%;
+            border:1px solid rgba(255,255,255,0.4);
+            background:rgba(0,0,0,0.55);
+            color:#fff;
+            font-size:14px;
+            line-height:28px;
+            text-align:center;
+            cursor:pointer;
+            opacity:0;
+            pointer-events:none;
+            transition:background .2s ease,transform .2s ease,opacity .3s ease;
+        }
+        .projects-by-category .expand-btn,
+        .projects-by-category .expand-toggle {
+            right:8px;
+            top:8px;
+        }
+        .projects-by-category .mute-toggle {
+            right:8px;
+            bottom:8px;
+        }
+        .projects-by-category .project-thumb:hover .expand-btn,
+        .projects-by-category .project-thumb:hover .expand-toggle,
+        .projects-by-category .project-thumb:hover .mute-toggle {
+            opacity:1;
+            pointer-events:auto;
+        }
+        .projects-by-category .expand-btn:hover,
+        .projects-by-category .expand-toggle:hover,
+        .projects-by-category .mute-toggle:hover {
+            background:rgba(0,0,0,0.75);
+            transform:scale(1.08);
+        }
         .projects-by-category .audio-indicator{position:absolute;left:8px;top:8px;background:rgba(0,0,0,0.6);color:#fff;padding:5px 10px;border-radius:999px;font-size:11px;z-index:2}
         .projects-by-category h3{margin:10px 6px 4px;font-size:1rem}
         .projects-by-category p.muted{margin:0 6px 8px;color:#cfcfcf;font-size:0.90rem}
@@ -72,14 +112,7 @@
                         @if ($project->video_url)
                             <video class="category-video" poster="{{ $project->poster_url }}" autoplay muted loop playsinline preload="metadata" src="{{ $project->video_url }}"></video>
                             <div class="category-overlay"></div>
-                            <button type="button" class="expand-btn" aria-label="Expand video">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                    <path d="M3 9V3h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M21 15v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M21 3l-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M3 21l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </button>
+                            <button type="button" class="expand-btn expand-toggle" aria-label="Expand video">⛶</button>
                             <div class="category-label">{{ $categoryLabel }}</div>
                             <button type="button" class="mute-toggle" aria-label="Unmute">🔇</button>
                         @else

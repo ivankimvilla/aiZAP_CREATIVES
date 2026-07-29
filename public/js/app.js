@@ -59,10 +59,41 @@
             } catch (error) {
             }
 
+            const closeBtn = thumb.querySelector('.pf-video-close');
+
+            const setExpanded = () => {
+                const card = thumb.closest('.pf-project-card');
+                if (card) card.classList.add('is-video-expanded');
+                if (closeBtn) closeBtn.style.display = 'flex';
+            };
+
             const updateToggle = () => {
                 toggle.textContent = video.muted ? '🔇' : '🔊';
                 toggle.setAttribute('aria-label', video.muted ? 'Unmute' : 'Mute');
             };
+
+            const closeVideo = () => {
+                const card = thumb.closest('.pf-project-card');
+                if (card) card.classList.remove('is-video-expanded');
+                if (closeBtn) closeBtn.style.display = 'none';
+                try {
+                    video.pause();
+                    video.currentTime = 0;
+                } catch (error) {
+                }
+            };
+
+            if (closeBtn) {
+                closeBtn.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    closeVideo();
+                });
+            }
+
+            if (thumb) {
+                thumb.addEventListener('pointerdown', () => setExpanded(), { passive: true });
+            }
 
             const muteAllOtherPortfolioVideos = (activeVideo) => {
                 document.querySelectorAll('.project-thumb').forEach((otherThumb) => {
@@ -80,7 +111,7 @@
             };
 
             const loadVideoIfNeeded = () => {
-                if (video.dataset.videoLoaded === '1') return;
+                if (video.dataset.videoLoaded === '1' || video.dataset.videoClosed === '1') return;
                 video.dataset.videoLoaded = '1';
 
                 if (video.getAttribute('data-src')) {
@@ -450,7 +481,7 @@
         if (!dropdown || dropdown.dataset.contactBound === '1') return;
         dropdown.dataset.contactBound = '1';
 
-        const contactButton = dropdown.closest('.contact-dropdown-component')?.querySelector('.contact-float-button');
+        const contactButtons = document.querySelectorAll('.contact-toggle');
         const closeBtn = dropdown.querySelector('.contact-dropdown-close');
 
         const setOpen = (open) => {
@@ -484,7 +515,11 @@
             setOpen(!dropdown.classList.contains('open'));
         };
 
-        if (contactButton) contactButton.addEventListener('click', toggleDropdown);
+        if (contactButtons.length) {
+            contactButtons.forEach((button) => {
+                button.addEventListener('click', toggleDropdown);
+            });
+        }
         if (closeBtn) {
             closeBtn.addEventListener('click', (event) => {
                 event.preventDefault();
