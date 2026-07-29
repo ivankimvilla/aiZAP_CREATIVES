@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\SectionVideo;
@@ -43,6 +44,14 @@ Route::view('/what-we-do/scriptwriting', 'what we do.scriptwriting');
 Route::view('/what-we-do/storyboarding', 'what we do.storyboarding');
 Route::view('/what-we-do/video-editing', 'what we do.video-editing');
 Route::view('/what-we-do/content-strategy', 'what we do.content-strategy');
+
+Route::get('/storage/{path}', function ($path) {
+    $disk = Storage::disk('public');
+    if (! $disk->exists($path)) {
+        abort(404);
+    }
+    return response()->file($disk->path($path));
+})->where('path', '.*');
 
 Route::get('/portfolio', [ProjectController::class, 'index']);
 Route::view('/process', 'pages.process');
