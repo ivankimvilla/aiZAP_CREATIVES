@@ -37,6 +37,20 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
+        // Sanitize Vite manifest to avoid serving assets with hardcoded http:// URLs
+        // This helps when a manifest was built with an insecure base URL (old cache or misconfigured build).
+        $manifestPath = public_path('build/manifest.json');
+        if (file_exists($manifestPath) && filesize($manifestPath) > 0) {
+            try {
+                $manifest = file_get_contents($manifestPath);
+                if (strpos($manifest, 'http://') !== false) {
+                    $sanitized = str_replace('http://', '//', $manifest);
+                    @file_put_contents($manifestPath, $sanitized);
+                }
+            } catch (\Throwable $e) {
+                // Don't break boot if manifest can't be read/written.
+            }
+        }
         $adminUnreadMessagesCount = 0;
         $adminUnreadPackagesCount = 0;
 
