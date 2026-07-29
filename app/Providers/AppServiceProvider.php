@@ -6,6 +6,7 @@ use App\Models\ContactMessage;
 use App\Models\PackageRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,6 +25,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $appUrl = config('app.url');
+        $isHttpsUrl = is_string($appUrl) && str_starts_with($appUrl, 'https://');
+        $forwardedProto = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? null;
+
+        if ($isHttpsUrl || $forwardedProto === 'https' || $forwardedProto === 'https,http') {
+            URL::forceScheme('https');
+        }
+
+        if ($appUrl) {
+            URL::forceRootUrl($appUrl);
+        }
+
         $adminUnreadMessagesCount = 0;
         $adminUnreadPackagesCount = 0;
 

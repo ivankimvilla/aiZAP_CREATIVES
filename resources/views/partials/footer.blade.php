@@ -99,7 +99,7 @@
 </footer>
 @include('partials.video-modal')
 
-@if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+@if ((file_exists(public_path('build/manifest.json')) && filesize(public_path('build/manifest.json')) > 0) || file_exists(public_path('hot')))
     @vite(['resources/js/video-modal.js', 'resources/css/video-modal.css'])
 @else
     <script src="{{ asset('js/video-modal.js') }}"></script>
