@@ -37,6 +37,17 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
+        if ($request) {
+            $currentHost = $request->getSchemeAndHttpHost();
+            if (! empty($currentHost)) {
+                URL::forceRootUrl($currentHost);
+                $publicUrl = config('filesystems.disks.public.url');
+                if (str_contains($publicUrl, 'localhost') || str_contains($publicUrl, '127.0.0.1')) {
+                    config(['filesystems.disks.public.url' => rtrim($currentHost, '/') . '/storage']);
+                }
+            }
+        }
+
         // Sanitize Vite manifest to avoid serving assets with hardcoded http:// URLs
         // This helps when a manifest was built with an insecure base URL (old cache or misconfigured build).
         $manifestPath = public_path('build/manifest.json');
