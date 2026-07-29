@@ -98,7 +98,7 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::post('/contacts/{contactMessage}/reply', [ContactMessageController::class, 'reply'])->name('contacts.reply');
     Route::delete('/contacts/bulk-delete', [ContactMessageController::class, 'bulkDestroy'])->name('contacts.bulk_destroy');
     Route::delete('/contacts/{contactMessage}', [ContactMessageController::class, 'destroy'])->name('contacts.destroy');
-    Route::redirect('/projects', '/', 302);
+    Route::get('/projects', [ProjectController::class, 'adminIndex'])->name('projects.index');
     Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
     Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
     Route::delete('/projects/bulk-delete', [ProjectController::class, 'bulkDestroy'])->name('projects.bulk_destroy');
@@ -106,8 +106,6 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
     Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
 
-    Route::get('/section-videos', [App\Http\Controllers\SectionVideoController::class, 'index'])->name('section-videos.index');
-    Route::post('/section-videos/{key}', [App\Http\Controllers\SectionVideoController::class, 'update'])->name('section-videos.update');
     Route::get('/packages', [App\Http\Controllers\Admin\PackageController::class, 'index'])->name('packages.index');
     Route::post('/packages/mark-read', [App\Http\Controllers\Admin\PackageController::class, 'markAllRead'])->name('packages.mark_read');
     Route::post('/packages/{packageRequest}/seen', [App\Http\Controllers\Admin\PackageController::class, 'markRead'])->name('packages.mark_read_single');

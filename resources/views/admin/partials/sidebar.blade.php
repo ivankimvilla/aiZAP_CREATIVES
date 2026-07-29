@@ -23,13 +23,6 @@
                 </a>
             </li>
             <li><a href="{{ route('admin.projects.create') }}" class="btn btn-outline {{ request()->routeIs('admin.projects.create') ? 'is-primary' : '' }}">Add Video</a></li>
-            <li>
-                @if(request()->routeIs('admin.section-videos.index'))
-                    <span class="btn btn-outline is-primary" aria-current="page">Section Videos</span>
-                @else
-                    <a href="{{ route('admin.section-videos.index') }}" class="btn btn-outline">Section Videos</a>
-                @endif
-            </li>
             <li><a href="{{ route('admin.password.change') }}" class="btn btn-outline {{ request()->routeIs('admin.password.change') ? 'is-primary' : '' }}">Account Settings</a></li>
         </ul>
     </nav>

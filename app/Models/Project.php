@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Project extends Model
 {
@@ -25,11 +26,11 @@ class Project extends Model
 
     public function getVideoUrlAttribute()
     {
-        return $this->video_path ? asset('storage/' . $this->video_path) : null;
+        return $this->video_path ? Storage::disk('public')->url($this->video_path) : null;
     }
 
     public function getImageUrlAttribute()
     {
-        return $this->image ? asset('storage/' . $this->image) : null;
+        return $this->image ? Storage::disk('public')->url($this->image) : null;
     }
 }
