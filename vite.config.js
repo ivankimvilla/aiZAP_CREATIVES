@@ -18,6 +18,7 @@ export default defineConfig({
                 'resources/css/process.css',
                 'resources/css/services.css',
                 'resources/css/video-modal.css',
+                'resources/js/video-modal.js',
                 'resources/css/admin/index.css',
                 'resources/js/app.js',
                 'resources/js/pages/home.js',
