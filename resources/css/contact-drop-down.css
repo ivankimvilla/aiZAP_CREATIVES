@@ -1,0 +1,648 @@
+.contact-dropdown-component {
+    --gold: #d4af37;
+    --gold-light: #f2d271;
+    --gold-dark: #a8842a;
+    --black: #111111;
+    --black-soft: #1c1c1c;
+    --black-field: #151515;
+    --off-white: #faf7ee;
+}
+
+.contact-dropdown-component {
+    position: fixed;
+    top: 12px;
+    right: 24px;
+    z-index: 1100;
+    font-family: inherit;
+}
+
+.contact-float-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 16px;
+    border: 1.5px solid var(--gold);
+    border-radius: 999px;
+    z-index: 1101;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold) 55%, var(--gold-dark));
+    color: var(--black);
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+    font-size: 0.76rem;
+    white-space: nowrap;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease, padding 0.2s ease, font-size 0.2s ease;
+}
+
+.contact-float-button:hover,
+.contact-float-button:focus-visible {
+    background: var(--black-soft);
+    color: var(--gold-light);
+    border-color: var(--gold-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(212, 175, 55, 0.18);
+}
+
+.contact-float-button:active {
+    transform: translateY(0);
+}
+
+.contact-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    left: auto;
+    min-width: min(920px, calc(100vw - 40px));
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    z-index: 1100;
+    transform-origin: top right;
+    display: none;
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.contact-dropdown.open {
+    display: block;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.contact-dropdown:not(.open) {
+    display: none;
+}
+
+.contact-dropdown .contact-dropdown-inner {
+    margin-top: 0;
+    background: var(--black-soft);
+    background-image: radial-gradient(circle at 15% 0%, rgba(212, 175, 55, 0.08), transparent 45%);
+    border: 1px solid var(--gold-dark);
+    border-radius: 16px;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+    padding: 30px 32px;
+    color: var(--off-white);
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-dropdown-close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    color: var(--gold-light);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 6;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.contact-dropdown-close:hover,
+.contact-dropdown-close:focus-visible {
+    color: var(--gold);
+    transform: scale(1.1);
+}
+
+/* ---- Layout: form (left) + get-in-touch/map/cta (right) ---- */
+
+.contact-dropdown-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 36px;
+    align-items: start;
+}
+
+.contact-form-col {
+    min-width: 0;
+}
+
+.contact-info-col {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.contact-info-top {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+}
+
+.contact-info {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+/* ---- Shared heading style ---- */
+
+.contact-dropdown .eyebrow {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    color: var(--off-white);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin: 0 0 10px;
+}
+
+.contact-dropdown .eyebrow span {
+    color: var(--gold);
+}
+
+.contact-dropdown .eyebrow-rule {
+    width: 42px;
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--gold-light), var(--gold-dark));
+    margin: 0 0 18px;
+}
+
+/* ---- Get in touch list ---- */
+
+.contact-info__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.contact-info__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 0.86rem;
+    line-height: 1.4;
+    color: rgba(250, 247, 238, 0.85);
+}
+
+.contact-info__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.contact-info__text strong {
+    color: var(--off-white);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-weight: 700;
+}
+
+.contact-info__text a,
+.contact-info__text span {
+    color: rgba(250, 247, 238, 0.7);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.2s ease;
+}
+
+.contact-info__text a:hover,
+.contact-info__text a:focus-visible {
+    color: var(--gold-light);
+}
+
+.contact-info__icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: rgba(212, 175, 55, 0.12);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    color: var(--gold);
+}
+
+.contact-info__icon svg {
+    width: 17px;
+    height: 17px;
+    display: block;
+}
+
+/* ---- Decorative world map ---- */
+
+.contact-map {
+    flex: 0 0 auto;
+    width: 128px;
+    align-self: stretch;
+    display: none;
+    opacity: 0.9;
+}
+
+.contact-map__svg {
+    width: 100%;
+    height: 100%;
+}
+
+.contact-map__lines {
+    stroke-dasharray: 4 4;
+    opacity: 0.7;
+}
+
+.contact-map__points circle {
+    fill: var(--gold);
+    filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.9));
+}
+
+@media (min-width: 741px) {
+    .contact-map {
+        display: block;
+    }
+}
+
+/* ---- CTA box ---- */
+
+.contact-cta {
+    position: relative;
+    background: linear-gradient(160deg, rgba(212, 175, 55, 0.16), rgba(17, 17, 17, 0.6));
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    border-radius: 14px;
+    padding: 20px 22px;
+    overflow: hidden;
+}
+
+.contact-cta__icon {
+    position: absolute;
+    right: 16px;
+    bottom: 12px;
+    color: var(--gold);
+    opacity: 0.35;
+}
+
+.contact-cta__icon svg {
+    width: 54px;
+    height: 54px;
+}
+
+.contact-cta__title {
+    margin: 0 0 8px;
+    font-size: 1.02rem;
+    font-weight: 800;
+    line-height: 1.3;
+    color: var(--off-white);
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    max-width: 85%;
+}
+
+.contact-cta__title span {
+    color: var(--gold-light);
+}
+
+.contact-cta__text {
+    margin: 0;
+    max-width: 78%;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: rgba(250, 247, 238, 0.75);
+}
+
+/* ---- Status / toast ---- */
+
+.contact-dropdown-status {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    right: 14px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #f8fafc;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 0;
+    font-size: 0.92rem;
+    box-shadow: 0 14px 30px rgba(16, 185, 129, 0.35);
+    opacity: 1;
+    visibility: visible;
+    animation: contact-status-float-in 0.28s ease;
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s ease;
+}
+
+.contact-dropdown-status.fade-out {
+    opacity: 0;
+    transform: translateY(-8px);
+    visibility: hidden;
+}
+
+@keyframes contact-status-float-in {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.contact-toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    z-index: 3100;
+    min-width: min(360px, calc(100% - 48px));
+    max-width: 380px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
+    border-radius: 14px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s ease, transform 0.35s ease, visibility 0.35s ease;
+}
+
+.contact-toast.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.contact-toast.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(-10px);
+}
+
+.contact-toast-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.contact-toast-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.22);
+    color: #fff;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+.contact-dropdown-errors {
+    background: rgba(255, 90, 90, 0.1);
+    border: 1px solid #a83232;
+    color: #ff9f9f;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 0.85rem;
+}
+
+.contact-dropdown-errors p {
+    margin: 0 0 6px;
+    font-weight: 700;
+}
+
+.contact-dropdown-errors ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+/* ---- Form ---- */
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.contact-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.contact-form label {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    font-size: 0.8rem;
+    color: rgba(250, 247, 238, 0.8);
+    font-weight: 600;
+}
+
+.contact-form label .field-icon {
+    position: absolute;
+    left: 12px;
+    display: inline-flex;
+    color: var(--gold);
+    pointer-events: none;
+}
+
+.contact-form label .field-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    background: var(--black-field);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 8px;
+    padding: 11px 14px;
+    color: var(--off-white);
+    font-size: 0.88rem;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact-form label:has(.field-icon) input {
+    padding-left: 38px;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+    color: rgba(250, 247, 238, 0.35);
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+.contact-form-message textarea {
+    min-height: 96px;
+}
+
+.contact-form .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 4px;
+    padding: 13px 20px;
+    border-radius: 999px;
+    border: 1.5px solid var(--gold);
+    background: linear-gradient(135deg, var(--gold-light), var(--gold) 55%, var(--gold-dark));
+    color: var(--black);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.contact-form .btn-primary .btn-arrow {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+}
+
+.contact-form .btn-primary:hover,
+.contact-form .btn-primary:focus-visible {
+    background: var(--black-soft);
+    color: var(--gold-light);
+    border-color: var(--gold-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(212, 175, 55, 0.18);
+}
+
+.contact-form .btn-primary:hover .btn-arrow {
+    transform: translateX(3px);
+}
+
+.contact-form .btn-primary:active {
+    transform: translateY(0);
+}
+
+.contact-form-privacy {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 2px 0 0;
+    font-size: 0.74rem;
+    color: rgba(250, 247, 238, 0.5);
+}
+
+.contact-form-privacy svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    color: rgba(250, 247, 238, 0.5);
+}
+
+/* Below 900px the hamburger toggle appears in the header (see header.css).
+   The contact button used to float in the same top-right corner as the
+   toggle and visually cover it. Instead, drop it to its own row directly
+   under the header so both are visible and nothing overlaps. */
+.site-header__nav-contact {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .contact-dropdown-component {
+        top: 76px;
+        /* 64px header height + 12px gap */
+        right: 24px;
+    }
+
+    /* The nav now has its own Contact Us button (site-header__nav-contact).
+       Hide the original floating one so it doesn't show up twice — it
+       stays in the DOM (just visually hidden) so its existing click
+       behavior is untouched and can still be triggered programmatically. */
+    .contact-dropdown-component>.contact-toggle {
+        display: none;
+    }
+
+    .contact-float-button {
+        padding: 6px 14px;
+        font-size: 0.72rem;
+    }
+
+    .contact-dropdown {
+        top: calc(100% + 10px);
+    }
+
+    /* Nav lives on flex align-items: stretch (header.css), which would
+       otherwise stretch this button full-width like the other links.
+       Override so it keeps the same compact pill look as the header
+       button, just centered as the last item in the mobile menu.
+       It also has plenty of room in the menu, so it's exempt from the
+       .contact-float-button shrink above/below — it keeps the exact
+       same size and style as the real header button. */
+    .site-header__nav-contact.contact-float-button {
+        display: inline-flex;
+        align-self: center;
+        margin: 14px 0 18px;
+        padding: 7px 16px;
+        font-size: 0.76rem;
+        letter-spacing: 0.025em;
+    }
+}
+
+@media (max-width: 640px) {
+    .contact-dropdown-component {
+        top: 66px;
+        /* 56px header height (small screens) + 10px gap */
+        right: 16px;
+    }
+}
+
+@media (max-width: 740px) {
+    .contact-dropdown-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .contact-info-top {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .contact-float-button:not(.site-header__nav-contact) {
+        padding: 6px 11px;
+        font-size: 0.65rem;
+        letter-spacing: 0.015em;
+    }
+
+    .contact-dropdown {
+        min-width: calc(100vw - 32px);
+        right: 0;
+    }
+
+    .contact-form-row {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .contact-cta__title,
+    .contact-cta__text {
+        max-width: 100%;
+    }
+}

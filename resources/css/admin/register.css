@@ -1,0 +1,236 @@
+
+
+        :root {
+            --c-black: #111111;
+            --c-white: #ffffff;
+            --c-yellow: #ffd400;
+            --c-yellow-dark: #e6bf00;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        .pw-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 1rem;
+            padding: 1rem 0.5rem 0.5rem;
+            box-sizing: border-box;
+        }
+
+        .pw-hero {
+            text-align: center;
+            max-width: 440px;
+        }
+
+        .eyebrow {
+            color: var(--c-yellow);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-size: 0.68rem;
+            margin: 0 0 0.3rem;
+        }
+
+        .hero-title {
+            color: var(--c-white);
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin: 0 0 0.3rem;
+        }
+
+        .hero-sub {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+            margin: 0;
+        }
+
+        .password-card {
+            width: 100%;
+            max-width: 380px;
+            background: var(--c-white);
+            border-radius: 12px;
+            padding: 1.25rem 1.4rem 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .password-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: 12px 12px 0 0;
+            background: var(--c-yellow);
+        }
+
+        .alert {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .alert-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.65rem;
+            flex-shrink: 0;
+        }
+
+        .alert-error {
+            background: #f7f7f7;
+            color: var(--c-black);
+            border: 1px solid var(--c-black);
+        }
+
+        .alert-error .alert-icon {
+            background: var(--c-black);
+            color: var(--c-yellow);
+        }
+
+        .password-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 0.7rem;
+        }
+
+        .form-group label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--c-black);
+            margin-bottom: 0.25rem;
+        }
+
+        .form-group > input {
+            width: 100%;
+            padding: 0.5rem 0.7rem;
+            border: 1.5px solid #e5e5e5;
+            border-radius: 7px;
+            font-size: 0.85rem;
+            color: var(--c-black);
+            background: var(--c-white);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group > input:focus {
+            outline: none;
+            border-color: var(--c-yellow-dark);
+            box-shadow: 0 0 0 3px rgba(255, 212, 0, 0.25);
+        }
+
+        .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            padding: 0.5rem 2.4rem 0.5rem 0.7rem;
+            border: 1.5px solid #e5e5e5;
+            border-radius: 7px;
+            font-size: 0.85rem;
+            color: var(--c-black);
+            background: var(--c-white);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            box-sizing: border-box;
+        }
+
+        .input-wrap input:focus {
+            outline: none;
+            border-color: var(--c-yellow-dark);
+            box-shadow: 0 0 0 3px rgba(255, 212, 0, 0.25);
+        }
+
+        .eye-toggle {
+            position: absolute;
+            right: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            padding: 4px;
+            cursor: pointer;
+            color: #9a9a9a;
+            border-radius: 5px;
+        }
+
+        .eye-toggle:hover {
+            color: var(--c-black);
+            background: #f5f5f5;
+        }
+
+        .eye-toggle svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        .btn-primary {
+            margin-top: 0.35rem;
+            padding: 0.6rem 1rem;
+            background: var(--c-black);
+            color: var(--c-yellow);
+            border: none;
+            border-radius: 7px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: box-shadow 0.15s ease, transform 0.05s ease;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 0 3px rgba(255, 212, 0, 0.35);
+        }
+
+        .btn-primary:active {
+            transform: translateY(1px);
+        }
+
+        .note {
+            margin-top: 0.9rem;
+            text-align: center;
+            font-size: 0.78rem;
+            color: #6b6b6b;
+        }
+
+        .note a {
+            color: var(--c-yellow-dark);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .note a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-height: 680px) {
+            .pw-page { gap: 0.6rem; }
+            .hero-title { font-size: 1.2rem; }
+            .hero-sub { font-size: 0.75rem; }
+            .password-card { padding: 1rem 1.2rem 1.25rem; }
+            .form-group { margin-bottom: 0.55rem; }
+        }
+   
