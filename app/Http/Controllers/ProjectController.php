@@ -58,12 +58,14 @@ class ProjectController extends Controller
         $project->subtitle = $request->subtitle;
         $project->featured = $request->boolean('featured');
 
+        $disk = config('filesystems.default', 'public');
+
         if ($request->hasFile('image')) {
-            $project->image = $request->file('image')->store('projects/images', 'public');
+            $project->image = $request->file('image')->store('projects/images', $disk);
         }
 
         if ($request->hasFile('video')) {
-            $project->video_path = $request->file('video')->store('projects/videos', 'public');
+            $project->video_path = $request->file('video')->store('projects/videos', $disk);
         }
 
         // categories as array (saved to json column via $casts)
@@ -98,19 +100,21 @@ class ProjectController extends Controller
 
         $updated = $project->isDirty();
 
+        $disk = config('filesystems.default', 'public');
+
         if ($request->hasFile('image')) {
             if ($project->image) {
-                Storage::disk('public')->delete($project->image);
+                Storage::disk($disk)->delete($project->image);
             }
-            $project->image = $request->file('image')->store('projects/images', 'public');
+            $project->image = $request->file('image')->store('projects/images', $disk);
             $updated = true;
         }
 
         if ($request->hasFile('video')) {
             if ($project->video_path) {
-                Storage::disk('public')->delete($project->video_path);
+                Storage::disk($disk)->delete($project->video_path);
             }
-            $project->video_path = $request->file('video')->store('projects/videos', 'public');
+            $project->video_path = $request->file('video')->store('projects/videos', $disk);
             $updated = true;
         }
 
@@ -125,12 +129,14 @@ class ProjectController extends Controller
 
     public function destroy(Project $project)
     {
+        $disk = config('filesystems.default', 'public');
+
         if ($project->image) {
-            Storage::disk('public')->delete($project->image);
+            Storage::disk($disk)->delete($project->image);
         }
 
         if ($project->video_path) {
-            Storage::disk('public')->delete($project->video_path);
+            Storage::disk($disk)->delete($project->video_path);
         }
 
         $project->delete();
@@ -145,12 +151,13 @@ class ProjectController extends Controller
             'ids.*' => ['integer', 'exists:projects,id'],
         ]);
 
-        Project::whereIn('id', $data['ids'])->get()->each(function (Project $project) {
+        $disk = config('filesystems.default', 'public');
+        Project::whereIn('id', $data['ids'])->get()->each(function (Project $project) use ($disk) {
             if ($project->image) {
-                Storage::disk('public')->delete($project->image);
+                Storage::disk($disk)->delete($project->image);
             }
             if ($project->video_path) {
-                Storage::disk('public')->delete($project->video_path);
+                Storage::disk($disk)->delete($project->video_path);
             }
             $project->delete();
         });

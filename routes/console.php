@@ -67,3 +67,11 @@ Artisan::command('test:booking', function () {
 
     $this->info('Done.');
 })->purpose('Create sample bookings for testing');
+
+// Register storage migration command so it is available via artisan in environments
+Artisan::command('storage:migrate-to-s3 {--visibility=public : Visibility for uploaded objects} {--path=projects : Path inside storage/app/public to migrate}', function () {
+    $command = new \App\Console\Commands\MigrateStorageToS3();
+    // Provide framework container to the command instance
+    $command->setLaravel(app());
+    return $command->handle();
+})->purpose('Copy files from local storage (storage/app/public) to the configured s3 disk');

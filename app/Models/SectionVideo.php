@@ -18,12 +18,14 @@ class SectionVideo extends Model
 
     public function getVideoUrlAttribute()
     {
-        return $this->video_path ? $this->makeProtocolRelative(Storage::disk('public')->url($this->video_path)) : null;
+        $disk = config('filesystems.default', 'public');
+        return $this->video_path ? $this->makeProtocolRelative(Storage::disk($disk)->url($this->video_path)) : null;
     }
 
     public function getPosterUrlAttribute()
     {
-        return $this->poster_path ? $this->makeProtocolRelative(Storage::disk('public')->url($this->poster_path)) : null;
+        $disk = config('filesystems.default', 'public');
+        return $this->poster_path ? $this->makeProtocolRelative(Storage::disk($disk)->url($this->poster_path)) : null;
     }
 
     private function makeProtocolRelative(string $url): string

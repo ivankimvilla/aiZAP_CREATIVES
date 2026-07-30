@@ -26,12 +26,14 @@ class Project extends Model
 
     public function getVideoUrlAttribute()
     {
-        return $this->video_path ? $this->makeProtocolRelative(Storage::disk('public')->url($this->video_path)) : null;
+        $disk = config('filesystems.default', 'public');
+        return $this->video_path ? $this->makeProtocolRelative(Storage::disk($disk)->url($this->video_path)) : null;
     }
 
     public function getImageUrlAttribute()
     {
-        return $this->image ? $this->makeProtocolRelative(Storage::disk('public')->url($this->image)) : null;
+        $disk = config('filesystems.default', 'public');
+        return $this->image ? $this->makeProtocolRelative(Storage::disk($disk)->url($this->image)) : null;
     }
 
     private function makeProtocolRelative(string $url): string
