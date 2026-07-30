@@ -37,7 +37,7 @@
                 @csrf
 
                 <label for="email">Email</label>
-                <input id="email" name="email" type="email" value="{{ old('email', 'admin@aizap.com') }}" required autofocus />
+                <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus autocomplete="email" placeholder="admin@example.com" />
 
                 <button type="submit">Send reset link</button>
             </form>

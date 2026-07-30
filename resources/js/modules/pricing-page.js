@@ -1,4 +1,5 @@
 export function initPricingPage() {
+    const isPricingPage = window.location.pathname.includes('/pricing');
     if (!isPricingPage) return;
 
     const glow = document.querySelector('.pricing-heading-glow');
