@@ -131,6 +131,9 @@ export function initProjectThumbnailVideos() {
 
         toggle.addEventListener('click', (event) => {
             event.preventDefault();
+            // Stop the global delegated mute handler from receiving the same click,
+            // otherwise the video state would be toggled twice.
+            event.stopPropagation();
             const willBeMuted = !video.muted;
             if (willBeMuted) {
                 video.muted = true;
