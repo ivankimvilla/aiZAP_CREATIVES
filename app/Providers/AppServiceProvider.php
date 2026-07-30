@@ -48,9 +48,14 @@ class AppServiceProvider extends ServiceProvider
             $currentHost = $request->getSchemeAndHttpHost();
             if (! empty($currentHost)) {
                 URL::forceRootUrl($currentHost);
+
                 $publicUrl = config('filesystems.disks.public.url');
-                if (str_contains($publicUrl, 'localhost') || str_contains($publicUrl, '127.0.0.1')) {
-                    config(['filesystems.disks.public.url' => rtrim($currentHost, '/') . '/storage']);
+                if (preg_match('#^https?://#i', $publicUrl) || str_starts_with($publicUrl, '//')) {
+                    config(['filesystems.disks.public.url' => preg_replace('#^https?://#i', '//', rtrim($currentHost, '/')) . '/storage']);
+                }
+
+                if ($request->isSecure()) {
+                    config(['filesystems.disks.public.url' => preg_replace('#^https?://#i', '//', rtrim($currentHost, '/')) . '/storage']);
                 }
             }
         }

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\SectionVideo;
@@ -52,6 +53,18 @@ Route::get('/storage/{path}', function ($path) {
     }
     return response()->file($disk->path($path));
 })->where('path', '.*');
+
+Route::get('/debug/storage-url', function () {
+    $sampleFile = 'projects/videos/sample.mp4';
+    return [
+        'app_url' => config('app.url'),
+        'filesystem_url' => config('filesystems.disks.public.url'),
+        'generated_url' => Storage::disk('public')->url($sampleFile),
+        'current_scheme_host' => request()->getSchemeAndHttpHost(),
+        'is_secure_request' => request()->isSecure(),
+        'storage_route' => route('debug.storage-url'),
+    ];
+});
 
 Route::get('/portfolio', [ProjectController::class, 'index']);
 Route::view('/process', 'pages.process');
