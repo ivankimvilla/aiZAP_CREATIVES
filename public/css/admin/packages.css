@@ -359,6 +359,11 @@
   overflow-wrap: anywhere;
 }
 
+.msg-field-label {
+  font-weight: 700;
+  color: var(--c-black);
+}
+
 .msg-phone {
   color: #555555;
 }
@@ -520,6 +525,10 @@
   flex-shrink: 0;
 }
 
+.chat-message.user .chat-meta {
+  display: none;
+}
+
 .chat-meta {
   display: flex;
   flex-wrap: wrap;
@@ -535,9 +544,10 @@
 
 .chat-bubble {
   max-width: 100%;
-  padding: 0.65rem 0.95rem;
+  width: fit-content !important;
+  padding: 0.3rem 0.7rem !important;
   border-radius: 18px;
-  line-height: 1.4;
+  line-height: 1.25 !important;
   white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: anywhere;

@@ -58,7 +58,7 @@
                                 </div>
                                 <p class="msg-email">{{ $request->email }}</p>
                                 @if(!empty($request->company))
-                                    <p class="msg-company">Company: {{ $request->company }}</p>
+                                    <p class="msg-company"><strong class="msg-field-label">Company:</strong> {{ $request->company }}</p>
                                 @endif
                                 @if(!empty($request->phone))
                                     <p class="msg-phone">{{ $request->phone }}</p>

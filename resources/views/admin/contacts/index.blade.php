@@ -58,10 +58,10 @@
                                 </div>
                                 <p class="msg-email">{{ $message->email }}</p>
                                 @if(!empty($message->company))
-                                    <p class="msg-company">Company: {{ $message->company }}</p>
+                                    <p class="msg-company"><strong class="msg-field-label">Company:</strong> {{ $message->company }}</p>
                                 @endif
                                 @if(!empty($message->subject))
-                                    <p class="msg-subject">Subject: {{ $message->subject }}</p>
+                                    <p class="msg-subject"><strong class="msg-field-label">Subject:</strong> {{ $message->subject }}</p>
                                 @endif
                                 @if(!empty($message->phone))
                                     <p class="msg-phone">{{ $message->phone }}</p>

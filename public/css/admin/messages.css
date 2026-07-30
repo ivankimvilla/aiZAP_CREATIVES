@@ -431,6 +431,11 @@
     overflow-wrap: anywhere;
 }
 
+.msg-field-label {
+    font-weight: 700;
+    color: var(--c-black);
+}
+
 .msg-phone {
     color: #555555;
 }
@@ -553,10 +558,11 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    padding: 0.5rem 0.35rem;
+    padding: 0;
     margin-bottom: 0.75rem;
-    background: #f7f7f8;
-    border-radius: 16px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
 }
 
 .chat-message {
@@ -595,6 +601,10 @@
     flex-shrink: 0;
 }
 
+.chat-message.user .chat-meta {
+    display: none;
+}
+
 .chat-meta {
     display: flex;
     flex-wrap: wrap;
@@ -613,9 +623,10 @@
    its column; it force-wraps onto new lines instead. */
 .chat-bubble {
     max-width: 100%;
-    padding: 0.65rem 0.95rem;
+    width: fit-content !important;
+    padding: 0.3rem 0.7rem !important;
     border-radius: 18px;
-    line-height: 1.4;
+    line-height: 1.25 !important;
     white-space: pre-wrap;
     word-break: break-word;
     overflow-wrap: anywhere;
