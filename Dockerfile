@@ -42,4 +42,4 @@ ENV APP_ENV production
 
 # Do not run config cache at build time; run at container start if APP_KEY present
 # Start command: cache config if APP_KEY exists, then serve with artisan on $PORT
-CMD ["sh", "-lc", "if [ -n \"$APP_KEY\" ]; then php artisan config:cache || true; fi; php artisan migrate --force 2>/dev/null || true; php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"]
+CMD ["sh", "-lc", "if [ -n \"$APP_KEY\" ]; then php artisan config:cache || true; fi; php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"]
