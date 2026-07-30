@@ -4,6 +4,7 @@ import { initAdminVideoAudioCheck } from './modules/admin-video-audio';
 import { initBookingCalendar } from './modules/booking-calendar';
 import { initCommon } from './common';
 import { initPricingPage } from './modules/pricing-page';
+import { initGlobalMuteToggles } from './init-video-mutes';
 
 window.addEventListener('pagehide', cleanupPortfolioVideoWork);
 window.addEventListener('beforeunload', cleanupPortfolioVideoWork);
@@ -32,6 +33,13 @@ const initPageInteractions = () => {
 
     initAdminVideoAudioCheck();
     initBookingCalendar();
+
+    // Initialize global delegated mute toggles so category/home/portfolio all behave the same
+    try {
+        initGlobalMuteToggles();
+    } catch (e) {
+        // ignore
+    }
 };
 
 if (document.readyState === 'loading') {

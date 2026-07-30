@@ -97,7 +97,7 @@
                             <article class="project-card{{ $projectVideo ? ' has-video' : '' }}">
                                 <div class="project-thumb" @if(!$projectVideo) style="background-image:url('{{ $projectImage }}')" @endif>
                                     @if($projectVideo)
-                                        <video class="project-video" autoplay muted playsinline loop preload="metadata" poster="{{ $projectImage }}" data-src="{{ $projectVideo }}">
+                                        <video class="project-video" autoplay muted playsinline loop preload="metadata" poster="{{ $projectImage }}" data-src="{{ preg_match('/^\\/\\//', $projectVideo) ? 'https:'.$projectVideo : $projectVideo }}">
                                             <source src="{{ $projectVideo }}" type="video/mp4" />
                                         </video>
                                         <div class="category-label">{{ $categoryLabel }}</div>
