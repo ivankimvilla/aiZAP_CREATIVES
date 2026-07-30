@@ -51,7 +51,7 @@ Route::get('/storage/{path}', function ($path) {
     if (! $disk->exists($path)) {
         abort(404);
     }
-    return response()->file($disk->path($path));
+    return $disk->response($path);
 })->where('path', '.*');
 
 Route::get('/debug/storage-url', function () {
