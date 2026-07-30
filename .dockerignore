@@ -1,0 +1,17 @@
+/vendor
+/node_modules
+/.git
+/.github
+/.env
+/storage/*.key
+/storage/debugbar
+/storage/.gitignore
+/public/hot
+/public/storage
+/.vscode
+/.idea
+/tests
+/.DS_Store
+npm-debug.log
+yarn-error.log
+.env.testing
