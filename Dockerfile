@@ -4,7 +4,8 @@ FROM composer:2 AS builder
 WORKDIR /app
 
 # Copy composer files first to leverage caching
-COPY composer.json composer.lock ./
+# Use a glob to copy composer.json and composer.lock if present (avoids build failure when lock is absent)
+COPY composer.* ./
 
 # Install dependencies (no dev) and optimize autoloader
 RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader --no-scripts
@@ -16,7 +17,7 @@ COPY . .
 RUN composer dump-autoload --optimize
 
 # Runtime stage
-FROM php:8.1-cli
+FROM php:8.2-cli
 WORKDIR /app
 
 # Install system dependencies and PHP extensions commonly needed by Laravel
