@@ -75,8 +75,47 @@ document.addEventListener('DOMContentLoaded', function () {
             const container = muteBtn.closest('article, .project-card, .value-card, .category-item, .project-item, .pf-project-card, .pf-project-thumb, .project-thumb');
             const video = container ? container.querySelector('video') : null;
             if (!video) return;
-            video.muted = !video.muted;
-            updateMuteButton(muteBtn, video);
+
+            const muteAllOtherVideos = (activeVideo) => {
+                document.querySelectorAll('video').forEach((otherVideo) => {
+                    if (!otherVideo || otherVideo === activeVideo) return;
+                    try {
+                        otherVideo.muted = true;
+                        otherVideo.volume = 0;
+                        otherVideo.setAttribute('muted', '');
+                    } catch (err) {
+                        // ignore
+                    }
+                    const otherContainer = otherVideo.closest('article, .project-card, .value-card, .category-item, .project-item, .pf-project-card, .pf-project-thumb, .project-thumb');
+                    const otherToggle = otherContainer ? otherContainer.querySelector('.mute-toggle') : null;
+                    if (otherToggle) updateMuteButton(otherToggle, otherVideo);
+                });
+            };
+
+            const willBeMuted = !video.muted;
+            if (willBeMuted) {
+                try {
+                    video.muted = true;
+                    video.volume = 0;
+                    video.setAttribute('muted', '');
+                } catch (err) {
+                    // ignore
+                }
+                updateMuteButton(muteBtn, video);
+            } else {
+                // Unmuting: ensure every other video is muted first
+                muteAllOtherVideos(video);
+                try {
+                    video.muted = false;
+                    video.volume = 1;
+                    video.removeAttribute('muted');
+                    video.play().catch(() => { });
+                } catch (err) {
+                    // ignore
+                }
+                updateMuteButton(muteBtn, video);
+            }
+
             return;
         }
 

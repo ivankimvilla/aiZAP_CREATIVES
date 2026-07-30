@@ -62,6 +62,62 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // Global mute toggle handler — ensures only one video is unmuted at a time
+    document.addEventListener('click', (e) => {
+        const muteBtn = e.target.closest('.mute-toggle');
+        if (!muteBtn) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const container = muteBtn.closest('article, .project-card, .value-card, .category-item, .project-item, .pf-project-card, .pf-project-thumb, .project-thumb');
+        const video = container ? container.querySelector('video') : null;
+        if (!video) return;
+
+        const muteAllOtherVideos = (activeVideo) => {
+            document.querySelectorAll('video').forEach((otherVideo) => {
+                if (!otherVideo || otherVideo === activeVideo) return;
+                try {
+                    otherVideo.muted = true;
+                    otherVideo.volume = 0;
+                    otherVideo.setAttribute('muted', '');
+                } catch (err) {
+                    // ignore
+                }
+                const otherContainer = otherVideo.closest('article, .project-card, .value-card, .category-item, .project-item, .pf-project-card, .pf-project-thumb, .project-thumb');
+                const otherToggle = otherContainer ? otherContainer.querySelector('.mute-toggle') : null;
+                if (otherToggle) {
+                    otherToggle.textContent = otherVideo.muted ? '🔇' : '🔊';
+                    otherToggle.setAttribute('aria-label', otherVideo.muted ? 'Unmute' : 'Mute');
+                }
+            });
+        };
+
+        const willBeMuted = !video.muted;
+        if (willBeMuted) {
+            try {
+                video.muted = true;
+                video.volume = 0;
+                video.setAttribute('muted', '');
+            } catch (err) {
+                // ignore
+            }
+            muteBtn.textContent = '🔇';
+            muteBtn.setAttribute('aria-label', 'Unmute');
+        } else {
+            // Unmuting: mute all others first, then unmute this one
+            muteAllOtherVideos(video);
+            try {
+                video.muted = false;
+                video.volume = 1;
+                video.removeAttribute('muted');
+                video.play().catch(() => { });
+            } catch (err) {
+                // ignore
+            }
+            muteBtn.textContent = '🔊';
+            muteBtn.setAttribute('aria-label', 'Mute');
+        }
+    });
+
     modal.addEventListener('click', (e) => {
         if (e.target.matches('[data-close]') || e.target === closeBtn) closeModal();
     });
