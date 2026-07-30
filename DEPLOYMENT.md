@@ -32,12 +32,27 @@ Note: Replace AllowedOrigin with your domain for tighter security (e.g., https:/
 
 3) Deploying to Railway
 
-- Ensure Railway has these env vars set (see above).
-- Build commands (Railway):
-  - Install PHP deps: composer install --no-dev --optimize-autoloader
-  - Run migrations: php artisan migrate --force
-  - If still using local public disk for assets in any environment, create symlink: php artisan storage:link
-  - Build frontend (if needed): npm ci && npm run build
+Option A — Use the included Dockerfile (recommended)
+
+- The repository now includes a multi-stage Dockerfile that runs composer install in a builder stage and produces a runtime image with PHP and required extensions.
+- In Railway, choose Docker deployment or let Railway detect the Dockerfile automatically. This avoids running `php artisan` during the platform build step and ensures `vendor/autoload.php` is present in the image.
+- Ensure these environment variables are set in Railway before starting the container (APP_KEY is required if you want to run `php artisan config:cache`):
+  - APP_KEY (or run `php artisan key:generate` locally and set it in Railway)
+  - DB_CONNECTION, DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD (if using a DB)
+  - FILESYSTEM_DISK and S3 credentials (if using S3)
+
+Option B — If you prefer Railway's Build Commands (not Docker)
+
+- Make sure the following build commands run in this order and that composer is available in the build environment:
+  1. composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+  2. (Optional) php artisan key:generate --force   # or set APP_KEY in Railway env
+  3. php artisan migrate --force
+  4. php artisan storage:link   # if you rely on public disk
+  5. npm ci && npm run build   # if you need to build frontend assets
+
+Important: Do NOT run php artisan config:cache during the Railway build unless APP_KEY and all env variables required by your config are already set in Railway. Running `php artisan config:cache` without vendor present or without APP_KEY will fail the build with errors like "Failed to open stream: No such file or directory in /app/vendor/autoload.php".
+
+If you previously configured Railway Build Commands to run `php artisan config:cache` or other artisan commands during build, remove them and either rely on the Dockerfile or run artisan commands at container start time where vendor is present.
 
 4) Migrating existing local files to S3
 
