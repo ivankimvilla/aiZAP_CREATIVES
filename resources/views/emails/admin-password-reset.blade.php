@@ -11,7 +11,9 @@
         <p>Hello {{ $user->name ?? 'there' }},</p>
         <p>We received a request to reset your admin password. Use the link below to continue:</p>
         <p><a href="{{ $resetUrl }}" style="display:inline-block; padding:12px 18px; background:#111827; color:#ffffff; text-decoration:none; border-radius:8px;">Reset password</a></p>
-        <p>This link expires in 1 minute.</p>
+        <p style="margin-top:16px; font-size:0.95rem; line-height:1.5; word-break:break-all;">If the button does not work, paste this link into your browser:</p>
+        <p style="font-size:0.95rem; line-height:1.5; word-break:break-all;"><a href="{{ $resetUrl }}" style="color:#111827;">{{ $resetUrl }}</a></p>
+        <p>This link expires in 60 minutes.</p>
         <p>If you did not request this, you can ignore this email.</p>
     </div>
 </body>

@@ -13,6 +13,8 @@ class ContactMessageController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
+            'company' => ['nullable', 'string', 'max:255'],
+            'subject' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:64'],
             'message' => ['required', 'string', 'max:2000'],
             'request_type' => ['nullable', 'string', 'in:contact,book_call'],
@@ -21,6 +23,8 @@ class ContactMessageController extends Controller
         ContactMessage::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'company' => $data['company'] ?? null,
+            'subject' => $data['subject'] ?? null,
             'phone' => $data['phone'] ?? null,
             'message' => $data['message'],
             'request_type' => $data['request_type'] ?? 'contact',

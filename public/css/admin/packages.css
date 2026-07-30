@@ -205,6 +205,7 @@
 .msg-card.collapsed .msg-date,
 .msg-card.collapsed .msg-created,
 .msg-card.collapsed .msg-email,
+.msg-card.collapsed .msg-company,
 .msg-card.collapsed .msg-phone {
   display: none;
 }
@@ -349,7 +350,8 @@
 }
 
 .msg-email,
-.msg-phone {
+.msg-phone,
+.msg-company {
   font-size: 0.78rem;
   color: var(--c-gray);
   text-decoration: none;

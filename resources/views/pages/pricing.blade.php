@@ -226,13 +226,18 @@ SVG,
                                             <input type="email" name="email" placeholder="Your email" value="{{ old('email') }}" required />
                                         </label>
 
+                                        <label class="field field-company">
+                                            <span class="label-text">Company / Brand</span>
+                                            <input type="text" name="company" placeholder="Your company" value="{{ old('company') }}" />
+                                        </label>
+
                                         <label class="field field-phone">
                                             <span class="label-text">Phone</span>
                                             <input type="text" name="phone" placeholder="Your phone number" value="{{ old('phone') }}" />
                                         </label>
 
                                         <label class="field field-message">
-                                            <span class="label-text">Tell us about your campaign</span>
+                                            <span class="label-text">Tell us about your project</span>
                                             <textarea name="message" rows="6" placeholder="Describe your goals, timeline, and any details." required>{{ old('message') }}</textarea>
                                         </label>
 

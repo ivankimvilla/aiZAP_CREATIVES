@@ -12,6 +12,7 @@ class PackageRequestController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
+            'company' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:64'],
             'message' => ['required', 'string', 'max:2000'],
             'package' => ['required', 'string', 'max:255'],
@@ -20,6 +21,7 @@ class PackageRequestController extends Controller
         PackageRequest::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'company' => $data['company'] ?? null,
             'phone' => $data['phone'] ?? null,
             'message' => $data['message'],
             'package' => $data['package'],

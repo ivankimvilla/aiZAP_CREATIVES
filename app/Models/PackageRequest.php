@@ -16,6 +16,7 @@ class PackageRequest extends Model
     protected $fillable = [
         'name',
         'email',
+        'company',
         'phone',
         'message',
         'package',

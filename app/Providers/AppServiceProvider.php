@@ -37,6 +37,13 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
+        if (is_string($appUrl) && ! empty($appUrl)) {
+            URL::forceRootUrl(rtrim($appUrl, '/'));
+            if (str_starts_with($appUrl, 'https://')) {
+                URL::forceScheme('https');
+            }
+        }
+
         if ($request) {
             $currentHost = $request->getSchemeAndHttpHost();
             if (! empty($currentHost)) {

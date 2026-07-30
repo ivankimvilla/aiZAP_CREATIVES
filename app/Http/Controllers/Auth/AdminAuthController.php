@@ -326,7 +326,7 @@ class AdminAuthController extends Controller
 
         $token = Str::random(64);
         $hashedToken = Hash::make($token);
-        $expiresAt = now()->addMinute();
+        $expiresAt = now()->addMinutes(60);
         $requestCount = $record && $lastRequestedAt && ! $lastRequestedAt->isSameDay($today)
             ? 1
             : (int) ($record->request_count ?? 0) + 1;
@@ -344,7 +344,13 @@ class AdminAuthController extends Controller
         );
 
         $resetUrl = route('admin.password.reset', ['token' => $token, 'email' => $user->email]);
-        Mail::to($user->email)->send(new AdminPasswordResetMail($user, $token, $resetUrl));
+
+        try {
+            Mail::to($user->email, $user->name)->send(new AdminPasswordResetMail($user, $token, $resetUrl));
+        } catch (\Throwable $exception) {
+            report($exception);
+            throw new \RuntimeException('Unable to send the password reset email. Please check mail settings or contact support.');
+        }
     }
 
     private function isValidResetToken(object $record, ?string $token): bool

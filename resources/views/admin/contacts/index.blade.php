@@ -57,6 +57,12 @@
                                         value="Re: Thanks for contacting aiZAP Creatives">
                                 </div>
                                 <p class="msg-email">{{ $message->email }}</p>
+                                @if(!empty($message->company))
+                                    <p class="msg-company">Company: {{ $message->company }}</p>
+                                @endif
+                                @if(!empty($message->subject))
+                                    <p class="msg-subject">Subject: {{ $message->subject }}</p>
+                                @endif
                                 @if(!empty($message->phone))
                                     <p class="msg-phone">{{ $message->phone }}</p>
                                 @endif
@@ -102,7 +108,9 @@
                                     </div>
                                     <div class="chat-row">
                                         <div class="chat-avatar">{{ strtoupper(substr($message->name, 0, 1)) }}</div>
-                                        <div class="chat-bubble chat-bubble-user">{{ $message->message }}</div>
+                                        <div class="chat-bubble chat-bubble-user">
+                                            <p>{{ $message->message }}</p>
+                                        </div>
                                     </div>
                                 </div>
 
