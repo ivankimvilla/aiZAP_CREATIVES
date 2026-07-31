@@ -154,11 +154,27 @@ class AdminAuthController extends Controller
     {
         $request->validate(['email' => ['required', 'email']]);
 
+        $user = User::where('email', $request->email)->first();
+        if (! $user) {
+            return back()->withErrors(['email' => 'No admin account was found with that email address.']);
+        }
+
+        try {
+            $this->ensureRealMailTransportIsConfigured();
+        } catch (\RuntimeException $exception) {
+            return back()->withErrors(['email' => $exception->getMessage()]);
+        }
+
         $status = Password::broker('users')->sendResetLink([
             'email' => $request->email,
         ]);
 
         if ($status === Password::RESET_LINK_SENT) {
+            $tokenRecord = DB::table('password_reset_tokens')->where('email', $request->email)->first();
+            if (! $tokenRecord || empty($tokenRecord->token)) {
+                return back()->withErrors(['email' => 'The reset token could not be created. Please check the database configuration.']);
+            }
+
             return back()->with('status', 'Reset link sent to your email address.');
         }
 
@@ -322,12 +338,34 @@ class AdminAuthController extends Controller
 
     private function sendPasswordResetLink(User $user): void
     {
+        $this->ensureRealMailTransportIsConfigured();
+
         $status = Password::broker('users')->sendResetLink([
             'email' => $user->email,
         ]);
 
         if ($status !== Password::RESET_LINK_SENT) {
             throw new \RuntimeException('Unable to send the password reset email. Please check mail settings or contact support.');
+        }
+    }
+
+    private function ensureRealMailTransportIsConfigured(): void
+    {
+        $mailer = config('mail.default');
+        $smtpHost = config('mail.mailers.smtp.host');
+        $smtpUser = config('mail.mailers.smtp.username');
+        $smtpPassword = config('mail.mailers.smtp.password');
+
+        if ($mailer === 'log' || $mailer === 'array') {
+            throw new \RuntimeException('Mail delivery is disabled in the current app configuration. Set a live SMTP transport in Railway before using password reset.');
+        }
+
+        if ($mailer === 'smtp' && blank($smtpHost)) {
+            throw new \RuntimeException('SMTP host is not configured. Set MAIL_HOST and the corresponding SMTP credentials in Railway before sending password reset emails.');
+        }
+
+        if ($mailer === 'smtp' && blank($smtpUser) && blank($smtpPassword)) {
+            throw new \RuntimeException('SMTP credentials are missing. Add MAIL_USERNAME and MAIL_PASSWORD in Railway before sending password reset emails.');
         }
     }
 
