@@ -9,10 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\Password as PasswordRule;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class AdminAuthController extends Controller
 {
@@ -155,40 +154,49 @@ class AdminAuthController extends Controller
     {
         $request->validate(['email' => ['required', 'email']]);
 
-        $user = User::where('email', $request->email)->first();
-        if (! $user) {
+        $status = Password::broker('users')->sendResetLink([
+            'email' => $request->email,
+        ]);
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return back()->with('status', 'Reset link sent to your email address.');
+        }
+
+        if ($status === Password::INVALID_USER) {
             return back()->withErrors(['email' => 'No admin account was found with that email address.']);
         }
 
-        try {
-            $this->sendPasswordResetLink($user);
-        } catch (\RuntimeException $exception) {
-            return back()->withErrors(['email' => $exception->getMessage()]);
+        if ($status === Password::RESET_THROTTLED) {
+            return back()->withErrors(['email' => 'Please wait before requesting another password reset link.']);
         }
 
-        return back()->with('status', 'Reset link sent to your email address.');
+        return back()->withErrors(['email' => 'Unable to send the password reset email. Please check mail settings or contact support.']);
     }
 
     public function sendPasswordResetToAdmin(Request $request, User $user)
     {
-        try {
-            $this->sendPasswordResetLink($user);
-        } catch (\RuntimeException $exception) {
-            return back()->withErrors(['email' => $exception->getMessage()]);
+        $status = Password::broker('users')->sendResetLink([
+            'email' => $user->email,
+        ]);
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return back()->with('status', "Password reset link sent to {$user->email}.");
         }
 
-        return back()->with('status', "Password reset link sent to {$user->email}.");
+        return back()->withErrors(['email' => 'Unable to send the password reset email. Please check mail settings or contact support.']);
     }
 
     public function resetAdminPassword(Request $request, User $user)
     {
-        try {
-            $this->sendPasswordResetLink($user);
-        } catch (\RuntimeException $exception) {
-            return back()->withErrors(['email' => $exception->getMessage()]);
+        $status = Password::broker('users')->sendResetLink([
+            'email' => $user->email,
+        ]);
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return back()->with('status', "Password reset link sent to {$user->email}.");
         }
 
-        return back()->with('status', "Password reset link sent to {$user->email}.");
+        return back()->withErrors(['email' => 'Unable to send the password reset email. Please check mail settings or contact support.']);
     }
 
     public function changeAdminPassword(Request $request, User $user)
@@ -247,29 +255,27 @@ class AdminAuthController extends Controller
             'password' => ['required', 'confirmed', PasswordRule::min(8)],
         ]);
 
-        $record = DB::table('password_reset_tokens')->where('email', $request->email)->first();
-        if (! $record || ! $this->isValidResetToken($record, $request->token)) {
-            return back()->withErrors(['email' => 'This password reset link is invalid or has expired.']);
+        $status = Password::broker('users')->reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (User $user, string $password) {
+                $user->password = Hash::make($password);
+                $user->save();
+
+                Auth::login($user);
+                session()->put('admin_password_reveal', ['id' => $user->id, 'password' => $password]);
+            }
+        );
+
+        if ($status === Password::PASSWORD_RESET) {
+            return redirect()->route('login')
+                ->with('status', 'Your password has been reset. Please sign in with your new password.');
         }
 
-        $user = User::where('email', $request->email)->first();
-        if (! $user) {
+        if ($status === Password::INVALID_USER) {
             return back()->withErrors(['email' => 'No admin account was found with that email address.']);
         }
 
-        $user->password = Hash::make($request->password);
-        $user->save();
-
-        DB::table('password_reset_tokens')->where('email', $request->email)->update([
-            'used_at' => now(),
-        ]);
-
-        Auth::login($user);
-
-        session()->put('admin_password_reveal', ['id' => $user->id, 'password' => $request->password]);
-
-        return redirect()->route('login')
-            ->with('status', 'Your password has been reset. Please sign in with your new password.');
+        return back()->withErrors(['email' => 'This password reset link is invalid or has expired.']);
     }
 
     public function showChangePasswordForm()
@@ -316,39 +322,11 @@ class AdminAuthController extends Controller
 
     private function sendPasswordResetLink(User $user): void
     {
-        $record = DB::table('password_reset_tokens')->where('email', $user->email)->first();
-        $today = now()->startOfDay();
-        $lastRequestedAt = $record?->last_requested_at ? now()->parse($record->last_requested_at) : null;
+        $status = Password::broker('users')->sendResetLink([
+            'email' => $user->email,
+        ]);
 
-        if ($record && $lastRequestedAt && $lastRequestedAt->isSameDay($today) && (int) ($record->request_count ?? 0) >= 5) {
-            throw new \RuntimeException('You have reached the daily password reset limit. Please try again tomorrow.');
-        }
-
-        $token = Str::random(64);
-        $hashedToken = Hash::make($token);
-        $expiresAt = now()->addMinutes(60);
-        $requestCount = $record && $lastRequestedAt && ! $lastRequestedAt->isSameDay($today)
-            ? 1
-            : (int) ($record->request_count ?? 0) + 1;
-
-        DB::table('password_reset_tokens')->updateOrInsert(
-            ['email' => $user->email],
-            [
-                'token' => $hashedToken,
-                'created_at' => now(),
-                'expires_at' => $expiresAt,
-                'used_at' => null,
-                'request_count' => $requestCount,
-                'last_requested_at' => now(),
-            ]
-        );
-
-        $resetUrl = route('admin.password.reset', ['token' => $token, 'email' => $user->email]);
-
-        try {
-            Mail::to($user->email, $user->name)->send(new AdminPasswordResetMail($user, $token, $resetUrl));
-        } catch (\Throwable $exception) {
-            report($exception);
+        if ($status !== Password::RESET_LINK_SENT) {
             throw new \RuntimeException('Unable to send the password reset email. Please check mail settings or contact support.');
         }
     }
