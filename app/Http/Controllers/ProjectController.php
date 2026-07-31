@@ -58,7 +58,7 @@ class ProjectController extends Controller
         $project->subtitle = $request->subtitle;
         $project->featured = $request->boolean('featured');
 
-        $disk = config('filesystems.default', 's3');
+        $disk = config('filesystems.default', 'public');
 
         if ($request->hasFile('image')) {
             $project->image = $request->file('image')->store('projects/images', $disk);

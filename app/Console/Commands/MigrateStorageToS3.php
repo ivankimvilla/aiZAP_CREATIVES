@@ -19,15 +19,15 @@ class MigrateStorageToS3 extends Command
      *
      * @var string
      */
-    protected $description = 'Copy files from local storage (storage/app/public) to the configured s3 disk (FILESYSTEM_DISK=s3).';
+    protected $description = 'Copy files from local storage (storage/app/public) to the configured object-storage disk, such as s3 or r2.';
 
     public function handle()
     {
         $this->info('Starting storage migration...');
 
         $disk = config('filesystems.default', 'public');
-        if ($disk !== 's3') {
-            $this->warn("Configured filesystem disk is '$disk'. This command is intended to be used when FILESYSTEM_DISK=s3.");
+        if (! in_array($disk, ['s3', 'r2'], true)) {
+            $this->warn("Configured filesystem disk is '$disk'. This command is intended to be used with an S3-compatible object disk such as s3 or r2.");
             if (! $this->confirm('Continue anyway?', false)) {
                 $this->info('Aborted.');
                 return 1;

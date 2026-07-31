@@ -108,7 +108,7 @@
                                         <span class="pf-thumb-overlay"></span>
 
                                         @if ($projectVideo)
-                                            <video class="pf-project-video" autoplay muted playsinline loop preload="none" poster="{{ $projectImage }}" data-src="{{ preg_match('/^\\/\\//', $projectVideo) ? 'https:'.$projectVideo : $projectVideo }}">
+                                            <video class="pf-project-video" autoplay muted playsinline loop preload="metadata" poster="{{ $projectImage }}" src="{{ $projectVideo }}" data-src="{{ preg_match('/^\/\//', $projectVideo) ? 'https:'.$projectVideo : $projectVideo }}">
                                                 <source src="{{ $projectVideo }}" type="video/mp4" />
                                             </video>
                                             <button type="button" class="pf-expand-toggle expand-toggle" aria-label="Expand video">⛶</button>
