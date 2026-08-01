@@ -46,7 +46,7 @@
         .projects-by-category .project-thumb,.projects-by-category .project-thumb-fallback{aspect-ratio:16/9;width:100%;display:block;background-size:cover;background-position:center}
         .projects-by-category .project-thumb video,
         .projects-by-category .project-video,
-        .projects-by-category .category-video{width:100% !important;height:100% !important;max-width:none !important;object-fit:cover !important;display:block !important;position:absolute;inset:0}
+        .projects-by-category .category-video{width:100% !important;height:100% !important;max-width:none !important;object-fit:cover !important;display:block !important;position:absolute;inset:0;z-index:1}
         .projects-by-category .expand-btn,
         .projects-by-category .expand-toggle,
         .projects-by-category .mute-toggle {
