@@ -28,8 +28,16 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
- && docker-php-ext-install pdo pdo_mysql zip mbstring exif pcntl bcmath gd xml \
- && rm -rf /var/lib/apt/lists/*
+    && docker-php-ext-install pdo pdo_mysql zip mbstring exif pcntl bcmath gd xml \
+    && rm -rf /var/lib/apt/lists/*
+
+# Increase PHP request-body limits so large video uploads can reach Laravel
+RUN printf '%s\n' \
+    'upload_max_filesize = 200M' \
+    'post_max_size = 200M' \
+    'memory_limit = 512M' \
+    'max_input_time = 300' \
+    'max_execution_time = 300' > /usr/local/etc/php/conf.d/uploads.ini
 
 # Copy application from builder
 COPY --from=builder /app /app
