@@ -626,7 +626,7 @@ a {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    z-index: 0;
+    z-index: 1;
 }
 
 .category-label {
@@ -756,6 +756,7 @@ a {
     content: "";
     position: absolute;
     inset: 0;
+    z-index: 0;
     background: inherit;
     background-size: cover;
     background-position: center;
@@ -767,6 +768,7 @@ a {
     content: "";
     position: absolute;
     inset: 0;
+    z-index: 2;
     pointer-events: none;
     background:
         linear-gradient(to top, rgba(5, 5, 5, 0.65) 0%, rgba(5, 5, 5, 0) 45%),

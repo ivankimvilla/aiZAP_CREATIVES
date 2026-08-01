@@ -110,7 +110,7 @@
                 <article class="project-card{{ $project->video_url ? ' has-video' : '' }}">
                     <div class="project-thumb">
                         @if ($project->video_url)
-                            <video class="category-video" poster="{{ $project->poster_url }}" autoplay muted loop playsinline preload="metadata" src="{{ preg_match('/^\\/\\//', $project->video_url) ? 'https:'.$project->video_url : $project->video_url }}"></video>
+                            <video class="category-video" poster="{{ $project->poster_url }}" autoplay muted loop playsinline preload="metadata" src="{{ preg_match('/^\/\//', $project->video_url) ? 'https:'.$project->video_url : $project->video_url }}" data-src="{{ preg_match('/^\/\//', $project->video_url) ? 'https:'.$project->video_url : $project->video_url }}"></video>
                             <div class="category-overlay"></div>
                             <button type="button" class="expand-btn expand-toggle" aria-label="Expand video">⛶</button>
                             <div class="category-label">{{ $categoryLabel }}</div>

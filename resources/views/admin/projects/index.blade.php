@@ -100,7 +100,7 @@
                         @endif
 
                         @if($project->video_url)
-                            <video class="project-video admin-project-video" autoplay muted playsinline loop preload="metadata" poster="{{ $project->image_url }}">
+                            <video class="project-video admin-project-video" autoplay muted playsinline loop preload="metadata" poster="{{ $project->image_url }}" src="{{ $project->video_url }}" data-src="{{ preg_match('/^\/\//', $project->video_url) ? 'https:'.$project->video_url : $project->video_url }}">
                                 <source src="{{ $project->video_url }}" type="video/mp4" />
                             </video>
 
